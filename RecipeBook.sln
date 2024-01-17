@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{86104A91-86AD-44A8-9EE3-CF77F1D07153}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeBook.Api", "src\RecipeBook.Api\RecipeBook.Api.csproj", "{DBF63A1C-6E60-4992-A08A-7E10DF163458}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{94845322-98C7-493E-A6E5-026F32F3D615}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeBook.Api.Tests", "tests\RecipeBook.Api.Tests\RecipeBook.Api.Tests.csproj", "{0B63B07A-1870-424E-8995-5E9311B15CC4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBF63A1C-6E60-4992-A08A-7E10DF163458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBF63A1C-6E60-4992-A08A-7E10DF163458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBF63A1C-6E60-4992-A08A-7E10DF163458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBF63A1C-6E60-4992-A08A-7E10DF163458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B63B07A-1870-424E-8995-5E9311B15CC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B63B07A-1870-424E-8995-5E9311B15CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B63B07A-1870-424E-8995-5E9311B15CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B63B07A-1870-424E-8995-5E9311B15CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DBF63A1C-6E60-4992-A08A-7E10DF163458} = {86104A91-86AD-44A8-9EE3-CF77F1D07153}
+		{0B63B07A-1870-424E-8995-5E9311B15CC4} = {94845322-98C7-493E-A6E5-026F32F3D615}
+	EndGlobalSection
+EndGlobal
