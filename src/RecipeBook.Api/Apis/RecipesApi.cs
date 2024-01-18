@@ -177,6 +177,8 @@ public static class RecipesApi
         recipe.Instructions.Markdown = dto.Instructions;
         recipe.Instructions.Html = Markdown.ToHtml(dto.Instructions!, s_pipeline);
 
+        recipe.Modified = DateTime.UtcNow;
+
         await services.Context.SaveChangesAsync();
 
         return TypedResults.Ok(recipe);
