@@ -23,7 +23,7 @@ public sealed class RecipesApiUnitTests : IDisposable
             .Options;
 
         ApplicationDbContext context = new(contextOptions);
-        context.Database.Migrate();
+        context.Database.EnsureCreated();
 
         context.Recipes.AddRange(RecipesApiTestData.Recipes);
         context.SaveChanges();
