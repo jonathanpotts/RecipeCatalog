@@ -17,6 +17,8 @@ public class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Recipe>
             x => x != null ? utcConverter.ConvertToProviderTyped(x.Value) : null,
             x => x != null ? utcConverter.ConvertFromProviderTyped(x.Value) : null);
 
+        builder.OwnsOne(x => x.Instructions);
+
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
 

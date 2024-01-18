@@ -2,10 +2,8 @@
 
 namespace RecipeBook.Api.Models;
 
-public class Recipe
+public class CreateOrUpdateRecipeDto
 {
-    public long Id { get; set; }
-
     [Required]
     public string? Name { get; set; }
 
@@ -14,13 +12,9 @@ public class Recipe
 
     public string? Description { get; set; }
 
-    public DateTime Created { get; set; }
-
-    public DateTime? Modified { get; set; }
-
     [Required]
     public string[]? Ingredients { get; set; }
 
     [Required]
-    public MarkdownData? Instructions { get; set; }
+    public string? Instructions { get; set; }
 }

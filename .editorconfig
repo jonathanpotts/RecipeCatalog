@@ -1,0 +1,20 @@
+root = true
+
+[*]
+indent_style = space
+
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
+indent_size = 2
+
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
+indent_size = 2
+
+[*.{cs,csx,vb,vbx}]
+indent_size = 4
+insert_final_newline = true
+
+[*.{cs,csx}]
+csharp_prefer_braces = true:silent
+csharp_force_attribute_style = separate
+csharp_place_attribute_on_same_line = false
+csharp_place_record_field_attribute_on_same_line = if_owner_is_single_line
