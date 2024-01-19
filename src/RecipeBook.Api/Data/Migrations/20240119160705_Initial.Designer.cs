@@ -11,7 +11,7 @@ using RecipeBook.Api.Data;
 namespace RecipeBook.Api.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240117231334_Initial")]
+    [Migration("20240119160705_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,6 +19,24 @@ namespace RecipeBook.Api.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
+
+            modelBuilder.Entity("RecipeBook.Api.Models.Cuisine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Cuisines");
+                });
 
             modelBuilder.Entity("RecipeBook.Api.Models.Recipe", b =>
                 {
@@ -28,9 +46,8 @@ namespace RecipeBook.Api.Data.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Cuisine")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("CuisineId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
@@ -48,11 +65,19 @@ namespace RecipeBook.Api.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CuisineId");
+
                     b.ToTable("Recipes");
                 });
 
             modelBuilder.Entity("RecipeBook.Api.Models.Recipe", b =>
                 {
+                    b.HasOne("RecipeBook.Api.Models.Cuisine", "Cuisine")
+                        .WithMany("Recipes")
+                        .HasForeignKey("CuisineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsOne("RecipeBook.Api.Models.MarkdownData", "Instructions", b1 =>
                         {
                             b1.Property<long>("RecipeId")
@@ -74,8 +99,15 @@ namespace RecipeBook.Api.Data.Migrations
                                 .HasForeignKey("RecipeId");
                         });
 
+                    b.Navigation("Cuisine");
+
                     b.Navigation("Instructions")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RecipeBook.Api.Models.Cuisine", b =>
+                {
+                    b.Navigation("Recipes");
                 });
 #pragma warning restore 612, 618
         }

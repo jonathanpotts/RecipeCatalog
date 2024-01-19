@@ -24,6 +24,10 @@ public static class RecipesApi
             .WithTags("Recipes");
 
         group.MapGet("/", GetListAsync);
+        group.MapGet("/{id:long}", GetAsync);
+        group.MapPost("/", PostAsync);
+        group.MapPut("/{id:long}", PutAsync);
+        group.MapDelete("/{id:long}", DeleteAsync);
 
         return builder;
     }
@@ -45,8 +49,7 @@ public static class RecipesApi
 
         var total = await services.Context.Recipes.CountAsync();
 
-        var recipes = services.Context.Recipes
-            .AsNoTracking();
+        var recipes = services.Context.Recipes.Include(x => x.Cuisine).AsNoTracking();
 
         if (last.HasValue)
         {
@@ -64,8 +67,7 @@ public static class RecipesApi
         [AsParameters] Services services,
         long id)
     {
-        var recipe = await services.Context.Recipes
-            .AsNoTracking()
+        var recipe = await services.Context.Recipes.Include(x => x.Cuisine).AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (recipe == null)
@@ -87,11 +89,6 @@ public static class RecipesApi
             errors.Add(nameof(dto.Name), ["Value is required."]);
         }
 
-        if (string.IsNullOrWhiteSpace(dto.Cuisine))
-        {
-            errors.Add(nameof(dto.Cuisine), ["Value is required."]);
-        }
-
         if (dto.Ingredients?.Length == 0 || (dto.Ingredients?.Any(string.IsNullOrWhiteSpace) ?? false))
         {
             errors.Add(nameof(dto.Ingredients), ["Value is required."]);
@@ -111,7 +108,7 @@ public static class RecipesApi
         {
             Id = services.IdGenerator.CreateId(),
             Name = dto.Name,
-            Cuisine = dto.Cuisine,
+            CuisineId = dto.CuisineId,
             Description = dto.Description,
             Created = DateTime.UtcNow,
             Ingredients = dto.Ingredients,
@@ -140,11 +137,6 @@ public static class RecipesApi
             errors.Add(nameof(dto.Name), ["Value is required."]);
         }
 
-        if (string.IsNullOrWhiteSpace(dto.Cuisine))
-        {
-            errors.Add(nameof(dto.Cuisine), ["Value is required."]);
-        }
-
         if (dto.Ingredients?.Length == 0 || (dto.Ingredients?.Any(string.IsNullOrWhiteSpace) ?? false))
         {
             errors.Add(nameof(dto.Ingredients), ["Value is required."]);
@@ -169,7 +161,7 @@ public static class RecipesApi
         }
 
         recipe.Name = dto.Name;
-        recipe.Cuisine = dto.Cuisine;
+        recipe.CuisineId = dto.CuisineId;
         recipe.Description = dto.Description;
         recipe.Ingredients = dto.Ingredients;
 

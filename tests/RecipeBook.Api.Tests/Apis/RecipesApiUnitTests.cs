@@ -25,7 +25,8 @@ public sealed class RecipesApiUnitTests : IDisposable
         ApplicationDbContext context = new(contextOptions);
         context.Database.EnsureCreated();
 
-        context.Recipes.AddRange(RecipesApiTestData.Recipes);
+        context.Cuisines.AddRange(TestData.Cuisines);
+        context.Recipes.AddRange(TestData.Recipes);
         context.SaveChanges();
 
         var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -109,7 +110,12 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.Multiple(
             () => Assert.Equal(6462160192405504, okResult.Value.Id),
             () => Assert.Equal("Test Recipe 2", okResult.Value.Name),
-            () => Assert.Equal("Test", okResult.Value.Cuisine),
+            () => Assert.Equal(1, okResult.Value.CuisineId),
+            () =>
+            {
+                Assert.NotNull(okResult.Value.Cuisine);
+                Assert.Equal("Test", okResult.Value.Cuisine.Name);
+            },
             () => Assert.Equal("This is a test.", okResult.Value.Description),
             () => Assert.Equal(new DateTime(638412046990521543, DateTimeKind.Utc), okResult.Value.Created),
             () => Assert.Null(okResult.Value.Modified),
@@ -141,7 +147,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         CreateOrUpdateRecipeDto newRecipe = new()
         {
             Name = "New Recipe",
-            Cuisine = "New",
+            CuisineId = 2,
             Description = "This is a new recipe.",
             Ingredients =
             [
@@ -167,6 +173,12 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.Multiple(
             () => Assert.True(currentId < createdResult.Value.Id),
             () => Assert.Equal(newRecipe.Name, createdResult.Value.Name),
+            () => Assert.Equal(2, createdResult.Value.CuisineId),
+            () =>
+            {
+                Assert.NotNull(createdResult.Value.Cuisine);
+                Assert.Equal("New", createdResult.Value.Cuisine.Name);
+            },
             () => Assert.Equal(newRecipe.Description, createdResult.Value.Description),
             () => Assert.True(utcNow < createdResult.Value.Created),
             () => Assert.Null(createdResult.Value.Modified),
@@ -198,7 +210,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         CreateOrUpdateRecipeDto updatedRecipe = new()
         {
             Name = "Updated Recipe",
-            Cuisine = "Updated",
+            CuisineId = 3,
             Description = "This is an updated recipe.",
             Ingredients =
             [
@@ -221,6 +233,12 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.Multiple(
             () => Assert.Equal(6462318867120128, okResult.Value.Id),
             () => Assert.Equal(updatedRecipe.Name, okResult.Value.Name),
+            () => Assert.Equal(3, okResult.Value.CuisineId),
+            () =>
+            {
+                Assert.NotNull(okResult.Value.Cuisine);
+                Assert.Equal("Updated", okResult.Value.Cuisine.Name);
+            },
             () => Assert.Equal(updatedRecipe.Description, okResult.Value.Description),
             () => Assert.Equal(new DateTime(638412047368832961), okResult.Value.Created),
             () => Assert.NotNull(okResult.Value.Modified),
@@ -253,7 +271,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         CreateOrUpdateRecipeDto updatedRecipe = new()
         {
             Name = "Updated Recipe",
-            Cuisine = "Updated",
+            CuisineId = 3,
             Description = "This is an updated recipe.",
             Ingredients =
             [

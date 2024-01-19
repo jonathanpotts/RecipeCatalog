@@ -12,6 +12,7 @@ indent_size = 2
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
 insert_final_newline = true
+dotnet_sort_system_directives_first = true
 
 [*.{cs,csx}]
 csharp_prefer_braces = true:silent

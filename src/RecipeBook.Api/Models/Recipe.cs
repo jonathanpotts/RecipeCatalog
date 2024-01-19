@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace RecipeBook.Api.Models;
 
@@ -9,8 +10,11 @@ public class Recipe
     [Required]
     public string? Name { get; set; }
 
+    [JsonIgnore]
+    public int CuisineId { get; set; }
+
     [Required]
-    public string? Cuisine { get; set; }
+    public Cuisine? Cuisine { get; set; }
 
     public string? Description { get; set; }
 

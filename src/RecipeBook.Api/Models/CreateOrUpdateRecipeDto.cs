@@ -7,8 +7,7 @@ public class CreateOrUpdateRecipeDto
     [Required]
     public string? Name { get; set; }
 
-    [Required]
-    public string? Cuisine { get; set; }
+    public int CuisineId { get; set; }
 
     public string? Description { get; set; }
 
