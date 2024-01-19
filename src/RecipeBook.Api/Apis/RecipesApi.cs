@@ -32,7 +32,7 @@ public static class RecipesApi
         return builder;
     }
 
-    public static async Task<Results<Ok<PagedResult<Recipe>>, ValidationProblem>> GetListAsync(
+    public static async Task<Results<Ok<PagedResult<RecipeWithCuisineDto>>, ValidationProblem>> GetListAsync(
         [AsParameters] Services services,
         [Range(1, MaxItemsPerPage)] int? top,
         long? last)
@@ -60,10 +60,26 @@ public static class RecipesApi
             .OrderByDescending(x => x.Id)
             .Take(top.GetValueOrDefault(DefaultItemsPerPage));
 
-        return TypedResults.Ok(new PagedResult<Recipe>(total, await recipes.ToArrayAsync()));
+        var items = recipes.Select(x => new RecipeWithCuisineDto
+        {
+            Id = x.Id.ToString(),
+            Name = x.Name,
+            Cuisine = x.Cuisine == null ? null : new CuisineDto
+            {
+                Id = x.Cuisine.Id,
+                Name = x.Cuisine.Name
+            },
+            Description = x.Description,
+            Created = x.Created,
+            Modified = x.Modified,
+            Ingredients = x.Ingredients,
+            Instructions = x.Instructions
+        });
+
+        return TypedResults.Ok(new PagedResult<RecipeWithCuisineDto>(total, await items.ToArrayAsync()));
     }
 
-    public static async Task<Results<Ok<Recipe>, NotFound>> GetAsync(
+    public static async Task<Results<Ok<RecipeWithCuisineDto>, NotFound>> GetAsync(
         [AsParameters] Services services,
         long id)
     {
@@ -75,10 +91,24 @@ public static class RecipesApi
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(recipe);
+        return TypedResults.Ok(new RecipeWithCuisineDto
+        {
+            Id = recipe.Id.ToString(),
+            Name = recipe.Name,
+            Cuisine = recipe.Cuisine == null ? null : new CuisineDto
+            {
+                Id = recipe.Cuisine.Id,
+                Name = recipe.Cuisine.Name
+            },
+            Description = recipe.Description,
+            Created = recipe.Created,
+            Modified = recipe.Modified,
+            Ingredients = recipe.Ingredients,
+            Instructions = recipe.Instructions
+        });
     }
 
-    public static async Task<Results<Created<Recipe>, ValidationProblem>> PostAsync(
+    public static async Task<Results<Created<RecipeWithCuisineDto>, ValidationProblem>> PostAsync(
         [AsParameters] Services services,
         CreateOrUpdateRecipeDto dto)
     {
@@ -122,10 +152,24 @@ public static class RecipesApi
         await services.Context.Recipes.AddAsync(recipe);
         await services.Context.SaveChangesAsync();
 
-        return TypedResults.Created($"/api/v1/recipes/{recipe.Id}", recipe);
+        return TypedResults.Created($"/api/v1/recipes/{recipe.Id}", new RecipeWithCuisineDto
+        {
+            Id = recipe.Id.ToString(),
+            Name = recipe.Name,
+            Cuisine = recipe.Cuisine == null ? null : new CuisineDto
+            {
+                Id = recipe.Cuisine.Id,
+                Name = recipe.Cuisine.Name
+            },
+            Description = recipe.Description,
+            Created = recipe.Created,
+            Modified = recipe.Modified,
+            Ingredients = recipe.Ingredients,
+            Instructions = recipe.Instructions
+        });
     }
 
-    public static async Task<Results<Ok<Recipe>, ValidationProblem, NotFound>> PutAsync(
+    public static async Task<Results<Ok<RecipeWithCuisineDto>, ValidationProblem, NotFound>> PutAsync(
         [AsParameters] Services services,
         long id,
         CreateOrUpdateRecipeDto dto)
@@ -173,14 +217,29 @@ public static class RecipesApi
 
         await services.Context.SaveChangesAsync();
 
-        return TypedResults.Ok(recipe);
+        return TypedResults.Ok(new RecipeWithCuisineDto
+        {
+            Id = recipe.Id.ToString(),
+            Name = recipe.Name,
+            Cuisine = recipe.Cuisine == null ? null : new CuisineDto
+            {
+                Id = recipe.Cuisine.Id,
+                Name = recipe.Cuisine.Name
+            },
+            Description = recipe.Description,
+            Created = recipe.Created,
+            Modified = recipe.Modified,
+            Ingredients = recipe.Ingredients,
+            Instructions = recipe.Instructions
+        });
     }
 
     public static async Task<Results<NoContent, NotFound>> DeleteAsync(
         [AsParameters] Services services,
         long id)
     {
-        var recipe = await services.Context.Recipes.FirstOrDefaultAsync(a => a.Id == id);
+        var recipe = await services.Context.Recipes
+            .FirstOrDefaultAsync(x => x.Id == id);
 
         if (recipe == null)
         {
