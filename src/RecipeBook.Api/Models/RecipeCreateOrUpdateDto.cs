@@ -2,7 +2,7 @@
 
 namespace RecipeBook.Api.Models;
 
-public class CreateOrUpdateRecipeDto
+public class RecipeCreateOrUpdateDto
 {
     [Required]
     public string? Name { get; set; }

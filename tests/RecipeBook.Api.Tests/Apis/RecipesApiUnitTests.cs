@@ -45,7 +45,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsRecipes()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, null, null);
+        var result = await RecipesApi.GetListAsync(_services, null, null, null);
 
         // Assert
         Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
@@ -59,7 +59,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsRecipesForValidTop()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, 3, null);
+        var result = await RecipesApi.GetListAsync(_services, 3, null, null);
 
         // Assert
         Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
@@ -73,7 +73,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsValidationProblemForInvalidTop()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, 0, null);
+        var result = await RecipesApi.GetListAsync(_services, 0, null, null);
 
         // Assert
         Assert.IsType<ValidationProblem>(result.Result);
@@ -83,7 +83,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsRecipesForLast()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, null, 6462258523668480);
+        var result = await RecipesApi.GetListAsync(_services, null, 6462258523668480, null);
 
         // Assert
         Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
@@ -92,8 +92,25 @@ public sealed class RecipesApiUnitTests : IDisposable
 
         Assert.Multiple(
             () => Assert.NotEmpty(okResult.Value.Items),
-            () => Assert.DoesNotContain(okResult.Value.Items, x => x.Id != null && long.Parse(x.Id) >= 6462258523668480),
+            () => Assert.DoesNotContain(okResult.Value.Items,
+                x => x.Id != null && long.Parse(x.Id) >= 6462258523668480),
             () => Assert.Equal(6462160192405504.ToString(), okResult.Value.Items.FirstOrDefault()?.Id));
+    }
+
+    [Fact]
+    public async void GetListAsyncReturnsRecipesForCuisineIds()
+    {
+        // Act
+        var result = await RecipesApi.GetListAsync(_services, null, null, [4]);
+
+        // Assert
+        Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
+        var okResult = (Ok<PagedResult<RecipeWithCuisineDto>>)result.Result;
+        Assert.NotNull(okResult.Value);
+
+        Assert.Multiple(
+            () => Assert.NotEmpty(okResult.Value.Items),
+            () => Assert.All(okResult.Value.Items, x => Assert.Equal(4, x.Cuisine?.Id)));
     }
 
     [Fact]
@@ -144,7 +161,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void PostAsyncReturnsRecipeForValidModel()
     {
         // Arrange
-        CreateOrUpdateRecipeDto newRecipe = new()
+        RecipeCreateOrUpdateDto newRecipe = new()
         {
             Name = "New Recipe",
             CuisineId = 2,
@@ -197,7 +214,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void PostAsyncReturnsValidationProblemForInvalidModel()
     {
         // Act
-        var result = await RecipesApi.PostAsync(_services, new CreateOrUpdateRecipeDto());
+        var result = await RecipesApi.PostAsync(_services, new RecipeCreateOrUpdateDto());
 
         // Assert
         Assert.IsType<ValidationProblem>(result.Result);
@@ -207,7 +224,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void PutAsyncReturnsArticleForValidModel()
     {
         // Arrange
-        CreateOrUpdateRecipeDto updatedRecipe = new()
+        RecipeCreateOrUpdateDto updatedRecipe = new()
         {
             Name = "Updated Recipe",
             CuisineId = 3,
@@ -223,7 +240,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         var utcNow = DateTime.UtcNow;
 
         // Act
-        var result = await RecipesApi.PutAsync(_services, 6462318867120128, updatedRecipe);
+        var result = await RecipesApi.PutAsync(_services, 6462416804118528, updatedRecipe);
 
         // Assert
         Assert.IsType<Ok<RecipeWithCuisineDto>>(result.Result);
@@ -231,7 +248,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.NotNull(okResult.Value);
 
         Assert.Multiple(
-            () => Assert.Equal(6462318867120128.ToString(), okResult.Value.Id),
+            () => Assert.Equal(6462416804118528.ToString(), okResult.Value.Id),
             () => Assert.Equal(updatedRecipe.Name, okResult.Value.Name),
             () =>
             {
@@ -240,7 +257,7 @@ public sealed class RecipesApiUnitTests : IDisposable
                 Assert.Equal("Updated", okResult.Value.Cuisine.Name);
             },
             () => Assert.Equal(updatedRecipe.Description, okResult.Value.Description),
-            () => Assert.Equal(new DateTime(638412047368832961), okResult.Value.Created),
+            () => Assert.Equal(new DateTime(638412047602332665, DateTimeKind.Utc), okResult.Value.Created),
             () => Assert.NotNull(okResult.Value.Modified),
             () => Assert.True(utcNow < okResult.Value.Modified),
             () =>
@@ -258,7 +275,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void PutAsyncReturnsValidationProblemForInvalidModel()
     {
         // Act
-        var result = await RecipesApi.PutAsync(_services, 6462318867120128, new CreateOrUpdateRecipeDto());
+        var result = await RecipesApi.PutAsync(_services, 6462416804118528, new RecipeCreateOrUpdateDto());
 
         // Assert
         Assert.IsType<ValidationProblem>(result.Result);
@@ -268,7 +285,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void PutAsyncReturnsNotFoundForInvalidId()
     {
         // Arrange
-        CreateOrUpdateRecipeDto updatedRecipe = new()
+        RecipeCreateOrUpdateDto updatedRecipe = new()
         {
             Name = "Updated Recipe",
             CuisineId = 3,

@@ -35,7 +35,8 @@ public static class RecipesApi
     public static async Task<Results<Ok<PagedResult<RecipeWithCuisineDto>>, ValidationProblem>> GetListAsync(
         [AsParameters] Services services,
         [Range(1, MaxItemsPerPage)] int? top,
-        long? last)
+        long? last,
+        int[]? cuisineIds)
     {
         if (top is < 1 or > MaxItemsPerPage)
         {
@@ -47,9 +48,16 @@ public static class RecipesApi
             return TypedResults.ValidationProblem(errors);
         }
 
-        var total = await services.Context.Recipes.CountAsync();
+        IQueryable<Recipe> recipes = services.Context.Recipes;
 
-        var recipes = services.Context.Recipes.Include(x => x.Cuisine).AsNoTracking();
+        if (cuisineIds?.Length > 0)
+        {
+            recipes = recipes.Where(x => cuisineIds.Contains(x.CuisineId));
+        }
+
+        var total = await recipes.CountAsync();
+
+        recipes = recipes.Include(x => x.Cuisine).AsNoTracking();
 
         if (last.HasValue)
         {
@@ -64,11 +72,13 @@ public static class RecipesApi
         {
             Id = x.Id.ToString(),
             Name = x.Name,
-            Cuisine = x.Cuisine == null ? null : new CuisineDto
-            {
-                Id = x.Cuisine.Id,
-                Name = x.Cuisine.Name
-            },
+            Cuisine = x.Cuisine == null
+                ? null
+                : new CuisineDto
+                {
+                    Id = x.Cuisine.Id,
+                    Name = x.Cuisine.Name
+                },
             Description = x.Description,
             Created = x.Created,
             Modified = x.Modified,
@@ -95,11 +105,13 @@ public static class RecipesApi
         {
             Id = recipe.Id.ToString(),
             Name = recipe.Name,
-            Cuisine = recipe.Cuisine == null ? null : new CuisineDto
-            {
-                Id = recipe.Cuisine.Id,
-                Name = recipe.Cuisine.Name
-            },
+            Cuisine = recipe.Cuisine == null
+                ? null
+                : new CuisineDto
+                {
+                    Id = recipe.Cuisine.Id,
+                    Name = recipe.Cuisine.Name
+                },
             Description = recipe.Description,
             Created = recipe.Created,
             Modified = recipe.Modified,
@@ -110,7 +122,7 @@ public static class RecipesApi
 
     public static async Task<Results<Created<RecipeWithCuisineDto>, ValidationProblem>> PostAsync(
         [AsParameters] Services services,
-        CreateOrUpdateRecipeDto dto)
+        RecipeCreateOrUpdateDto dto)
     {
         Dictionary<string, string[]> errors = [];
 
@@ -156,11 +168,13 @@ public static class RecipesApi
         {
             Id = recipe.Id.ToString(),
             Name = recipe.Name,
-            Cuisine = recipe.Cuisine == null ? null : new CuisineDto
-            {
-                Id = recipe.Cuisine.Id,
-                Name = recipe.Cuisine.Name
-            },
+            Cuisine = recipe.Cuisine == null
+                ? null
+                : new CuisineDto
+                {
+                    Id = recipe.Cuisine.Id,
+                    Name = recipe.Cuisine.Name
+                },
             Description = recipe.Description,
             Created = recipe.Created,
             Modified = recipe.Modified,
@@ -172,7 +186,7 @@ public static class RecipesApi
     public static async Task<Results<Ok<RecipeWithCuisineDto>, ValidationProblem, NotFound>> PutAsync(
         [AsParameters] Services services,
         long id,
-        CreateOrUpdateRecipeDto dto)
+        RecipeCreateOrUpdateDto dto)
     {
         Dictionary<string, string[]> errors = [];
 
@@ -204,10 +218,7 @@ public static class RecipesApi
             return TypedResults.NotFound();
         }
 
-        recipe.Name = dto.Name;
-        recipe.CuisineId = dto.CuisineId;
-        recipe.Description = dto.Description;
-        recipe.Ingredients = dto.Ingredients;
+        services.Context.Entry(recipe).CurrentValues.SetValues(dto);
 
         recipe.Instructions ??= new MarkdownData();
         recipe.Instructions.Markdown = dto.Instructions;
@@ -221,11 +232,13 @@ public static class RecipesApi
         {
             Id = recipe.Id.ToString(),
             Name = recipe.Name,
-            Cuisine = recipe.Cuisine == null ? null : new CuisineDto
-            {
-                Id = recipe.Cuisine.Id,
-                Name = recipe.Cuisine.Name
-            },
+            Cuisine = recipe.Cuisine == null
+                ? null
+                : new CuisineDto
+                {
+                    Id = recipe.Cuisine.Id,
+                    Name = recipe.Cuisine.Name
+                },
             Description = recipe.Description,
             Created = recipe.Created,
             Modified = recipe.Modified,

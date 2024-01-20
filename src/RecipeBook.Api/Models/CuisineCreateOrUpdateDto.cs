@@ -2,8 +2,8 @@
 
 namespace RecipeBook.Api.Models;
 
-public class CuisineWithRecipesDto : CuisineDto
+public class CuisineCreateOrUpdateDto
 {
     [Required]
-    public List<Recipe>? Recipes { get; set; }
+    public string? Name { get; set; }
 }

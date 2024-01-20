@@ -20,6 +20,11 @@ public static class TestData
         {
             Id = 3,
             Name = "Updated"
+        },
+        new Cuisine
+        {
+            Id = 4,
+            Name = "Test 2"
         }
     ];
 
@@ -83,7 +88,7 @@ public static class TestData
         {
             Id = 6462318867120128,
             Name = "Test Recipe 4",
-            CuisineId = 1,
+            CuisineId = 4,
             Description = "This is a test.",
             Created = new DateTime(638412047368832961, DateTimeKind.Utc),
             Ingredients =
