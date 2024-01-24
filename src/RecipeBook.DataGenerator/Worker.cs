@@ -32,8 +32,6 @@ public class Worker(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        applicationLifetime.ApplicationStopped.Register(OnStopped);
-
         AnsiConsole.Write(new FigletText("Data Generator").Color(Color.DodgerBlue1));
 
         var grid = new Grid();
@@ -81,9 +79,6 @@ public class Worker(
                 var recipeListTask = ctx.AddTask("Recipe list").IsIndeterminate();
                 recipeListTask.StartTask();
 
-                // Start terminal indeterminate progress bar
-                AnsiConsole.Write("\x1b]9;4;3;0\x07");
-
                 var recipeList = await textGenerator.GenerateDataFromChatCompletions(
                     new RecipeList
                     {
@@ -102,13 +97,6 @@ public class Worker(
 
                 recipeListTask.Value = 100.0;
                 recipeListTask.StopTask();
-
-                var recipeCount = recipeList?.Cuisines?.SelectMany(x => x.Recipes ?? []).Count() ?? 0;
-                var progressIncrement = recipeCount != 0 ? 1.0 / recipeCount * 100.0 : 100.0;
-                var currentProgress = 0.0;
-
-                // Start terminal progress bar
-                AnsiConsole.Write("\x1b]9;4;1;0\x07");
 
                 List<Task> tasks = [];
 
@@ -159,11 +147,6 @@ public class Worker(
 
                             newCuisine.Recipes.Add(newRecipe);
                             task.Increment(1.0 / cuisine.Recipes!.Count * 100.0);
-
-                            currentProgress += progressIncrement;
-
-                            // Update terminal progress bar
-                            AnsiConsole.Write($"\x1b]9;4;1;{(int)Math.Round(currentProgress)}\x07");
                         }
 
                         cuisines.Add(newCuisine);
@@ -174,9 +157,6 @@ public class Worker(
                 }
 
                 await Task.WhenAll(tasks);
-
-                // Stop terminal progress bar
-                AnsiConsole.Write("\x1b]9;4;0;0\x07");
             });
 
         var elapsed = DateTime.UtcNow - startTime;
@@ -206,17 +186,11 @@ public class Worker(
                 var recipeListTask = ctx.AddTask("Pad Thai image").IsIndeterminate();
                 recipeListTask.StartTask();
 
-                // Start terminal indeterminate progress bar
-                AnsiConsole.Write("\x1b]9;4;3;50\x07");
-
                 urls.Add(await imageGenerator.GenerateImageAsync(
                     "a plate of delicious Pad Thai on a wooden table with chopsticks", cancellationToken));
 
                 recipeListTask.Value = 100.0;
                 recipeListTask.StopTask();
-
-                // Stop terminal progress bar
-                AnsiConsole.Write("\x1b]9;4;0;0\x07");
             });
 
         var imageElapsed = DateTime.UtcNow - startTime;
@@ -224,11 +198,5 @@ public class Worker(
         AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {imageElapsed}");
 
         return urls;
-    }
-
-    private static void OnStopped()
-    {
-        // Stop terminal progress bar
-        AnsiConsole.Write("\x1b]9;4;0;0\x07");
     }
 }
