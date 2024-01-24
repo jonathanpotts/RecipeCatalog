@@ -5,54 +5,54 @@ namespace RecipeBook.DataGenerator.Services;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddTextGenerationService(this IServiceCollection services,
+    public static IServiceCollection AddTextGenerator(this IServiceCollection services,
         IConfiguration namedConfigurationSection)
     {
-        services.AddOptions<TextGenerationServiceOptions>()
+        services.AddOptions<TextGeneratorOptions>()
             .Bind(namedConfigurationSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<TextGenerationService>();
+        services.AddSingleton<TextGenerator>();
 
         return services;
     }
 
-    public static IServiceCollection AddTextGenerationService(this IServiceCollection services,
-        Action<TextGenerationServiceOptions> configureOptions)
+    public static IServiceCollection AddTextGenerator(this IServiceCollection services,
+        Action<TextGeneratorOptions> configureOptions)
     {
-        services.AddOptions<TextGenerationServiceOptions>()
+        services.AddOptions<TextGeneratorOptions>()
             .Configure(configureOptions)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<TextGenerationService>();
+        services.AddSingleton<TextGenerator>();
 
         return services;
     }
 
-    public static IServiceCollection AddImageGenerationService(this IServiceCollection services,
+    public static IServiceCollection AddImageGenerator(this IServiceCollection services,
         IConfiguration namedConfigurationSection)
     {
-        services.AddOptions<ImageGenerationServiceOptions>()
+        services.AddOptions<ImageGeneratorOptions>()
             .Bind(namedConfigurationSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<ImageGenerationService>();
+        services.AddSingleton<ImageGenerator>();
 
         return services;
     }
 
-    public static IServiceCollection AddImageGenerationService(this IServiceCollection services,
-        Action<ImageGenerationServiceOptions> configureOptions)
+    public static IServiceCollection AddImageGenerator(this IServiceCollection services,
+        Action<ImageGeneratorOptions> configureOptions)
     {
-        services.AddOptions<ImageGenerationServiceOptions>()
+        services.AddOptions<ImageGeneratorOptions>()
             .Configure(configureOptions)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<ImageGenerationService>();
+        services.AddSingleton<ImageGenerator>();
 
         return services;
     }

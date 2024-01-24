@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace RecipeBook.DataGenerator.Services;
 
-public sealed class TextGenerationService(IOptions<TextGenerationServiceOptions> options)
+public sealed class TextGenerator(IOptions<TextGeneratorOptions> options)
 {
     private readonly string _chatCompletionsDeploymentName = options.Value.ChatCompletionsDeploymentName!;
 

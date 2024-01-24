@@ -2,7 +2,7 @@
 
 namespace RecipeBook.DataGenerator.Services;
 
-public class ImageGenerationServiceOptions
+public class ImageGeneratorOptions
 {
     [Required]
     public string? Endpoint { get; set; }

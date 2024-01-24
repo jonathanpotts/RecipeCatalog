@@ -2,7 +2,7 @@
 
 namespace RecipeBook.DataGenerator.Services;
 
-public class TextGenerationServiceOptions
+public class TextGeneratorOptions
 {
     [Required]
     public string? Endpoint { get; set; }

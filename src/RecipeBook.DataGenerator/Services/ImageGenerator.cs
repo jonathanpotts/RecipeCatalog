@@ -4,7 +4,7 @@ using RecipeBook.DataGenerator.Services.Models;
 
 namespace RecipeBook.DataGenerator.Services;
 
-public sealed class ImageGenerationService : IDisposable
+public sealed class ImageGenerator : IDisposable
 {
     private const string _startGenerationUrl = "/openai/images/generations:submit";
     private const string _imageOperationUrl = "/openai/operations/images";
@@ -13,7 +13,7 @@ public sealed class ImageGenerationService : IDisposable
     private readonly HttpClient _client;
     private readonly int _maxRetries;
 
-    public ImageGenerationService(IOptions<ImageGenerationServiceOptions> options)
+    public ImageGenerator(IOptions<ImageGeneratorOptions> options)
     {
         _client = new HttpClient
         {

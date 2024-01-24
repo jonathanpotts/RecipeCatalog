@@ -9,8 +9,8 @@ namespace RecipeBook.DataGenerator;
 
 public class Worker(
     IHostApplicationLifetime applicationLifetime,
-    TextGenerationService textGenerator,
-    ImageGenerationService imageGenerator) : BackgroundService
+    TextGenerator textGenerator,
+    ImageGenerator imageGenerator) : BackgroundService
 {
     private const int _recipesPerCuisine = 5;
     private static readonly JsonSerializerOptions jsonOptions = new() { WriteIndented = true };
@@ -33,6 +33,21 @@ public class Worker(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         applicationLifetime.ApplicationStopped.Register(OnStopped);
+
+        AnsiConsole.Write(new FigletText("Data Generator").Color(Color.DodgerBlue1));
+
+        var grid = new Grid();
+        grid.AddColumns(3);
+        grid.AddRow("Chat Completions", "[bold]:sparkles:GPT-3.5 Turbo (1106)[/]", "[dim]gpt-35-turbo (1106)[/]");
+        grid.AddRow("Text Embeddings", "[bold]:sparkles:Ada (version 2)[/]", "[dim]text-embedding-ada-002[/]");
+        grid.AddRow("Image Generation", "[bold]:sparkles:DALL-E 2[/]", "[dim]dalle2[/]");
+
+        var panel = new Panel(grid)
+        {
+            Header = new PanelHeader("[bold]Azure OpenAI Models Used[/]")
+        };
+
+        AnsiConsole.Write(panel);
 
         var recipes = await GenerateRecipesAsync(stoppingToken);
 
@@ -67,7 +82,7 @@ public class Worker(
                 recipeListTask.StartTask();
 
                 // Start terminal indeterminate progress bar
-                AnsiConsole.Write("\x1b]9;4;3;50\x07");
+                AnsiConsole.Write("\x1b]9;4;3;0\x07");
 
                 var recipeList = await textGenerator.GenerateDataFromChatCompletions(
                     new RecipeList
@@ -87,6 +102,13 @@ public class Worker(
 
                 recipeListTask.Value = 100.0;
                 recipeListTask.StopTask();
+
+                var recipeCount = recipeList?.Cuisines?.SelectMany(x => x.Recipes ?? []).Count() ?? 0;
+                var progressIncrement = recipeCount != 0 ? 1.0 / recipeCount * 100.0 : 100.0;
+                var currentProgress = 0.0;
+
+                // Start terminal progress bar
+                AnsiConsole.Write("\x1b]9;4;1;0\x07");
 
                 List<Task> tasks = [];
 
@@ -137,6 +159,11 @@ public class Worker(
 
                             newCuisine.Recipes.Add(newRecipe);
                             task.Increment(1.0 / cuisine.Recipes!.Count * 100.0);
+
+                            currentProgress += progressIncrement;
+
+                            // Update terminal progress bar
+                            AnsiConsole.Write($"\x1b]9;4;1;{(int)Math.Round(currentProgress)}\x07");
                         }
 
                         cuisines.Add(newCuisine);
@@ -155,7 +182,7 @@ public class Worker(
         var elapsed = DateTime.UtcNow - startTime;
 
         AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
-        AnsiConsole.MarkupLine($":notebook: Total recipes: {cuisines.SelectMany(x => x.Recipes!).Count()}");
+        AnsiConsole.MarkupLine($":clipboard: Total recipes: {cuisines.SelectMany(x => x.Recipes!).Count()}");
 
         return cuisines;
     }
