@@ -11,4 +11,6 @@ public class ImageGeneratorOptions
     public string? ApiKey { get; set; }
 
     public int? MaxRetries { get; set; }
+
+    public int? RetryDelay { get; set; }
 }

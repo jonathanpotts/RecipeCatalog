@@ -10,8 +10,11 @@ public sealed class ImageGenerator : IDisposable
     private const string _imageOperationUrl = "/openai/operations/images";
     private const string _apiVersion = "2023-08-01-preview";
     private const int _defaultMaxRetries = 5;
+    private const int _defaultRetryDelay = 1000;
+
     private readonly HttpClient _client;
     private readonly int _maxRetries;
+    private readonly int _retryDelay;
 
     public ImageGenerator(IOptions<ImageGeneratorOptions> options)
     {
@@ -23,6 +26,7 @@ public sealed class ImageGenerator : IDisposable
         _client.DefaultRequestHeaders.Add("api-key", options.Value!.ApiKey);
 
         _maxRetries = options.Value.MaxRetries ?? _defaultMaxRetries;
+        _retryDelay = options.Value.RetryDelay ?? _defaultRetryDelay;
     }
 
     public void Dispose()
@@ -60,13 +64,8 @@ public sealed class ImageGenerator : IDisposable
     {
         var retries = 0;
 
-        while (true)
+        while (retries < _maxRetries)
         {
-            if (retries == _maxRetries)
-            {
-                throw new Exception("Max retry attempts reached");
-            }
-
             cancellationToken.ThrowIfCancellationRequested();
 
             HttpRequestMessage request = new(
@@ -98,13 +97,28 @@ public sealed class ImageGenerator : IDisposable
                 }
             }
 
-            if (response.Headers.TryGetValues("retry-after", out var values) &&
-                int.TryParse(values.FirstOrDefault(), out var retryAfter))
+            if (response.Headers.RetryAfter?.Delta != null)
             {
-                await Task.Delay(retryAfter * 1000, cancellationToken);
+                await Task.Delay(response.Headers.RetryAfter.Delta.Value, cancellationToken);
+            }
+            else if (response.Headers.RetryAfter?.Date != null)
+            {
+                var delta = response.Headers.RetryAfter.Date.Value - DateTimeOffset.UtcNow;
+
+                if (delta.Ticks > 0)
+                {
+                    await Task.Delay(delta, cancellationToken);
+                }
+            }
+            else
+            {
+                // Use exponential backoff
+                await Task.Delay(_retryDelay * (int)Math.Pow(2, retries), cancellationToken);
             }
 
             retries++;
         }
+
+        throw new Exception("Max retry attempts reached");
     }
 }
