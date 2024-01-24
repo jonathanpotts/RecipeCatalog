@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RecipeBook.DataGenerator": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

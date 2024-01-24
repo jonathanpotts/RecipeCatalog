@@ -93,8 +93,8 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.Multiple(
             () => Assert.NotEmpty(okResult.Value.Items),
             () => Assert.DoesNotContain(okResult.Value.Items,
-                x => x.Id != null && long.Parse(x.Id) >= 6462258523668480),
-            () => Assert.Equal(6462160192405504.ToString(), okResult.Value.Items.FirstOrDefault()?.Id));
+                x => x.Id >= 6462258523668480),
+            () => Assert.Equal(6462160192405504, okResult.Value.Items.FirstOrDefault()?.Id));
     }
 
     [Fact]
@@ -125,7 +125,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.NotNull(okResult.Value);
 
         Assert.Multiple(
-            () => Assert.Equal(6462160192405504.ToString(), okResult.Value.Id),
+            () => Assert.Equal(6462160192405504, okResult.Value.Id),
             () => Assert.Equal("Test Recipe 2", okResult.Value.Name),
             () =>
             {
@@ -188,7 +188,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.Equal($"/api/v1/recipes/{createdResult.Value.Id}", createdResult.Location);
 
         Assert.Multiple(
-            () => Assert.True(createdResult.Value.Id != null && currentId < long.Parse(createdResult.Value.Id)),
+            () => Assert.True(currentId < createdResult.Value.Id),
             () => Assert.Equal(newRecipe.Name, createdResult.Value.Name),
             () =>
             {
@@ -248,7 +248,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.NotNull(okResult.Value);
 
         Assert.Multiple(
-            () => Assert.Equal(6462416804118528.ToString(), okResult.Value.Id),
+            () => Assert.Equal(6462416804118528, okResult.Value.Id),
             () => Assert.Equal(updatedRecipe.Name, okResult.Value.Name),
             () =>
             {

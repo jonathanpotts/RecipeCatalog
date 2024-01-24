@@ -9,6 +9,10 @@ public class Recipe
     [Required]
     public string? Name { get; set; }
 
+    public string? CoverImage { get; set; }
+
+    public string? CoverImagePrompt { get; set; }
+
     public int CuisineId { get; set; }
 
     [Required]

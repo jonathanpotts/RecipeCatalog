@@ -70,7 +70,7 @@ public static class RecipesApi
 
         var items = recipes.Select(x => new RecipeWithCuisineDto
         {
-            Id = x.Id.ToString(),
+            Id = x.Id,
             Name = x.Name,
             Cuisine = x.Cuisine == null
                 ? null
@@ -103,7 +103,7 @@ public static class RecipesApi
 
         return TypedResults.Ok(new RecipeWithCuisineDto
         {
-            Id = recipe.Id.ToString(),
+            Id = recipe.Id,
             Name = recipe.Name,
             Cuisine = recipe.Cuisine == null
                 ? null
@@ -166,7 +166,7 @@ public static class RecipesApi
 
         return TypedResults.Created($"/api/v1/recipes/{recipe.Id}", new RecipeWithCuisineDto
         {
-            Id = recipe.Id.ToString(),
+            Id = recipe.Id,
             Name = recipe.Name,
             Cuisine = recipe.Cuisine == null
                 ? null
@@ -230,7 +230,7 @@ public static class RecipesApi
 
         return TypedResults.Ok(new RecipeWithCuisineDto
         {
-            Id = recipe.Id.ToString(),
+            Id = recipe.Id,
             Name = recipe.Name,
             Cuisine = recipe.Cuisine == null
                 ? null

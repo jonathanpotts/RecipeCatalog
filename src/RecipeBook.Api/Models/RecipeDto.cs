@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace RecipeBook.Api.Models;
 
 public class RecipeDto
 {
-    public string? Id { get; set; }
+    [JsonNumberHandling(JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString)]
+    public long Id { get; set; }
 
     [Required]
     public string? Name { get; set; }
