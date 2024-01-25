@@ -2,7 +2,7 @@
 
 namespace RecipeBook.DataGenerator.Services;
 
-public class TextGeneratorOptions
+public class AzureOpenAITextGeneratorOptions
 {
     [Required]
     public string? Endpoint { get; set; }

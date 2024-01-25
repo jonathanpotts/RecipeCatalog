@@ -14,7 +14,7 @@ public class AzureOpenAIImageOperationResponse
     public string? Id { get; set; }
 
     [JsonPropertyName("result")]
-    public AzureOpenAIImageOperationResult? Result { get; set; }
+    public OpenAIImageGenerationResponse? Result { get; set; }
 
     [JsonPropertyName("status")]
     public string? Status { get; set; }

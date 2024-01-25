@@ -4,19 +4,17 @@ using RecipeBook.DataGenerator.Services.Models;
 
 namespace RecipeBook.DataGenerator.Services;
 
-public sealed class ImageGenerator : IDisposable
+public class AzureOpenAIDallE2ImageGenerator : IImageGenerator
 {
     private const string _startGenerationUrl = "/openai/images/generations:submit";
     private const string _imageOperationUrl = "/openai/operations/images";
     private const string _apiVersion = "2023-08-01-preview";
-    private const int _defaultMaxRetries = 5;
-    private const int _defaultRetryDelay = 1000;
 
     private readonly HttpClient _client;
     private readonly int _maxRetries;
     private readonly int _retryDelay;
 
-    public ImageGenerator(IOptions<ImageGeneratorOptions> options)
+    public AzureOpenAIDallE2ImageGenerator(IOptions<AzureOpenAIDallE2ImageGeneratorOptions> options)
     {
         _client = new HttpClient
         {
@@ -25,13 +23,8 @@ public sealed class ImageGenerator : IDisposable
 
         _client.DefaultRequestHeaders.Add("api-key", options.Value!.ApiKey);
 
-        _maxRetries = options.Value.MaxRetries ?? _defaultMaxRetries;
-        _retryDelay = options.Value.RetryDelay ?? _defaultRetryDelay;
-    }
-
-    public void Dispose()
-    {
-        _client.Dispose();
+        _maxRetries = options.Value.MaxRetries ?? 5;
+        _retryDelay = options.Value.RetryDelay ?? 1000;
     }
 
     public async Task<string> GenerateImageAsync(string prompt, CancellationToken cancellationToken = default)
