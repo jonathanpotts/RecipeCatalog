@@ -20,7 +20,8 @@ public class OpenAITextGenerator(IOptions<OpenAITextGeneratorOptions> options) :
             cancellationToken);
     }
 
-    public override Task<ReadOnlyMemory<float>> GenerateEmbeddingsAsync(string input, CancellationToken cancellationToken = default)
+    public override Task<ReadOnlyMemory<float>> GenerateEmbeddingsAsync(string input,
+        CancellationToken cancellationToken = default)
     {
         return GenerateEmbeddingsAsync(_embeddingsDeploymentName, input, cancellationToken);
     }

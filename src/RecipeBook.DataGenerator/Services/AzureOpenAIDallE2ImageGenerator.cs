@@ -4,7 +4,7 @@ using RecipeBook.DataGenerator.Services.Models;
 
 namespace RecipeBook.DataGenerator.Services;
 
-public class AzureOpenAIDallE2ImageGenerator : IImageGenerator
+public class AzureOpenAIDallE2ImageGenerator : IAIImageGenerator
 {
     private const string _startGenerationUrl = "/openai/images/generations:submit";
     private const string _imageOperationUrl = "/openai/operations/images";

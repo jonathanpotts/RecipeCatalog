@@ -3,14 +3,15 @@ using Azure.AI.OpenAI;
 
 namespace RecipeBook.DataGenerator.Services;
 
-public abstract class BaseOpenAITextGenerator : ITextGenerator
+public abstract class BaseOpenAITextGenerator : IAITextGenerator
 {
     protected abstract OpenAIClient Client { get; init; }
 
     public abstract Task<T?> GenerateDataFromChatCompletions<T>(T exampleData, string systemMessage, string prompt,
         CancellationToken cancellationToken = default);
 
-    public abstract Task<ReadOnlyMemory<float>> GenerateEmbeddingsAsync(string input, CancellationToken cancellationToken = default);
+    public abstract Task<ReadOnlyMemory<float>> GenerateEmbeddingsAsync(string input,
+        CancellationToken cancellationToken = default);
 
     protected async Task<T?> GenerateDataFromChatCompletions<T>(string deploymentName, T exampleData,
         string systemMessage, string prompt, CancellationToken cancellationToken = default)
@@ -41,7 +42,8 @@ public abstract class BaseOpenAITextGenerator : ITextGenerator
     protected async Task<ReadOnlyMemory<float>> GenerateEmbeddingsAsync(string deploymentName, string input,
         CancellationToken cancellationToken = default)
     {
-        var embeddings = await Client.GetEmbeddingsAsync(new EmbeddingsOptions(deploymentName, [input]), cancellationToken);
+        var embeddings =
+            await Client.GetEmbeddingsAsync(new EmbeddingsOptions(deploymentName, [input]), cancellationToken);
 
         return embeddings.Value.Data[0].Embedding;
     }

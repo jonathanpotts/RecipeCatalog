@@ -16,8 +16,8 @@ internal class Worker(
     IOptions<WorkerOptions> options,
     IHostApplicationLifetime applicationLifetime,
     ILogger<Worker> logger,
-    ITextGenerator textGenerator,
-    IImageGenerator imageGenerator,
+    IAITextGenerator textGenerator,
+    IAIImageGenerator imageGenerator,
     IdGenerator idGenerator) : BackgroundService
 {
     private static readonly JsonSerializerOptions jsonOptions = new() { WriteIndented = true };

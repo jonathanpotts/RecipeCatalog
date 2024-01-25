@@ -2,7 +2,7 @@
 
 namespace RecipeBook.DataGenerator.Services;
 
-public abstract class BaseOpenAIImageGenerator : IImageGenerator
+public abstract class BaseOpenAIImageGenerator : IAIImageGenerator
 {
     protected abstract OpenAIClient Client { get; init; }
 

@@ -5,6 +5,43 @@ namespace RecipeBook.DataGenerator.Services;
 
 public static class ServiceCollectionExtensions
 {
+    public static IServiceCollection AddAITextGenerator(this IServiceCollection services,
+        IConfiguration namedConfigurationSection)
+    {
+        if (namedConfigurationSection.GetValue<bool>("UseAzureOpenAI"))
+        {
+            services.AddAzureOpenAITextGenerator(namedConfigurationSection);
+        }
+        else
+        {
+            services.AddOpenAITextGenerator(namedConfigurationSection);
+        }
+
+        return services;
+    }
+
+    public static IServiceCollection AddAIImageGenerator(this IServiceCollection services,
+        IConfiguration namedConfigurationSection)
+    {
+        if (namedConfigurationSection.GetValue<bool>("UseAzureOpenAI"))
+        {
+            if (namedConfigurationSection.GetValue<bool>("UseDallE3"))
+            {
+                services.AddAzureOpenAIImageGenerator(namedConfigurationSection);
+            }
+            else
+            {
+                services.AddAzureOpenAIDallE2ImageGenerator(namedConfigurationSection);
+            }
+        }
+        else
+        {
+            services.AddOpenAIImageGenerator(namedConfigurationSection);
+        }
+
+        return services;
+    }
+
     public static IServiceCollection AddOpenAITextGenerator(this IServiceCollection services,
         IConfiguration namedConfigurationSection)
     {
@@ -13,7 +50,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<ITextGenerator, OpenAITextGenerator>();
+        services.AddSingleton<IAITextGenerator, OpenAITextGenerator>();
 
         return services;
     }
@@ -26,7 +63,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<ITextGenerator, OpenAITextGenerator>();
+        services.AddSingleton<IAITextGenerator, OpenAITextGenerator>();
 
         return services;
     }
@@ -39,7 +76,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<ITextGenerator, AzureOpenAITextGenerator>();
+        services.AddSingleton<IAITextGenerator, AzureOpenAITextGenerator>();
 
         return services;
     }
@@ -52,7 +89,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<ITextGenerator, AzureOpenAITextGenerator>();
+        services.AddSingleton<IAITextGenerator, AzureOpenAITextGenerator>();
 
         return services;
     }
@@ -65,7 +102,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<IImageGenerator, OpenAIImageGenerator>();
+        services.AddSingleton<IAIImageGenerator, OpenAIImageGenerator>();
 
         return services;
     }
@@ -78,7 +115,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<IImageGenerator, OpenAIImageGenerator>();
+        services.AddSingleton<IAIImageGenerator, OpenAIImageGenerator>();
 
         return services;
     }
@@ -91,7 +128,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<IImageGenerator, AzureOpenAIDallE2ImageGenerator>();
+        services.AddSingleton<IAIImageGenerator, AzureOpenAIDallE2ImageGenerator>();
 
         return services;
     }
@@ -104,7 +141,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<IImageGenerator, AzureOpenAIDallE2ImageGenerator>();
+        services.AddSingleton<IAIImageGenerator, AzureOpenAIDallE2ImageGenerator>();
 
         return services;
     }
@@ -117,7 +154,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<IImageGenerator, AzureOpenAIImageGenerator>();
+        services.AddSingleton<IAIImageGenerator, AzureOpenAIImageGenerator>();
 
         return services;
     }
@@ -130,7 +167,7 @@ public static class ServiceCollectionExtensions
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddSingleton<IImageGenerator, AzureOpenAIImageGenerator>();
+        services.AddSingleton<IAIImageGenerator, AzureOpenAIImageGenerator>();
 
         return services;
     }
