@@ -1,7 +1,7 @@
 using IdGen;
 using IdGen.DependencyInjection;
-using JonathanPotts.RecipeBook.WebApi.Apis;
-using JonathanPotts.RecipeBook.WebApi.Data;
+using JonathanPotts.RecipeCatalog.WebApi.Apis;
+using JonathanPotts.RecipeCatalog.WebApi.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

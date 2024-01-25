@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace JonathanPotts.RecipeBook.WebApi.Data.Migrations
+namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration

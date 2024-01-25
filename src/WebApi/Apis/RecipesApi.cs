@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using IdGen;
-using JonathanPotts.RecipeBook.WebApi.Data;
-using JonathanPotts.RecipeBook.WebApi.Models;
+using JonathanPotts.RecipeCatalog.WebApi.Data;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Markdig;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace JonathanPotts.RecipeBook.WebApi.Apis;
+namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
 
 public static class RecipesApi
 {

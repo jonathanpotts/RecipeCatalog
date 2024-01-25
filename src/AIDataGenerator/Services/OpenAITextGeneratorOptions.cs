@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JonathanPotts.RecipeBook.AIDataGenerator.Services;
+namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 
 public class OpenAITextGeneratorOptions
 {

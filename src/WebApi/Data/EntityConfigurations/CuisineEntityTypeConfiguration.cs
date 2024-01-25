@@ -1,8 +1,8 @@
-﻿using JonathanPotts.RecipeBook.WebApi.Models;
+﻿using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace JonathanPotts.RecipeBook.WebApi.Data.EntityConfigurations;
+namespace JonathanPotts.RecipeCatalog.WebApi.Data.EntityConfigurations;
 
 public class CuisineEntityTypeConfiguration : IEntityTypeConfiguration<Cuisine>
 {

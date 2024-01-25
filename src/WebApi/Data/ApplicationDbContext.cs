@@ -1,8 +1,8 @@
-﻿using JonathanPotts.RecipeBook.WebApi.Data.EntityConfigurations;
-using JonathanPotts.RecipeBook.WebApi.Models;
+﻿using JonathanPotts.RecipeCatalog.WebApi.Data.EntityConfigurations;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JonathanPotts.RecipeBook.WebApi.Data;
+namespace JonathanPotts.RecipeCatalog.WebApi.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {

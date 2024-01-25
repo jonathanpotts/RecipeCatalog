@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using IdGen;
-using JonathanPotts.RecipeBook.AIDataGenerator.Models;
-using JonathanPotts.RecipeBook.AIDataGenerator.Services;
-using JonathanPotts.RecipeBook.WebApi.Models;
+using JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
+using JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Markdig;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 using SkiaSharp;
 using Spectre.Console;
 
-namespace JonathanPotts.RecipeBook.AIDataGenerator;
+namespace JonathanPotts.RecipeCatalog.AIDataGenerator;
 
 internal class Worker(
     IOptions<WorkerOptions> options,

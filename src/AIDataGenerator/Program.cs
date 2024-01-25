@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using IdGen;
 using IdGen.DependencyInjection;
-using JonathanPotts.RecipeBook.AIDataGenerator;
-using JonathanPotts.RecipeBook.AIDataGenerator.Services;
+using JonathanPotts.RecipeCatalog.AIDataGenerator;
+using JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Spectre.Console;

@@ -1,12 +1,12 @@
 ﻿using IdGen;
-using JonathanPotts.RecipeBook.WebApi.Apis;
-using JonathanPotts.RecipeBook.WebApi.Data;
-using JonathanPotts.RecipeBook.WebApi.Models;
+using JonathanPotts.RecipeCatalog.WebApi.Apis;
+using JonathanPotts.RecipeCatalog.WebApi.Data;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace JonathanPotts.RecipeBook.WebApi.Tests.Apis;
+namespace JonathanPotts.RecipeCatalog.WebApi.Tests.Apis;
 
 public sealed class RecipesApiUnitTests : IDisposable
 {

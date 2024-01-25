@@ -1,7 +1,8 @@
-# RecipeBook
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeBook/dotnet.yml)
+# RecipeCatalog
 
-RecipeBook is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a web catalog for recipes and generative AI capabilities.
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeCatalog/dotnet.yml)
+
+RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a web catalog for recipes and generative AI capabilities.
 
 ## Projects
 

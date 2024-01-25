@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>a7c6cbae-8108-48e0-a29c-2c6c8a44a832</UserSecretsId>
-    <RootNamespace>JonathanPotts.RecipeBook.AIDataGenerator</RootNamespace>
+    <RootNamespace>JonathanPotts.RecipeCatalog.AIDataGenerator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

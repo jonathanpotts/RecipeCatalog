@@ -1,6 +1,6 @@
-﻿using JonathanPotts.RecipeBook.WebApi.Models;
+﻿using JonathanPotts.RecipeCatalog.WebApi.Models;
 
-namespace JonathanPotts.RecipeBook.WebApi.Tests.Apis;
+namespace JonathanPotts.RecipeCatalog.WebApi.Tests.Apis;
 
 public static class TestData
 {

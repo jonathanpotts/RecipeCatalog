@@ -1,6 +1,6 @@
 ﻿using Azure.AI.OpenAI;
 
-namespace JonathanPotts.RecipeBook.AIDataGenerator.Services;
+namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 
 public abstract class BaseOpenAIImageGenerator : IAIImageGenerator
 {

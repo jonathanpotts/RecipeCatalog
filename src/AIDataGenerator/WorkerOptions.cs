@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JonathanPotts.RecipeBook.AIDataGenerator;
+namespace JonathanPotts.RecipeCatalog.AIDataGenerator;
 
 internal class WorkerOptions
 {

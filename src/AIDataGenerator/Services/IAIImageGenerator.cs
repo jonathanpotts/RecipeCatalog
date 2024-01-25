@@ -1,4 +1,4 @@
-﻿namespace JonathanPotts.RecipeBook.AIDataGenerator.Services;
+﻿namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 
 public interface IAIImageGenerator
 {

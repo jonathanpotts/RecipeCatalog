@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace JonathanPotts.RecipeBook.WebApi.Models;
+namespace JonathanPotts.RecipeCatalog.WebApi.Models;
 
 public class RecipeDto
 {

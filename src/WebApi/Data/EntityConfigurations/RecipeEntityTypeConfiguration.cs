@@ -1,9 +1,9 @@
-﻿using JonathanPotts.RecipeBook.WebApi.Models;
+﻿using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace JonathanPotts.RecipeBook.WebApi.Data.EntityConfigurations;
+namespace JonathanPotts.RecipeCatalog.WebApi.Data.EntityConfigurations;
 
 public class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Recipe>
 {

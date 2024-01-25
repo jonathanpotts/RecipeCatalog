@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace JonathanPotts.RecipeBook.AIDataGenerator.Services;
+namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 
 public static class ServiceCollectionExtensions
 {

@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Json;
-using JonathanPotts.RecipeBook.AIDataGenerator.Services.Models;
+using JonathanPotts.RecipeCatalog.AIDataGenerator.Services.Models;
 using Microsoft.Extensions.Options;
 
-namespace JonathanPotts.RecipeBook.AIDataGenerator.Services;
+namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 
 public class AzureOpenAIDallE2ImageGenerator : IAIImageGenerator
 {

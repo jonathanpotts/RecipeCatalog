@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JonathanPotts.RecipeBook.WebApi.Models;
+namespace JonathanPotts.RecipeCatalog.WebApi.Models;
 
 public class Cuisine
 {

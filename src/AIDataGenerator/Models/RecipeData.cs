@@ -1,4 +1,4 @@
-﻿namespace JonathanPotts.RecipeBook.AIDataGenerator.Models;
+﻿namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
 
 public class RecipeData
 {
