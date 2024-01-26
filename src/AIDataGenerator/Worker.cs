@@ -40,7 +40,7 @@ internal class Worker(
         var grid = new Grid();
         grid.AddColumns(2);
         grid.AddRow("Chat Completions",
-            "[bold]:sparkles:GPT-3.5 Turbo (1106)[/] [dim]gpt-3.5-turbo-1106[/] / [bold]:sparkles:GPT-4 Turbo (1106)[/] [dim]gpt-4-1106-preview[/]");
+            "[bold]:sparkles:Updated GPT-3.5 Turbo[/] [dim]gpt-3.5-turbo-1106[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4-turbo-preview[/]");
         grid.AddRow("Embeddings",
             "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
         grid.AddRow("Image Generation",
