@@ -24,7 +24,7 @@ The following configuration options are available:
         - Azure OpenAI Service - **(Required)** Deployment name for Chat Completions model; supports gpt-35-turbo (1106) or gpt-4 (1106-preview)
 - AIImageGenerator
     - UseAzureOpenAI - Set to true if using Azure OpenAI Service
-    - UseDallE3 - Set to true if using DALL-E 3
+    - UseDallE3 - Only used with Azure OpenAI Service; set to true if using DALL-E 3
     - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
     - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
     - DeploymentName
@@ -38,3 +38,6 @@ The following configuration options are available:
 - Worker
     - Cuisines - **(Required)** List of cuisines to generate recipes for (default values in appsettings.json)
     - RecipesPerCuisine - Number of recipes to generate for each cuisine
+    - RecipeGenerationMaxConcurrency - Number of recipes to generate at the same time (defaults to 5)
+    - ImageGenerationMaxConcurrency - Number of images to generate at the same time (defaults to 1)
+    - ImageQuality - Image quality of saved image (defaults to 60)

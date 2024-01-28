@@ -25,14 +25,14 @@ public abstract class BaseOpenAIImageGenerator : IAIImageGenerator
         {
             "standard" => ImageGenerationQuality.Standard,
             "hd" => ImageGenerationQuality.Hd,
-            _ => null
+            _ => (ImageGenerationQuality?)null
         };
 
         var imageStyle = style?.ToLower() switch
         {
             "vivid" => ImageGenerationStyle.Vivid,
             "natural" => ImageGenerationStyle.Natural,
-            _ => null
+            _ => (ImageGenerationStyle?)null
         };
 
         var generations = await Client.GetImageGenerationsAsync(new ImageGenerationOptions

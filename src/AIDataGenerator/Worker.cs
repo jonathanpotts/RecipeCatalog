@@ -153,7 +153,7 @@ internal class Worker(
                                     new GeneratedRecipe
                                     {
                                         CoverImagePrompt =
-                                            "DALL-E prompt for generating image of plated finished recipe",
+                                            "DALL-E prompt for generating a photo of plated finished recipe",
                                         Description = "string",
                                         Ingredients = ["string"],
                                         InstructionsMarkdown = "string"
