@@ -5,7 +5,6 @@ AIDataGenerator is a console app that uses generative AI to generate sample data
 - [.NET generic host](https://learn.microsoft.com/dotnet/core/extensions/generic-host)
 - [OpenAI](https://openai.com/) / [Azure OpenAI Service](https://azure.microsoft.com/products/ai-services/openai-service/) ([Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net))
     - [Chat Completions](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in [JSON Mode](https://platform.openai.com/docs/guides/text-generation/json-mode): [Updated GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) / [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo)
-    - [Embeddings](https://platform.openai.com/docs/guides/embeddings): [Ada V2 / Embedding V3 small](https://platform.openai.com/docs/models/embeddings)
     - [Image Generation](https://platform.openai.com/docs/guides/images): [DALL-E 2 / DALL-E 3](https://platform.openai.com/docs/models/dall-e)
 - [SkiaSharp](https://github.com/mono/SkiaSharp)
 - [Spectre.Console](https://spectreconsole.net/)
@@ -23,9 +22,6 @@ The following configuration options are available:
     - ChatCompletionsDeploymentName
         - OpenAI - Chat Completions model (defaults to gpt-3.5-turbo-1106) [requires gpt-3.5-turbo-1106 or gpt-4-turbo-preview]
         - Azure OpenAI Service - **(Required)** Deployment name for Chat Completions model [requires gpt-35-turbo (1106) or gpt-4 (1106-preview)]
-    - EmbeddingsDeploymentName
-        - OpenAI - Embeddings model (defaults to text-embedding-ada-002) [requires text-embedding-ada-002 or text-embedding-3-small]
-        - Azure OpenAI Service - **(Required)** Deployment name for Embeddings model [requires text-embedding-ada-002]
 - AIImageGenerator
     - UseAzureOpenAI - Set to true if using Azure OpenAI Service
     - UseDallE3 - Set to true if using DALL-E 3

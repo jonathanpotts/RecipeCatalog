@@ -1,8 +1,8 @@
 ﻿namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
 
-public class CuisineData
+public class GeneratedCuisine
 {
     public string? Name { get; set; }
 
-    public List<string>? Recipes { get; set; }
+    public List<GeneratedRecipe>? Recipes { get; set; }
 }

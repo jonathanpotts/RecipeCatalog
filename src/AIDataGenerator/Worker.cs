@@ -1,9 +1,7 @@
 ﻿using System.Text.Json;
-using IdGen;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 using JonathanPotts.RecipeCatalog.WebApi.Models;
-using Markdig;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,15 +15,9 @@ internal class Worker(
     IHostApplicationLifetime applicationLifetime,
     ILogger<Worker> logger,
     IAITextGenerator textGenerator,
-    IAIImageGenerator imageGenerator,
-    IdGenerator idGenerator) : BackgroundService
+    IAIImageGenerator imageGenerator) : BackgroundService
 {
-    private static readonly JsonSerializerOptions jsonOptions = new() { WriteIndented = true };
-
-    private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
-        .DisableHtml()
-        .UseReferralLinks(["ugc"])
-        .Build();
+    private static readonly JsonSerializerOptions s_jsonOptions = new() { WriteIndented = true };
 
     private readonly IReadOnlyList<string> _cuisines = options.Value.Cuisines!.AsReadOnly();
     private readonly int _imageGenerationMaxConcurrency = options.Value.ImageGenerationMaxConcurrency ?? 2;
@@ -41,8 +33,8 @@ internal class Worker(
         grid.AddColumns(2);
         grid.AddRow("Chat Completions",
             "[bold]:sparkles:Updated GPT-3.5 Turbo[/] [dim]gpt-3.5-turbo-1106[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4-turbo-preview[/]");
-        grid.AddRow("Embeddings",
-            "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
+        //grid.AddRow("Embeddings",
+        //    "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
         grid.AddRow("Image Generation",
             "[bold]:sparkles:DALL-E 2[/] [dim]dall-e-2[/] / [bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
 
@@ -53,29 +45,44 @@ internal class Worker(
 
         AnsiConsole.Write(panel);
 
-        var recipes = await GenerateRecipesAsync(stoppingToken);
+        var recipeList = await GenerateRecipeListAsync(stoppingToken);
 
-        var imageUrls = await GenerateImagesAsync(recipes, stoppingToken);
+        await GenerateImagesAsync(recipeList, stoppingToken);
 
         var outputDirectory =
             Path.Combine(AppContext.BaseDirectory, "Data", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
         Directory.CreateDirectory(outputDirectory);
 
-        var imagesDirectory = Path.Combine(outputDirectory, "Images");
-        Directory.CreateDirectory(imagesDirectory);
+        await ProcessImagesAsync(recipeList, outputDirectory, stoppingToken);
 
-        await ProcessImagesAsync(imageUrls, imagesDirectory, stoppingToken);
+        var cuisines = recipeList.Cuisines?.Select(x => new Cuisine
+        {
+            Name = x.Name,
+            Recipes = x.Recipes?.Select(y => new Recipe
+            {
+                Name = y.Name,
+                CoverImage = y.CoverImage,
+                CoverImagePrompt = y.CoverImagePrompt,
+                Description = y.Description,
+                Ingredients = [.. y.Ingredients],
+                Instructions = new MarkdownData
+                {
+                    Markdown = y.InstructionsMarkdown
+                }
+            }).ToList()
+        }).ToList();
 
-        var json = JsonSerializer.Serialize(recipes, jsonOptions);
+        var json = JsonSerializer.Serialize(cuisines, s_jsonOptions);
         await File.WriteAllTextAsync(Path.Combine(outputDirectory, "Cuisines.json"), json, stoppingToken);
 
         applicationLifetime.StopApplication();
     }
 
-    private async Task<List<Cuisine>> GenerateRecipesAsync(CancellationToken cancellationToken)
+    private async Task<GeneratedRecipeList> GenerateRecipeListAsync(CancellationToken cancellationToken)
     {
+        GeneratedRecipeList? recipeList = null;
+
         var startTime = DateTime.UtcNow;
-        List<Cuisine> cuisineList = [];
 
         await AnsiConsole.Progress()
             .Columns(
@@ -90,28 +97,28 @@ internal class Worker(
             {
                 var recipeListTask = ctx.AddTask("Recipe list");
 
-                var recipeList = await textGenerator.GenerateDataFromChatCompletions(
-                    new RecipeList
+                recipeList = await textGenerator.GenerateDataFromChatCompletions(
+                    new GeneratedRecipeList
                     {
                         Cuisines =
                         [
-                            new CuisineData
+                            new GeneratedCuisine
                             {
                                 Name = "string",
-                                Recipes = ["string"]
+                                Recipes = [new GeneratedRecipe { Name = "string" }]
                             }
                         ]
                     },
                     "You are a helpful assistant that creates recipe lists.",
-                    $"Create a list of homemade recipes popular in the United States with {_recipesPerCuisine} recipes each from the following cuisines: {string.Join(", ", _cuisines)}",
+                    $"Create a list of popular homemade recipes with {_recipesPerCuisine} recipes each from the following cuisines: {string.Join(", ", _cuisines)}",
                     cancellationToken);
 
                 recipeListTask.Value = 100.0;
                 recipeListTask.StopTask();
 
-                var cuisines = recipeList?.Cuisines ?? Enumerable.Empty<CuisineData>();
+                var cuisines = recipeList?.Cuisines ?? Enumerable.Empty<GeneratedCuisine>();
 
-                Dictionary<CuisineData, ProgressTask> progressTasks = [];
+                Dictionary<GeneratedCuisine, ProgressTask> progressTasks = [];
 
                 foreach (var cuisine in cuisines)
                 {
@@ -133,13 +140,7 @@ internal class Worker(
 
                         var increment = 1.0 / cuisine.Recipes!.Count * 100.0;
 
-                        Cuisine newCuisine = new()
-                        {
-                            Name = cuisine.Name,
-                            Recipes = []
-                        };
-
-                        foreach (var name in cuisine.Recipes ?? Enumerable.Empty<string>())
+                        foreach (var recipe in cuisine.Recipes ?? Enumerable.Empty<GeneratedRecipe>())
                         {
                             if (cancellationToken.IsCancellationRequested)
                             {
@@ -148,64 +149,63 @@ internal class Worker(
 
                             try
                             {
-                                var recipe = await textGenerator.GenerateDataFromChatCompletions(
-                                    new RecipeData
+                                var generatedRecipe = await textGenerator.GenerateDataFromChatCompletions(
+                                    new GeneratedRecipe
                                     {
                                         CoverImagePrompt =
-                                            "descriptive DALL-E prompt for generating image of plated finished recipe",
+                                            "DALL-E prompt for generating image of plated finished recipe",
                                         Description = "string",
                                         Ingredients = ["string"],
                                         InstructionsMarkdown = "string"
                                     },
                                     "You are a helpful assistant that creates recipes.",
-                                    $"Create a recipe for {name}.",
+                                    $"Create a recipe for {recipe.Name}.",
                                     cancellationToken) ?? throw new NullReferenceException("Recipe data is null");
 
-                                newCuisine.Recipes.Add(new Recipe
-                                {
-                                    Id = idGenerator.CreateId(),
-                                    Name = name,
-                                    CoverImagePrompt = recipe.CoverImagePrompt,
-                                    Description = recipe.Description,
-                                    Created = DateTime.UtcNow,
-                                    Ingredients = recipe.Ingredients?.ToArray(),
-                                    Instructions = new MarkdownData
-                                    {
-                                        Markdown = recipe.InstructionsMarkdown,
-                                        Html = recipe.InstructionsMarkdown == null
-                                            ? null
-                                            : Markdown.ToHtml(recipe.InstructionsMarkdown, s_pipeline)
-                                    }
-                                });
+                                recipe.CoverImagePrompt = generatedRecipe.CoverImagePrompt;
+                                recipe.Description = generatedRecipe.Description;
+                                recipe.Ingredients = generatedRecipe.Ingredients;
+                                recipe.InstructionsMarkdown = generatedRecipe.InstructionsMarkdown;
                             }
                             catch
                             {
-                                logger.LogWarning("Unable to generate recipe for {Recipe}", name);
+                                logger.LogWarning("Unable to generate recipe for {Recipe}", recipe.Name);
                             }
 
                             task.Increment(increment);
                         }
-
-                        cuisineList.Add(newCuisine);
 
                         task.Value = 100.0;
                         task.StopTask();
                     });
             });
 
+        var recipes = recipeList?.Cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<GeneratedRecipe>());
+
+        if (!(recipes?.Any() ?? false))
+        {
+            throw new Exception("Unable to generate recipe list");
+        }
+
         var elapsed = DateTime.UtcNow - startTime;
 
         AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
-        AnsiConsole.MarkupLine($":clipboard: Recipes generated: {cuisineList.SelectMany(x => x.Recipes!).Count()}");
+        AnsiConsole.MarkupLine($":clipboard: Recipes generated: {recipes.Count()}");
 
-        return cuisineList;
+        return recipeList!;
     }
 
-    private async Task<Dictionary<Recipe, string>> GenerateImagesAsync(List<Cuisine> cuisines,
+    private async Task GenerateImagesAsync(GeneratedRecipeList recipeList,
         CancellationToken cancellationToken)
     {
+        var recipes = recipeList.Cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<GeneratedRecipe>());
+
+        if (!(recipes?.Any() ?? false))
+        {
+            throw new ArgumentException("No recipes were provided", nameof(recipeList));
+        }
+
         var startTime = DateTime.UtcNow;
-        Dictionary<Recipe, string> urls = [];
 
         await AnsiConsole.Progress()
             .Columns(
@@ -221,7 +221,6 @@ internal class Worker(
                 var task = ctx.AddTask("Recipe images");
                 task.StartTask();
 
-                var recipes = cuisines.SelectMany(x => x.Recipes ?? Enumerable.Empty<Recipe>());
                 var increment = 1.0 / recipes.Count() * 100.0;
 
                 await Parallel.ForEachAsync(recipes,
@@ -239,8 +238,8 @@ internal class Worker(
                                 throw new NullReferenceException("Cover image prompt is null");
                             }
 
-                            urls.Add(recipe,
-                                await imageGenerator.GenerateImageAsync(recipe.CoverImagePrompt, cancellationToken));
+                            recipe.CoverImage =
+                                await imageGenerator.GenerateImageAsync(recipe.CoverImagePrompt, cancellationToken);
                         }
                         catch
                         {
@@ -256,15 +255,23 @@ internal class Worker(
 
         var elapsed = DateTime.UtcNow - startTime;
 
-        AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
-        AnsiConsole.MarkupLine($":camera: Images generated: {urls.Count}");
+        var imageCount = recipes.Where(x => !string.IsNullOrEmpty(x.CoverImage)).Count();
 
-        return urls;
+        AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
+        AnsiConsole.MarkupLine($":camera: Images generated: {imageCount}");
     }
 
-    private async Task ProcessImagesAsync(Dictionary<Recipe, string> imageUrls, string directory,
+    private async Task ProcessImagesAsync(GeneratedRecipeList recipeList, string directory,
         CancellationToken cancellationToken)
     {
+        var recipes = recipeList.Cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<GeneratedRecipe>())
+            .Where(x => !string.IsNullOrEmpty(x.CoverImage));
+
+        if (!(recipes?.Any() ?? false))
+        {
+            throw new ArgumentException("No recipes with cover images were provided", nameof(recipeList));
+        }
+
         using HttpClient client = new();
 
         var startTime = DateTime.UtcNow;
@@ -283,23 +290,28 @@ internal class Worker(
                 var task = ctx.AddTask("Image processing");
                 task.StartTask();
 
-                var increment = 1.0 / imageUrls.Count * 100.0;
+                var increment = 1.0 / recipes.Count() * 100.0;
 
-                foreach (var (recipe, url) in imageUrls)
+                foreach (var recipe in recipes)
                 {
+                    var canonicalName =
+                        new string(recipe.Name!.Normalize()
+                                .Where(x => char.IsAsciiLetterOrDigit(x) || char.IsWhiteSpace(x)).ToArray()).ToLower()
+                            .Replace(' ', '-');
+
                     try
                     {
-                        var bytes = await client.GetByteArrayAsync(url, cancellationToken);
+                        var bytes = await client.GetByteArrayAsync(recipe.CoverImage, cancellationToken);
 
                         using var bitmap = SKBitmap.Decode(bytes);
                         using var data = bitmap.Encode(SKEncodedImageFormat.Webp, _imageQuality);
 
                         await File.WriteAllBytesAsync(
-                            Path.Combine(directory, $"{recipe.Id}.webp"),
+                            Path.Combine(directory, $"{canonicalName}.webp"),
                             data.AsSpan().ToArray(),
                             cancellationToken);
 
-                        recipe.CoverImage = $"{recipe.Id}.webp";
+                        recipe.CoverImage = $"{canonicalName}.webp";
                     }
                     catch
                     {
