@@ -12,4 +12,10 @@ public class AzureOpenAIImageGeneratorOptions
 
     [Required]
     public string? DeploymentName { get; set; }
+
+    public string? Size { get; set; }
+
+    public string? Quality { get; set; }
+
+    public string? Style { get; set; }
 }

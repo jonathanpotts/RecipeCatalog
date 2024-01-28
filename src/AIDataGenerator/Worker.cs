@@ -20,7 +20,7 @@ internal class Worker(
     private static readonly JsonSerializerOptions s_jsonOptions = new() { WriteIndented = true };
 
     private readonly IReadOnlyList<string> _cuisines = options.Value.Cuisines!.AsReadOnly();
-    private readonly int _imageGenerationMaxConcurrency = options.Value.ImageGenerationMaxConcurrency ?? 2;
+    private readonly int _imageGenerationMaxConcurrency = options.Value.ImageGenerationMaxConcurrency ?? 1;
     private readonly int _imageQuality = options.Value.ImageQuality ?? 60;
     private readonly int _recipeGenerationMaxConcurrency = options.Value.RecipeGenerationMaxConcurrency ?? 5;
     private readonly int _recipesPerCuisine = options.Value.RecipesPerCuisine ?? 1;
