@@ -47,13 +47,11 @@ internal class Worker(
 
         var recipeList = await GenerateRecipeListAsync(stoppingToken);
 
-        await GenerateImagesAsync(recipeList, stoppingToken);
-
         var outputDirectory =
             Path.Combine(AppContext.BaseDirectory, "Data", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
         Directory.CreateDirectory(outputDirectory);
 
-        await ProcessImagesAsync(recipeList, outputDirectory, stoppingToken);
+        await GenerateImagesAsync(recipeList, outputDirectory, stoppingToken);
 
         var cuisines = recipeList.Cuisines?.Select(x => new Cuisine
         {
@@ -191,11 +189,12 @@ internal class Worker(
 
         AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
         AnsiConsole.MarkupLine($":clipboard: Recipes generated: {recipes.Count()}");
+        AnsiConsole.WriteLine();
 
         return recipeList!;
     }
 
-    private async Task GenerateImagesAsync(GeneratedRecipeList recipeList,
+    private async Task GenerateImagesAsync(GeneratedRecipeList recipeList, string directory,
         CancellationToken cancellationToken)
     {
         var recipes = recipeList.Cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<GeneratedRecipe>());
@@ -205,24 +204,13 @@ internal class Worker(
             throw new ArgumentException("No recipes were provided", nameof(recipeList));
         }
 
+        using HttpClient client = new();
+
         var startTime = DateTime.UtcNow;
 
-        await AnsiConsole.Progress()
-            .Columns(
-            [
-                new TaskDescriptionColumn(),
-                new ProgressBarColumn(),
-                new PercentageColumn(),
-                new ElapsedTimeColumn(),
-                new SpinnerColumn()
-            ])
-            .StartAsync(async ctx =>
+        await AnsiConsole.Status()
+            .StartAsync("Generating images", async ctx =>
             {
-                var task = ctx.AddTask("Recipe images");
-                task.StartTask();
-
-                var increment = 1.0 / recipes.Count() * 100.0;
-
                 await Parallel.ForEachAsync(recipes,
                     new ParallelOptions
                     {
@@ -231,104 +219,50 @@ internal class Worker(
                     },
                     async (recipe, cancellationToken) =>
                     {
+                        AnsiConsole.WriteLine($"Generating image for {recipe.Name}...");
+
+                        if (string.IsNullOrEmpty(recipe.CoverImagePrompt))
+                        {
+                            throw new NullReferenceException("Cover image prompt is null");
+                        }
+
+                        var canonicalName =
+                            new string(recipe.Name!.Normalize()
+                                    .Where(x => char.IsAsciiLetterOrDigit(x) || char.IsWhiteSpace(x)).ToArray())
+                                .ToLower()
+                                .Replace(' ', '-');
+
                         try
                         {
-                            if (string.IsNullOrEmpty(recipe.CoverImagePrompt))
-                            {
-                                throw new NullReferenceException("Cover image prompt is null");
-                            }
-
-                            recipe.CoverImage =
+                            var generatedImage =
                                 await imageGenerator.GenerateImageAsync(recipe.CoverImagePrompt, cancellationToken);
+
+                            var bytes = await client.GetByteArrayAsync(generatedImage, cancellationToken);
+
+                            using var bitmap = SKBitmap.Decode(bytes);
+                            using var data = bitmap.Encode(SKEncodedImageFormat.Webp, _imageQuality);
+
+                            await File.WriteAllBytesAsync(
+                                Path.Combine(directory, $"{canonicalName}.webp"),
+                                data.AsSpan().ToArray(),
+                                cancellationToken);
+
+                            recipe.CoverImage = $"{canonicalName}.webp";
                         }
                         catch
                         {
                             logger.LogWarning("Unable to generate image for {Recipe}", recipe.Name);
                         }
-
-                        task.Increment(increment);
                     });
-
-                task.Value = 100.0;
-                task.StopTask();
             });
 
         var elapsed = DateTime.UtcNow - startTime;
 
-        var imageCount = recipes.Where(x => !string.IsNullOrEmpty(x.CoverImage)).Count();
-
-        AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
-        AnsiConsole.MarkupLine($":camera: Images generated: {imageCount}");
-    }
-
-    private async Task ProcessImagesAsync(GeneratedRecipeList recipeList, string directory,
-        CancellationToken cancellationToken)
-    {
-        var recipes = recipeList.Cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<GeneratedRecipe>())
-            .Where(x => !string.IsNullOrEmpty(x.CoverImage));
-
-        if (!(recipes?.Any() ?? false))
-        {
-            throw new ArgumentException("No recipes with cover images were provided", nameof(recipeList));
-        }
-
-        using HttpClient client = new();
-
-        var startTime = DateTime.UtcNow;
-
-        await AnsiConsole.Progress()
-            .Columns(
-            [
-                new TaskDescriptionColumn(),
-                new ProgressBarColumn(),
-                new PercentageColumn(),
-                new ElapsedTimeColumn(),
-                new SpinnerColumn()
-            ])
-            .StartAsync(async ctx =>
-            {
-                var task = ctx.AddTask("Image processing");
-                task.StartTask();
-
-                var increment = 1.0 / recipes.Count() * 100.0;
-
-                foreach (var recipe in recipes)
-                {
-                    var canonicalName =
-                        new string(recipe.Name!.Normalize()
-                                .Where(x => char.IsAsciiLetterOrDigit(x) || char.IsWhiteSpace(x)).ToArray()).ToLower()
-                            .Replace(' ', '-');
-
-                    try
-                    {
-                        var bytes = await client.GetByteArrayAsync(recipe.CoverImage, cancellationToken);
-
-                        using var bitmap = SKBitmap.Decode(bytes);
-                        using var data = bitmap.Encode(SKEncodedImageFormat.Webp, _imageQuality);
-
-                        await File.WriteAllBytesAsync(
-                            Path.Combine(directory, $"{canonicalName}.webp"),
-                            data.AsSpan().ToArray(),
-                            cancellationToken);
-
-                        recipe.CoverImage = $"{canonicalName}.webp";
-                    }
-                    catch
-                    {
-                        logger.LogWarning("Failed to download image for {Recipe}", recipe.Name);
-                    }
-
-                    task.Increment(increment);
-                }
-
-                task.Value = 100.0;
-                task.StopTask();
-            });
-
-        var elapsed = DateTime.UtcNow - startTime;
+        AnsiConsole.WriteLine();
 
         AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
         AnsiConsole.MarkupLine(
-            $":camera: Images processed: {Directory.GetFiles(directory).Where(x => x.EndsWith(".webp")).Count()}");
+            $":camera: Images generated: {Directory.GetFiles(directory).Where(x => x.EndsWith(".webp")).Count()}");
+        AnsiConsole.WriteLine();
     }
 }
