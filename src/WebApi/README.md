@@ -14,3 +14,7 @@ Configuration can be provided in appsettings.json, user secrets, environment var
 The following configuration options are available:
 
 - GeneratorId - ID number for running instance (each concurrently running instance should have a unique value)
+
+## Seed Data
+
+Seed data was created using the [AIDataGenerator](../AIDataGenerator/) project with Updated GPT-3.5 Turbo and DALL-E 3.
