@@ -1,6 +1,6 @@
 # RecipeCatalog
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeCatalog/dotnet.yml)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeCatalog/dotnet.yml)](https://github.com/jonathanpotts/RecipeCatalog/actions/workflows/dotnet.yml)
 
 RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a web catalog for recipes with generative AI capabilities.
 
