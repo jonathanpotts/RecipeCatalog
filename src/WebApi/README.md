@@ -18,4 +18,4 @@ The following configuration options are available:
 
 ## Seed Data
 
-Seed data was created using the [AIDataGenerator](../AIDataGenerator/) project with Updated GPT-3.5 Turbo and DALL-E 3.
+Seed data was created using the [AIDataGenerator](../AIDataGenerator/) project with [Updated GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) and [DALL-E 3](https://platform.openai.com/docs/models/dall-e).
