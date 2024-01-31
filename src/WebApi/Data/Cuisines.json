@@ -5,9 +5,13 @@
     "Recipes": [
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Mac and Cheese",
-        "CoverImage": "mac-and-cheese.webp",
-        "CoverImagePrompt": "A bowl of creamy mac and cheese topped with bread crumbs and parsley",
+        "CoverImage": {
+          "Url": "mac-and-cheese.webp",
+          "AltText": "A bowl of creamy mac and cheese topped with bread crumbs and parsley"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Indulge in the ultimate comfort food with this creamy and cheesy mac and cheese recipe. Perfect for a cozy night in or as a side dish for gatherings.",
@@ -30,9 +34,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "BBQ Ribs",
-        "CoverImage": "bbq-ribs.webp",
-        "CoverImagePrompt": "BBQ Ribs plated on a wooden board with a side of coleslaw and corn on the cob",
+        "CoverImage": {
+          "Url": "bbq-ribs.webp",
+          "AltText": "BBQ Ribs plated on a wooden board with a side of coleslaw and corn on the cob"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Delicious and tender BBQ ribs with a smoky and tangy flavor that will satisfy your cravings for a hearty and flavorful meal.",
@@ -55,9 +63,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Cheeseburger",
-        "CoverImage": "cheeseburger.webp",
-        "CoverImagePrompt": "A delicious cheeseburger plated on a wooden board with crispy fries and a pickle on the side",
+        "CoverImage": {
+          "Url": "cheeseburger.webp",
+          "AltText": "A delicious cheeseburger plated on a wooden board with crispy fries and a pickle on the side"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "The classic cheeseburger recipe featuring juicy beef patty, melted cheese, fresh vegetables, and condiments, all sandwiched between soft burger buns.",
@@ -82,9 +94,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Apple Pie",
-        "CoverImage": "apple-pie.webp",
-        "CoverImagePrompt": "An image of a mouth-watering apple pie fresh out of the oven",
+        "CoverImage": {
+          "Url": "apple-pie.webp",
+          "AltText": "An image of a mouth-watering apple pie fresh out of the oven"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "A classic American dessert featuring tender, cinnamon-spiced apples baked in a flaky crust.",
@@ -108,9 +124,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Fried Chicken",
-        "CoverImage": "fried-chicken.webp",
-        "CoverImagePrompt": "Fried chicken on a plate with a side of coleslaw and a hot honey drizzle",
+        "CoverImage": {
+          "Url": "fried-chicken.webp",
+          "AltText": "Fried chicken on a plate with a side of coleslaw and a hot honey drizzle"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Enjoy crispy and flavorful fried chicken with this classic recipe. Perfect for a cozy family dinner or a picnic!",
@@ -141,9 +161,13 @@
     "Recipes": [
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Sweet and Sour Chicken",
-        "CoverImage": "sweet-and-sour-chicken.webp",
-        "CoverImagePrompt": "Sweet and Sour Chicken plated on a white serving dish with colorful vegetables and pineapple garnish",
+        "CoverImage": {
+          "Url": "sweet-and-sour-chicken.webp",
+          "AltText": "Sweet and Sour Chicken plated on a white serving dish with colorful vegetables and pineapple garnish"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "A classic Chinese takeout dish featuring crispy fried chicken coated in a tangy sweet and sour sauce.",
@@ -174,9 +198,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Beef and Broccoli Stir-Fry",
-        "CoverImage": "beef-and-broccoli-stirfry.webp",
-        "CoverImagePrompt": "Beef and broccoli stir-fry on a white plate with chopsticks and garnished with sesame seeds",
+        "CoverImage": {
+          "Url": "beef-and-broccoli-stirfry.webp",
+          "AltText": "Beef and broccoli stir-fry on a white plate with chopsticks and garnished with sesame seeds"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "A delicious and easy-to-make beef and broccoli stir-fry with tender strips of beef, crisp broccoli, and a savory sauce. Perfect for a quick and flavorful weeknight meal.",
@@ -203,9 +231,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Kung Pao Chicken",
-        "CoverImage": "kung-pao-chicken.webp",
-        "CoverImagePrompt": "Kung Pao Chicken plated on a serving dish with chopsticks",
+        "CoverImage": {
+          "Url": "kung-pao-chicken.webp",
+          "AltText": "Kung Pao Chicken plated on a serving dish with chopsticks"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "A classic Chinese dish with tender chicken, crunchy peanuts, and a flavorful mix of savory and spicy sauce.",
@@ -231,9 +263,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Egg Fried Rice",
-        "CoverImage": "egg-fried-rice.webp",
-        "CoverImagePrompt": "Egg fried rice served on a plate with chopsticks, garnished with fresh chopped green onions and a sprinkle of sesame seeds",
+        "CoverImage": {
+          "Url": "egg-fried-rice.webp",
+          "AltText": "Egg fried rice served on a plate with chopsticks, garnished with fresh chopped green onions and a sprinkle of sesame seeds"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Egg fried rice is a quick and delicious dish that is perfect for a satisfying meal. It\u0027s made with a simple combination of ingredients and can be customized with your favorite additions like vegetables, seafood, or tofu.",
@@ -256,9 +292,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Hot and Sour Soup",
-        "CoverImage": "hot-and-sour-soup.webp",
-        "CoverImagePrompt": "Hot and Sour Soup in a traditional Chinese bowl with steam rising from the soup",
+        "CoverImage": {
+          "Url": "hot-and-sour-soup.webp",
+          "AltText": "Hot and Sour Soup in a traditional Chinese bowl with steam rising from the soup"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "A classic Chinese soup with a perfect balance of spicy and tangy flavors.",
@@ -293,9 +333,13 @@
     "Recipes": [
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Tacos",
-        "CoverImage": "tacos.webp",
-        "CoverImagePrompt": "Tacos on a beautiful plate",
+        "CoverImage": {
+          "Url": "tacos.webp",
+          "AltText": "Tacos on a beautiful plate"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Tacos are a delicious Mexican dish consisting of a corn or flour tortilla filled with various ingredients such as seasoned meat, beans, cheese, and vegetables.",
@@ -319,9 +363,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Enchiladas",
-        "CoverImage": "enchiladas.webp",
-        "CoverImagePrompt": "Enchiladas plated on a colorful dish with avocado slices and a side of salsa and sour cream",
+        "CoverImage": {
+          "Url": "enchiladas.webp",
+          "AltText": "Enchiladas plated on a colorful dish with avocado slices and a side of salsa and sour cream"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Enchiladas are a classic Mexican dish featuring tortillas wrapped around a savory filling, covered in a flavorful sauce, and baked to perfection. This recipe is a delicious and satisfying meal for any occasion.",
@@ -348,9 +396,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Guacamole",
-        "CoverImage": "guacamole.webp",
-        "CoverImagePrompt": "Guacamole in a traditional serving bowl with tortilla chips on a wooden table",
+        "CoverImage": {
+          "Url": "guacamole.webp",
+          "AltText": "Guacamole in a traditional serving bowl with tortilla chips on a wooden table"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Classic guacamole made with ripe avocados, tomatoes, onions, lime juice, and cilantro. Perfect for dipping with tortilla chips or as a topping for tacos and burritos.",
@@ -374,9 +426,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Chiles Rellenos",
-        "CoverImage": "chiles-rellenos.webp",
-        "CoverImagePrompt": "A plate of Chiles Rellenos with a side of rice and beans",
+        "CoverImage": {
+          "Url": "chiles-rellenos.webp",
+          "AltText": "A plate of Chiles Rellenos with a side of rice and beans"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Chiles Rellenos are a traditional Mexican dish consisting of roasted poblano peppers stuffed with cheese, coated in egg batter, and fried until golden. They are often served with a flavorful tomato salsa and a side of rice and beans.",
@@ -404,9 +460,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Salsa Verde",
-        "CoverImage": "salsa-verde.webp",
-        "CoverImagePrompt": "Salsa verde in a small dish with tortilla chips on a colorful plate",
+        "CoverImage": {
+          "Url": "salsa-verde.webp",
+          "AltText": "Salsa verde in a small dish with tortilla chips on a colorful plate"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Salsa Verde is a delicious and tangy green sauce made with tomatillos, cilantro, onion, and jalape\u00F1o. It\u0027s perfect for dipping tortilla chips, topping tacos, or adding flavor to various dishes.",
@@ -434,9 +494,13 @@
     "Recipes": [
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Spaghetti Carbonara",
-        "CoverImage": "spaghetti-carbonara.webp",
-        "CoverImagePrompt": "A plate of spaghetti carbonara with crispy bacon and a sprinkling of parmesan cheese",
+        "CoverImage": {
+          "Url": "spaghetti-carbonara.webp",
+          "AltText": "A plate of spaghetti carbonara with crispy bacon and a sprinkling of parmesan cheese"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Classic Italian pasta dish featuring spaghetti tossed in a creamy egg and cheese sauce with crispy bacon or pancetta.",
@@ -460,9 +524,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Margherita Pizza",
-        "CoverImage": "margherita-pizza.webp",
-        "CoverImagePrompt": "A photorealistic image of a beautifully plated Margherita pizza on a wooden pizza peel, fresh basil leaves scattered around, and a drizzle of olive oil on top.",
+        "CoverImage": {
+          "Url": "margherita-pizza.webp",
+          "AltText": "A photorealistic image of a beautifully plated Margherita pizza on a wooden pizza peel, fresh basil leaves scattered around, and a drizzle of olive oil on top."
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Enjoy the classic flavors of Italy with this simple and delicious Margherita pizza. It features a thin crust, flavorful tomato sauce, fresh mozzarella, and fragrant basil.",
@@ -484,9 +552,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Lasagna",
-        "CoverImage": "lasagna.webp",
-        "CoverImagePrompt": "A photorealistic image of a plated classic lasagna with melted cheese on top",
+        "CoverImage": {
+          "Url": "lasagna.webp",
+          "AltText": "A photorealistic image of a plated classic lasagna with melted cheese on top"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "This classic lasagna recipe features layers of hearty meat sauce, creamy cheese filling, and tender lasagna noodles. It\u0027s the ultimate comfort food that\u0027s perfect for sharing with family and friends.",
@@ -520,9 +592,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Tiramisu",
-        "CoverImage": "tiramisu.webp",
-        "CoverImagePrompt": "Tiramisu plated on a dessert plate with cocoa dusted on top",
+        "CoverImage": {
+          "Url": "tiramisu.webp",
+          "AltText": "Tiramisu plated on a dessert plate with cocoa dusted on top"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Tiramisu is a classic Italian dessert made with layers of coffee-dipped ladyfingers and a rich mascarpone cream, topped with a dusting of cocoa.",
@@ -547,9 +623,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Risotto",
-        "CoverImage": "risotto.webp",
-        "CoverImagePrompt": "A plate of creamy mushroom risotto topped with fresh grated parmesan cheese and a sprinkle of chopped parsley",
+        "CoverImage": {
+          "Url": "risotto.webp",
+          "AltText": "A plate of creamy mushroom risotto topped with fresh grated parmesan cheese and a sprinkle of chopped parsley"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "This creamy mushroom risotto is a classic Italian dish that\u0027s rich, hearty, and comforting. The combination of tender arborio rice, flavorful mushrooms, and creamy sauce makes it an irresistible option for any meal.",
@@ -581,9 +661,13 @@
     "Recipes": [
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Sushi",
-        "CoverImage": "sushi.webp",
-        "CoverImagePrompt": "Sushi roll on a plate with garnishes",
+        "CoverImage": {
+          "Url": "sushi.webp",
+          "AltText": "Sushi roll on a plate with garnishes"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Sushi is a delicious Japanese dish made from seasoned rice and various fillings, such as seafood, vegetables, and occasionally tropical fruits. It is typically rolled in seaweed and sliced into bite-sized pieces.",
@@ -608,9 +692,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Yakitori",
-        "CoverImage": "yakitori.webp",
-        "CoverImagePrompt": "Yakitori skewers on a traditional Japanese plate with garnishes",
+        "CoverImage": {
+          "Url": "yakitori.webp",
+          "AltText": "Yakitori skewers on a traditional Japanese plate with garnishes"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Yakitori is a popular Japanese dish consisting of bite-sized pieces of chicken grilled on skewers. The chicken is traditionally seasoned with a sweet and savory sauce, resulting in a delicious, smoky flavor.",
@@ -631,9 +719,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Miso Soup",
-        "CoverImage": "miso-soup.webp",
-        "CoverImagePrompt": "Miso soup served in a traditional Japanese bowl with a garnish of green onions and tofu",
+        "CoverImage": {
+          "Url": "miso-soup.webp",
+          "AltText": "Miso soup served in a traditional Japanese bowl with a garnish of green onions and tofu"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "A warm and comforting Japanese soup with a savory umami flavor from miso paste, combined with delicate tofu and fresh green onions.",
@@ -654,9 +746,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Tonkatsu",
-        "CoverImage": "tonkatsu.webp",
-        "CoverImagePrompt": "Tonkatsu plated on a white plate with a side of shredded cabbage and a slice of lemon",
+        "CoverImage": {
+          "Url": "tonkatsu.webp",
+          "AltText": "Tonkatsu plated on a white plate with a side of shredded cabbage and a slice of lemon"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Tonkatsu is a popular Japanese dish consisting of a breaded and deep-fried pork cutlet. It is typically served with shredded cabbage, a side of tonkatsu sauce, and steamed rice.",
@@ -680,9 +776,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Gyoza",
-        "CoverImage": "gyoza.webp",
-        "CoverImagePrompt": "Gyoza dumplings arranged on a plate with dipping sauce and garnish",
+        "CoverImage": {
+          "Url": "gyoza.webp",
+          "AltText": "Gyoza dumplings arranged on a plate with dipping sauce and garnish"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Gyoza are delicious Japanese dumplings filled with a juicy and savory mixture of ground meat and vegetables, wrapped in a thin dough and then pan-fried to crispy perfection. They are a popular appetizer or snack in Japan and around the world.",
@@ -715,9 +815,13 @@
     "Recipes": [
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Chicken Tikka Masala",
-        "CoverImage": "chicken-tikka-masala.webp",
-        "CoverImagePrompt": "A plated serving of chicken tikka masala with naan bread and rice on a colorful table setting",
+        "CoverImage": {
+          "Url": "chicken-tikka-masala.webp",
+          "AltText": "A plated serving of chicken tikka masala with naan bread and rice on a colorful table setting"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "A classic and flavorful Indian dish featuring marinated and grilled chicken pieces simmered in a rich, creamy tomato sauce.",
@@ -758,9 +862,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Palak Paneer",
-        "CoverImage": "palak-paneer.webp",
-        "CoverImagePrompt": "A plate of Palak Paneer with garnished coriander and a side of naan bread",
+        "CoverImage": {
+          "Url": "palak-paneer.webp",
+          "AltText": "A plate of Palak Paneer with garnished coriander and a side of naan bread"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Palak Paneer is a popular North Indian dish made of spinach and paneer (Indian cottage cheese) cooked with aromatic spices. It is a creamy and flavorful vegetarian dish that pairs well with naan or rice.",
@@ -789,9 +897,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Butter Chicken",
-        "CoverImage": "butter-chicken.webp",
-        "CoverImagePrompt": "Butter Chicken served on a white plate with naan bread and garnished with fresh cilantro and a dollop of yogurt",
+        "CoverImage": {
+          "Url": "butter-chicken.webp",
+          "AltText": "Butter Chicken served on a white plate with naan bread and garnished with fresh cilantro and a dollop of yogurt"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Butter Chicken is a classic Indian dish featuring tender chicken in a rich and creamy tomato sauce. It\u0027s a flavorful and satisfying dish that\u0027s perfect served with naan or rice.",
@@ -807,9 +919,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Aloo Gobi",
-        "CoverImage": "aloo-gobi.webp",
-        "CoverImagePrompt": "Aloo Gobi plated on a serving dish with fresh cilantro garnish",
+        "CoverImage": {
+          "Url": "aloo-gobi.webp",
+          "AltText": "Aloo Gobi plated on a serving dish with fresh cilantro garnish"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Aloo Gobi is a classic Indian dish made with potatoes (aloo) and cauliflower (gobi) cooked with aromatic spices. It\u0027s a comforting and flavorful vegetarian dish that pairs well with rice or roti.",
@@ -838,9 +954,13 @@
       },
       {
         "Id": 0,
+        "OwnerId": null,
+        "Owner": null,
         "Name": "Chana Masala",
-        "CoverImage": "chana-masala.webp",
-        "CoverImagePrompt": "Chana Masala plated on a colorful ceramic plate with fresh cilantro garnish",
+        "CoverImage": {
+          "Url": "chana-masala.webp",
+          "AltText": "Chana Masala plated on a colorful ceramic plate with fresh cilantro garnish"
+        },
         "CuisineId": 0,
         "Cuisine": null,
         "Description": "Chana Masala is a popular Indian dish made with chickpeas cooked in a flavorful and aromatic tomato-based sauce. It\u0027s a comforting and hearty vegetarian meal that is best served with rice or naan.",

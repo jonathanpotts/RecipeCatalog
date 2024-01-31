@@ -16,9 +16,7 @@ public class Recipe
     [Required]
     public string? Name { get; set; }
 
-    public string? CoverImage { get; set; }
-
-    public string? CoverImageAltText { get; set; }
+    public ImageData? CoverImage { get; set; }
 
     public int CuisineId { get; set; }
 

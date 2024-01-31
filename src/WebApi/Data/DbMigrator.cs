@@ -70,12 +70,12 @@ public class DbMigrator(
                     recipe.Instructions.Html = Markdown.ToHtml(recipe.Instructions.Markdown, s_pipeline);
                 }
 
-                if (!string.IsNullOrEmpty(recipe.CoverImage) &&
-                    File.Exists(Path.Combine(s_dataImagesDirectory, recipe.CoverImage)))
+                if (!string.IsNullOrEmpty(recipe.CoverImage?.Url) &&
+                    File.Exists(Path.Combine(s_dataImagesDirectory, recipe.CoverImage.Url)))
                 {
-                    File.Move(Path.Combine(s_dataImagesDirectory, recipe.CoverImage),
+                    File.Move(Path.Combine(s_dataImagesDirectory, recipe.CoverImage.Url),
                         Path.Combine(s_imagesDirectory, $"{recipe.Id}.webp"), true);
-                    recipe.CoverImage = $"{recipe.Id}.webp";
+                    recipe.CoverImage.Url = $"{recipe.Id}.webp";
                 }
             }
 

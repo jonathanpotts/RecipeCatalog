@@ -59,8 +59,11 @@ internal class Worker(
             Recipes = x.Recipes?.Select(y => new Recipe
             {
                 Name = y.Name,
-                CoverImage = y.CoverImage,
-                CoverImageAltText = y.CoverImagePrompt,
+                CoverImage = new ImageData
+                {
+                    Url = y.CoverImage,
+                    AltText = y.CoverImagePrompt
+                },
                 Description = y.Description,
                 Ingredients = [.. y.Ingredients],
                 Instructions = new MarkdownData

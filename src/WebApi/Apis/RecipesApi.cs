@@ -86,7 +86,7 @@ public static class RecipesApi
                 : new ImageData
                 {
                     Url = $"/api/v1/recipes/{x.Id}/coverImage",
-                    AltText = x.CoverImageAltText
+                    AltText = x.CoverImage.AltText
                 },
             Cuisine = x.Cuisine == null
                 ? null
@@ -127,7 +127,7 @@ public static class RecipesApi
                 : new ImageData
                 {
                     Url = $"/api/v1/recipes/{recipe.Id}/coverImage",
-                    AltText = recipe.CoverImageAltText
+                    AltText = recipe.CoverImage.AltText
                 },
             Cuisine = recipe.Cuisine == null
                 ? null
@@ -151,12 +151,12 @@ public static class RecipesApi
         var recipe = await services.Context.Recipes.AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
 
-        if (recipe?.CoverImage == null)
+        if (recipe?.CoverImage?.Url == null)
         {
             return TypedResults.NotFound();
         }
 
-        var imagePath = Path.Combine(s_imagesDirectory, recipe.CoverImage);
+        var imagePath = Path.Combine(s_imagesDirectory, recipe.CoverImage.Url);
         var lastModified = File.GetLastWriteTimeUtc(imagePath);
 
         return TypedResults.PhysicalFile(imagePath, "image/webp", lastModified: lastModified);

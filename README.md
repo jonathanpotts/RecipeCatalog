@@ -27,6 +27,7 @@ RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a 
     - [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
     - [Resource-based Authorization](https://learn.microsoft.com/aspnet/core/security/authorization/resourcebased)
 - [Entity Framework Core](https://learn.microsoft.com/ef/core/)
+    - [Migrations](https://learn.microsoft.com/ef/core/managing-schemas/migrations/)
     - [SQLite](https://www.sqlite.org/)
 - Markdown ([Markdig](https://github.com/xoofx/markdig))
 - Snowflake IDs ([IdGen](https://github.com/RobThree/IdGen))
