@@ -81,6 +81,11 @@ public static class TestData
             Id = 6461870173061120,
             OwnerId = "73edf737-df51-4c06-ac6f-3ec6d79f1f12",
             Name = "Test Recipe 1",
+            CoverImage = new ImageData
+            {
+                Url = "6461870173061120.webp",
+                AltText = "A photo of test recipe 1"
+            },
             CuisineId = 1,
             Description = "This is a test.",
             Created = new DateTime(638412046299055561, DateTimeKind.Utc),
@@ -100,6 +105,11 @@ public static class TestData
             Id = 6462160192405504,
             OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
             Name = "Test Recipe 2",
+            CoverImage = new ImageData
+            {
+                Url = "6462160192405504.webp",
+                AltText = "A photo of test recipe 2"
+            },
             CuisineId = 1,
             Description = "This is a test.",
             Created = new DateTime(638412046990521543, DateTimeKind.Utc),
@@ -119,6 +129,11 @@ public static class TestData
             Id = 6462258523668480,
             OwnerId = "73edf737-df51-4c06-ac6f-3ec6d79f1f12",
             Name = "Test Recipe 3",
+            CoverImage = new ImageData
+            {
+                Url = "6462258523668480.webp",
+                AltText = "A photo of test recipe 3"
+            },
             CuisineId = 1,
             Description = "This is a test.",
             Created = new DateTime(638412047224957774, DateTimeKind.Utc),
@@ -138,6 +153,11 @@ public static class TestData
             Id = 6462318867120128,
             OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
             Name = "Test Recipe 4",
+            CoverImage = new ImageData
+            {
+                Url = "6462318867120128.webp",
+                AltText = "A photo of test recipe 4"
+            },
             CuisineId = 4,
             Description = "This is a test.",
             Created = new DateTime(638412047368832961, DateTimeKind.Utc),
@@ -157,6 +177,11 @@ public static class TestData
             Id = 6462416804118528,
             OwnerId = "73edf737-df51-4c06-ac6f-3ec6d79f1f12",
             Name = "Test Recipe 5",
+            CoverImage = new ImageData
+            {
+                Url = "6462416804118528.webp",
+                AltText = "A photo of test recipe 5"
+            },
             CuisineId = 1,
             Description = "This is a test.",
             Created = new DateTime(638412047602332665, DateTimeKind.Utc),

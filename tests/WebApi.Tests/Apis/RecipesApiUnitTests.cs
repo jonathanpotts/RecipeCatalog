@@ -91,6 +91,30 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.NotNull(okResult.Value);
 
         Assert.NotEmpty(okResult.Value.Items);
+
+        var firstItem = okResult.Value.Items.First();
+
+        Assert.Multiple(
+            () => Assert.Equal(6462416804118528, firstItem.Id),
+            () => Assert.Equal("73edf737-df51-4c06-ac6f-3ec6d79f1f12", firstItem.OwnerId),
+            () => Assert.Equal("Test Recipe 5", firstItem.Name),
+            () =>
+            {
+                Assert.NotNull(firstItem.CoverImage);
+                Assert.Equal("/api/v1/recipes/6462416804118528/coverImage", firstItem.CoverImage.Url);
+                Assert.Equal("A photo of test recipe 5", firstItem.CoverImage.AltText);
+            },
+            () =>
+            {
+                Assert.NotNull(firstItem.Cuisine);
+                Assert.Equal(1, firstItem.Cuisine.Id);
+                Assert.Equal("Test", firstItem.Cuisine.Name);
+            },
+            () => Assert.Null(firstItem.Description),
+            () => Assert.Equal(new DateTime(638412047602332665, DateTimeKind.Utc), firstItem.Created),
+            () => Assert.Null(firstItem.Modified),
+            () => Assert.Null(firstItem.Ingredients),
+            () => Assert.Null(firstItem.Instructions));
     }
 
     [Fact]
@@ -152,6 +176,51 @@ public sealed class RecipesApiUnitTests : IDisposable
     }
 
     [Fact]
+    public async void GetListAsyncReturnsRecipesForWithDetails()
+    {
+        // Act
+        var result = await RecipesApi.GetListAsync(_services, null, null, null, true);
+
+        // Assert
+        Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
+        var okResult = (Ok<PagedResult<RecipeWithCuisineDto>>)result.Result;
+        Assert.NotNull(okResult.Value);
+
+        Assert.NotEmpty(okResult.Value.Items);
+
+        var firstItem = okResult.Value.Items.First();
+
+        Assert.Multiple(
+            () => Assert.Equal(6462416804118528, firstItem.Id),
+            () => Assert.Equal("73edf737-df51-4c06-ac6f-3ec6d79f1f12", firstItem.OwnerId),
+            () => Assert.Equal("Test Recipe 5", firstItem.Name),
+            () =>
+            {
+                Assert.NotNull(firstItem.CoverImage);
+                Assert.Equal("/api/v1/recipes/6462416804118528/coverImage", firstItem.CoverImage.Url);
+                Assert.Equal("A photo of test recipe 5", firstItem.CoverImage.AltText);
+            },
+            () =>
+            {
+                Assert.NotNull(firstItem.Cuisine);
+                Assert.Equal(1, firstItem.Cuisine.Id);
+                Assert.Equal("Test", firstItem.Cuisine.Name);
+            },
+            () => Assert.Equal("This is a test.", firstItem.Description),
+            () => Assert.Equal(new DateTime(638412047602332665, DateTimeKind.Utc), firstItem.Created),
+            () => Assert.Null(firstItem.Modified),
+            () =>
+            {
+                Assert.NotNull(firstItem.Ingredients);
+                Assert.Collection(firstItem.Ingredients,
+                    x => Assert.Equal("1 tsp of test ingredient 1", x),
+                    x => Assert.Equal("1 cup of test ingredient 2", x));
+            },
+            () => Assert.Equal("This is a test.", firstItem.Instructions?.Markdown),
+            () => Assert.Equal("<p>This is a test.</p>\n", firstItem.Instructions?.Html));
+    }
+
+    [Fact]
     public async void GetAsyncReturnsRecipeForValidId()
     {
         // Act
@@ -166,6 +235,12 @@ public sealed class RecipesApiUnitTests : IDisposable
             () => Assert.Equal(6462258523668480, okResult.Value.Id),
             () => Assert.Equal("73edf737-df51-4c06-ac6f-3ec6d79f1f12", okResult.Value.OwnerId),
             () => Assert.Equal("Test Recipe 3", okResult.Value.Name),
+            () =>
+            {
+                Assert.NotNull(okResult.Value.CoverImage);
+                Assert.Equal("/api/v1/recipes/6462258523668480/coverImage", okResult.Value.CoverImage.Url);
+                Assert.Equal("A photo of test recipe 3", okResult.Value.CoverImage.AltText);
+            },
             () =>
             {
                 Assert.NotNull(okResult.Value.Cuisine);
