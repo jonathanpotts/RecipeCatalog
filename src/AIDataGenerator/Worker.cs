@@ -60,7 +60,7 @@ internal class Worker(
             {
                 Name = y.Name,
                 CoverImage = y.CoverImage,
-                CoverImagePrompt = y.CoverImagePrompt,
+                CoverImageAltText = y.CoverImagePrompt,
                 Description = y.Description,
                 Ingredients = [.. y.Ingredients],
                 Instructions = new MarkdownData

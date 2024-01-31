@@ -1,6 +1,8 @@
-﻿using IdGen;
+﻿using System.Security.Claims;
+using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using JonathanPotts.RecipeCatalog.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,8 +60,10 @@ public static class CuisinesApi
         });
     }
 
-    public static async Task<Results<Created<CuisineDto>, ValidationProblem>> PostAsync(
+    [Authorize]
+    public static async Task<Results<Created<CuisineDto>, ValidationProblem, ForbidHttpResult>> PostAsync(
         [AsParameters] Services services,
+        ClaimsPrincipal user,
         CuisineDto dto)
     {
         Dictionary<string, string[]> errors = [];
@@ -79,6 +83,13 @@ public static class CuisinesApi
             Name = dto.Name
         };
 
+        var authResult = await services.AuthorizationService.AuthorizeAsync(user, cuisine, Operations.Create);
+
+        if (!authResult.Succeeded)
+        {
+            return TypedResults.Forbid();
+        }
+
         await services.Context.Cuisines.AddAsync(cuisine);
         await services.Context.SaveChangesAsync();
 
@@ -89,8 +100,10 @@ public static class CuisinesApi
         });
     }
 
-    public static async Task<Results<Ok<CuisineDto>, ValidationProblem, NotFound>> PutAsync(
+    [Authorize]
+    public static async Task<Results<Ok<CuisineDto>, ValidationProblem, NotFound, ForbidHttpResult>> PutAsync(
         [AsParameters] Services services,
+        ClaimsPrincipal user,
         int id,
         CuisineDto dto)
     {
@@ -114,6 +127,13 @@ public static class CuisinesApi
             return TypedResults.NotFound();
         }
 
+        var authResult = await services.AuthorizationService.AuthorizeAsync(user, cuisine, Operations.Update);
+
+        if (!authResult.Succeeded)
+        {
+            return TypedResults.Forbid();
+        }
+
         services.Context.Entry(cuisine).CurrentValues.SetValues(dto);
         await services.Context.SaveChangesAsync();
 
@@ -124,8 +144,10 @@ public static class CuisinesApi
         });
     }
 
-    public static async Task<Results<NoContent, NotFound>> DeleteAsync(
+    [Authorize]
+    public static async Task<Results<NoContent, NotFound, ForbidHttpResult>> DeleteAsync(
         [AsParameters] Services services,
+        ClaimsPrincipal user,
         int id)
     {
         var cuisine = await services.Context.Cuisines
@@ -136,6 +158,13 @@ public static class CuisinesApi
             return TypedResults.NotFound();
         }
 
+        var authResult = await services.AuthorizationService.AuthorizeAsync(user, cuisine, Operations.Delete);
+
+        if (!authResult.Succeeded)
+        {
+            return TypedResults.Forbid();
+        }
+
         services.Context.Cuisines.Remove(cuisine);
         await services.Context.SaveChangesAsync();
 
@@ -144,10 +173,10 @@ public static class CuisinesApi
 
     public class Services(
         ApplicationDbContext context,
-        IdGenerator idGenerator)
+        IAuthorizationService authorizationService)
     {
         public ApplicationDbContext Context { get; set; } = context;
 
-        public IdGenerator IdGenerator { get; } = idGenerator;
+        public IAuthorizationService AuthorizationService { get; } = authorizationService;
     }
 }

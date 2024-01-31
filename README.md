@@ -23,6 +23,7 @@ RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a 
 
 - [ASP.NET Core minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
 - [Entity Framework Core](https://learn.microsoft.com/ef/core/)
+- [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity) with authorization handlers
 - Markdown ([Markdig](https://github.com/xoofx/markdig))
 - Snowflake IDs ([IdGen](https://github.com/RobThree/IdGen))
 

@@ -1,9 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using IdGen;
+using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Markdig;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
@@ -12,6 +16,8 @@ public static class RecipesApi
 {
     private const int MaxItemsPerPage = 50;
     private const int DefaultItemsPerPage = 20;
+
+    private static readonly string s_imagesDirectory = Path.Combine(AppContext.BaseDirectory, "Images");
 
     private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
         .DisableHtml()
@@ -25,6 +31,7 @@ public static class RecipesApi
 
         group.MapGet("/", GetListAsync);
         group.MapGet("/{id:long}", GetAsync);
+        group.MapGet("/{id:long}/coverImage", GetCoverImageAsync);
         group.MapPost("/", PostAsync);
         group.MapPut("/{id:long}", PutAsync);
         group.MapDelete("/{id:long}", DeleteAsync);
@@ -36,7 +43,8 @@ public static class RecipesApi
         [AsParameters] Services services,
         [Range(1, MaxItemsPerPage)] int? top,
         long? last,
-        int[]? cuisineIds)
+        int[]? cuisineIds,
+        bool? withDetails)
     {
         if (top is < 1 or > MaxItemsPerPage)
         {
@@ -71,7 +79,15 @@ public static class RecipesApi
         var items = recipes.Select(x => new RecipeWithCuisineDto
         {
             Id = x.Id,
+            OwnerId = x.OwnerId,
             Name = x.Name,
+            CoverImage = x.CoverImage == null
+                ? null
+                : new ImageData
+                {
+                    Url = $"/api/v1/recipes/{x.Id}/coverImage",
+                    AltText = x.CoverImageAltText
+                },
             Cuisine = x.Cuisine == null
                 ? null
                 : new CuisineDto
@@ -79,11 +95,11 @@ public static class RecipesApi
                     Id = x.Cuisine.Id,
                     Name = x.Cuisine.Name
                 },
-            Description = x.Description,
+            Description = withDetails.GetValueOrDefault(false) ? x.Description : null,
             Created = x.Created,
             Modified = x.Modified,
-            Ingredients = x.Ingredients,
-            Instructions = x.Instructions
+            Ingredients = withDetails.GetValueOrDefault(false) ? x.Ingredients : null,
+            Instructions = withDetails.GetValueOrDefault(false) ? x.Instructions : null
         });
 
         return TypedResults.Ok(new PagedResult<RecipeWithCuisineDto>(total, await items.ToArrayAsync()));
@@ -104,7 +120,15 @@ public static class RecipesApi
         return TypedResults.Ok(new RecipeWithCuisineDto
         {
             Id = recipe.Id,
+            OwnerId = recipe.OwnerId,
             Name = recipe.Name,
+            CoverImage = recipe.CoverImage == null
+                ? null
+                : new ImageData
+                {
+                    Url = $"/api/v1/recipes/{recipe.Id}/coverImage",
+                    AltText = recipe.CoverImageAltText
+                },
             Cuisine = recipe.Cuisine == null
                 ? null
                 : new CuisineDto
@@ -120,8 +144,28 @@ public static class RecipesApi
         });
     }
 
-    public static async Task<Results<Created<RecipeWithCuisineDto>, ValidationProblem>> PostAsync(
+    public static async Task<Results<PhysicalFileHttpResult, NotFound>> GetCoverImageAsync(
         [AsParameters] Services services,
+        long id)
+    {
+        var recipe = await services.Context.Recipes.AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (recipe?.CoverImage == null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var imagePath = Path.Combine(s_imagesDirectory, recipe.CoverImage);
+        var lastModified = File.GetLastWriteTimeUtc(imagePath);
+
+        return TypedResults.PhysicalFile(imagePath, "image/webp", lastModified: lastModified);
+    }
+
+    [Authorize]
+    public static async Task<Results<Created<RecipeWithCuisineDto>, ValidationProblem, ForbidHttpResult>> PostAsync(
+        [AsParameters] Services services,
+        ClaimsPrincipal user,
         RecipeCreateOrUpdateDto dto)
     {
         Dictionary<string, string[]> errors = [];
@@ -149,6 +193,7 @@ public static class RecipesApi
         Recipe recipe = new()
         {
             Id = services.IdGenerator.CreateId(),
+            OwnerId = services.UserManager.GetUserId(user),
             Name = dto.Name,
             CuisineId = dto.CuisineId,
             Description = dto.Description,
@@ -160,6 +205,13 @@ public static class RecipesApi
                 Html = Markdown.ToHtml(dto.Instructions!, s_pipeline)
             }
         };
+
+        var authResult = await services.AuthorizationService.AuthorizeAsync(user, recipe, Operations.Delete);
+
+        if (!authResult.Succeeded)
+        {
+            return TypedResults.Forbid();
+        }
 
         await services.Context.Recipes.AddAsync(recipe);
         await services.Context.SaveChangesAsync();
@@ -183,8 +235,10 @@ public static class RecipesApi
         });
     }
 
-    public static async Task<Results<Ok<RecipeWithCuisineDto>, ValidationProblem, NotFound>> PutAsync(
+    [Authorize]
+    public static async Task<Results<Ok<RecipeWithCuisineDto>, ValidationProblem, NotFound, ForbidHttpResult>> PutAsync(
         [AsParameters] Services services,
+        ClaimsPrincipal user,
         long id,
         RecipeCreateOrUpdateDto dto)
     {
@@ -218,6 +272,13 @@ public static class RecipesApi
             return TypedResults.NotFound();
         }
 
+        var authResult = await services.AuthorizationService.AuthorizeAsync(user, recipe, Operations.Update);
+
+        if (!authResult.Succeeded)
+        {
+            return TypedResults.Forbid();
+        }
+
         services.Context.Entry(recipe).CurrentValues.SetValues(dto);
 
         recipe.Instructions ??= new MarkdownData();
@@ -231,6 +292,7 @@ public static class RecipesApi
         return TypedResults.Ok(new RecipeWithCuisineDto
         {
             Id = recipe.Id,
+            OwnerId = recipe.OwnerId,
             Name = recipe.Name,
             Cuisine = recipe.Cuisine == null
                 ? null
@@ -247,8 +309,10 @@ public static class RecipesApi
         });
     }
 
-    public static async Task<Results<NoContent, NotFound>> DeleteAsync(
+    [Authorize]
+    public static async Task<Results<NoContent, NotFound, ForbidHttpResult>> DeleteAsync(
         [AsParameters] Services services,
+        ClaimsPrincipal user,
         long id)
     {
         var recipe = await services.Context.Recipes
@@ -259,6 +323,13 @@ public static class RecipesApi
             return TypedResults.NotFound();
         }
 
+        var authResult = await services.AuthorizationService.AuthorizeAsync(user, recipe, Operations.Delete);
+
+        if (!authResult.Succeeded)
+        {
+            return TypedResults.Forbid();
+        }
+
         services.Context.Recipes.Remove(recipe);
         await services.Context.SaveChangesAsync();
 
@@ -267,10 +338,16 @@ public static class RecipesApi
 
     public class Services(
         ApplicationDbContext context,
-        IdGenerator idGenerator)
+        IdGenerator idGenerator,
+        IAuthorizationService authorizationService,
+        UserManager<IdentityUser> userManager)
     {
         public ApplicationDbContext Context { get; set; } = context;
 
         public IdGenerator IdGenerator { get; } = idGenerator;
+
+        public IAuthorizationService AuthorizationService { get; } = authorizationService;
+
+        public UserManager<IdentityUser> UserManager { get; } = userManager;
     }
 }

@@ -3,6 +3,7 @@ using System;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240130001918_AddIdentity")]
+    partial class AddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
@@ -43,7 +46,7 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
                     b.Property<string>("CoverImage")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CoverImageAltText")
+                    b.Property<string>("CoverImagePrompt")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")

@@ -1,17 +1,25 @@
-﻿using IdGen;
+﻿using System.Security.Claims;
+using IdGen;
+using IdGen.DependencyInjection;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
+using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using JonathanPotts.RecipeCatalog.WebApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Tests.Apis;
 
 public sealed class RecipesApiUnitTests : IDisposable
 {
+    private readonly ClaimsPrincipal _adminUser;
     private readonly SqliteConnection _connection;
     private readonly RecipesApi.Services _services;
+    private readonly ClaimsPrincipal _user;
 
     public RecipesApiUnitTests()
     {
@@ -25,14 +33,44 @@ public sealed class RecipesApiUnitTests : IDisposable
         ApplicationDbContext context = new(contextOptions);
         context.Database.EnsureCreated();
 
+        context.Users.AddRange(TestData.Users);
+        context.Roles.AddRange(TestData.Roles);
+        context.UserRoles.AddRange(TestData.UserRoles);
         context.Cuisines.AddRange(TestData.Cuisines);
         context.Recipes.AddRange(TestData.Recipes);
         context.SaveChanges();
 
-        var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        IdGenerator idGenerator = new(0, new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
+        ServiceCollection serviceCollection = new();
 
-        _services = new RecipesApi.Services(context, idGenerator);
+        serviceCollection.AddSingleton(context);
+
+        serviceCollection.AddAuthorization();
+        serviceCollection.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
+
+        serviceCollection.AddIdentityCore<IdentityUser>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        serviceCollection.AddIdGen(0, () => new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
+
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        var idGenerator = serviceProvider.GetRequiredService<IdGenerator>();
+        var authorizationService = serviceProvider.GetRequiredService<IAuthorizationService>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+        _services = new RecipesApi.Services(context, idGenerator, authorizationService, userManager);
+
+        _adminUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+        {
+            new(ClaimTypes.NameIdentifier, "73edf737-df51-4c06-ac6f-3ec6d79f1f12")
+        }, "Test"));
+
+        _user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+        {
+            new(ClaimTypes.NameIdentifier, "d7df5331-1c53-491f-8b71-91989846874f")
+        }, "Test"));
     }
 
     public void Dispose()
@@ -45,7 +83,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsRecipes()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, null, null, null);
+        var result = await RecipesApi.GetListAsync(_services, null, null, null, null);
 
         // Assert
         Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
@@ -59,7 +97,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsRecipesForValidTop()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, 3, null, null);
+        var result = await RecipesApi.GetListAsync(_services, 3, null, null, null);
 
         // Assert
         Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
@@ -73,7 +111,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsValidationProblemForInvalidTop()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, 0, null, null);
+        var result = await RecipesApi.GetListAsync(_services, 0, null, null, null);
 
         // Assert
         Assert.IsType<ValidationProblem>(result.Result);
@@ -83,7 +121,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsRecipesForLast()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, null, 6462258523668480, null);
+        var result = await RecipesApi.GetListAsync(_services, null, 6462258523668480, null, null);
 
         // Assert
         Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
@@ -101,7 +139,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetListAsyncReturnsRecipesForCuisineIds()
     {
         // Act
-        var result = await RecipesApi.GetListAsync(_services, null, null, [4]);
+        var result = await RecipesApi.GetListAsync(_services, null, null, [4], null);
 
         // Assert
         Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
@@ -178,7 +216,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         var currentId = _services.IdGenerator.CreateId();
 
         // Act
-        var result = await RecipesApi.PostAsync(_services, newRecipe);
+        var result = await RecipesApi.PostAsync(_services, _adminUser, newRecipe);
 
         // Assert
         Assert.IsType<Created<RecipeWithCuisineDto>>(result.Result);
@@ -214,7 +252,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void PostAsyncReturnsValidationProblemForInvalidModel()
     {
         // Act
-        var result = await RecipesApi.PostAsync(_services, new RecipeCreateOrUpdateDto());
+        var result = await RecipesApi.PostAsync(_services, _user, new RecipeCreateOrUpdateDto());
 
         // Assert
         Assert.IsType<ValidationProblem>(result.Result);
@@ -240,7 +278,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         var utcNow = DateTime.UtcNow;
 
         // Act
-        var result = await RecipesApi.PutAsync(_services, 6462416804118528, updatedRecipe);
+        var result = await RecipesApi.PutAsync(_services, _adminUser, 6462416804118528, updatedRecipe);
 
         // Assert
         Assert.IsType<Ok<RecipeWithCuisineDto>>(result.Result);
@@ -275,7 +313,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void PutAsyncReturnsValidationProblemForInvalidModel()
     {
         // Act
-        var result = await RecipesApi.PutAsync(_services, 6462416804118528, new RecipeCreateOrUpdateDto());
+        var result = await RecipesApi.PutAsync(_services, _adminUser, 6462416804118528, new RecipeCreateOrUpdateDto());
 
         // Assert
         Assert.IsType<ValidationProblem>(result.Result);
@@ -299,7 +337,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         };
 
         // Act
-        var result = await RecipesApi.PutAsync(_services, 123, updatedRecipe);
+        var result = await RecipesApi.PutAsync(_services, _adminUser, 123, updatedRecipe);
 
         // Assert
         Assert.IsType<NotFound>(result.Result);
@@ -309,7 +347,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void DeleteAsyncReturnsNoContentForValidId()
     {
         // Act
-        var result = await RecipesApi.DeleteAsync(_services, 6461870173061120);
+        var result = await RecipesApi.DeleteAsync(_services, _adminUser, 6461870173061120);
 
         // Assert
         Assert.IsType<NoContent>(result.Result);
@@ -319,7 +357,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void DeleteAsyncReturnsNotFoundForInvalidId()
     {
         // Act
-        var result = await RecipesApi.DeleteAsync(_services, 123);
+        var result = await RecipesApi.DeleteAsync(_services, _adminUser, 123);
 
         // Assert
         Assert.IsType<NotFound>(result.Result);

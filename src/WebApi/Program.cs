@@ -1,18 +1,30 @@
 using IdGen;
 using IdGen.DependencyInjection;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
+using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddProblemDetails();
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite($"Data Source={Path.Combine(AppContext.BaseDirectory, $"{nameof(ApplicationDbContext)}.db")}"));
 
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<IAuthorizationHandler, CuisineAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddScoped<DbMigrator>();
+
+builder.Services.AddProblemDetails();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -28,16 +40,20 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
-    app.UseMigrationsEndPoint();
-
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
+app.MapGroup("/api/v1/identity").WithTags("Identity").MapIdentityApi<IdentityUser>();
+
 app.MapCuisinesApi();
 app.MapRecipesApi();
+
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<DbMigrator>().Migrate();
+}
 
 app.Run();
