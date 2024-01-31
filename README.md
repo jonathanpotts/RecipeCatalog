@@ -2,7 +2,7 @@
 
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeCatalog/dotnet.yml)](https://github.com/jonathanpotts/RecipeCatalog/actions/workflows/dotnet.yml)
 
-RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a web catalog for recipes with generative AI capabilities.
+RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a Web catalog for recipes with generative AI capabilities.
 
 ## Projects
 
@@ -20,7 +20,7 @@ RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a 
 
 ### WebApi
 
-[WebApi](src/WebApi/) is a web API that provides CRUD operations for managing recipes. Technologies used:
+[WebApi](src/WebApi/) is a REST Web API that provides CRUD operations for managing recipes. Technologies used:
 
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
     - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)

@@ -1,6 +1,6 @@
 # WebAPI
 
-WebApi is a web API that provides CRUD operations for managing recipes. Technologies used:
+WebApi is a REST Web API that provides CRUD operations for managing recipes. Technologies used:
 
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
     - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
