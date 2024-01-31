@@ -98,7 +98,7 @@ public static class TestData
         new Recipe
         {
             Id = 6462160192405504,
-            OwnerId = "73edf737-df51-4c06-ac6f-3ec6d79f1f12",
+            OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
             Name = "Test Recipe 2",
             CuisineId = 1,
             Description = "This is a test.",
@@ -136,7 +136,7 @@ public static class TestData
         new Recipe
         {
             Id = 6462318867120128,
-            OwnerId = "73edf737-df51-4c06-ac6f-3ec6d79f1f12",
+            OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
             Name = "Test Recipe 4",
             CuisineId = 4,
             Description = "This is a test.",

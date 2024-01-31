@@ -2,11 +2,12 @@
 
 WebApi is a web API that provides CRUD operations for managing recipes. Technologies used:
 
-- [ASP.NET Core minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
+- [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
+    - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
+    - [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
+    - [Resource-based Authorization](https://learn.microsoft.com/aspnet/core/security/authorization/resourcebased)
 - [Entity Framework Core](https://learn.microsoft.com/ef/core/)
     - [SQLite](https://www.sqlite.org/)
-- [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
-    - [Resource-based Authorization](https://learn.microsoft.com/aspnet/core/security/authorization/resourcebased)
 - Markdown ([Markdig](https://github.com/xoofx/markdig))
 - Snowflake IDs ([IdGen](https://github.com/RobThree/IdGen))
 

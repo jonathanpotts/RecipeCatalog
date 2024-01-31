@@ -155,7 +155,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetAsyncReturnsRecipeForValidId()
     {
         // Act
-        var result = await RecipesApi.GetAsync(_services, 6462160192405504);
+        var result = await RecipesApi.GetAsync(_services, 6462258523668480);
 
         // Assert
         Assert.IsType<Ok<RecipeWithCuisineDto>>(result.Result);
@@ -163,8 +163,9 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.NotNull(okResult.Value);
 
         Assert.Multiple(
-            () => Assert.Equal(6462160192405504, okResult.Value.Id),
-            () => Assert.Equal("Test Recipe 2", okResult.Value.Name),
+            () => Assert.Equal(6462258523668480, okResult.Value.Id),
+            () => Assert.Equal("73edf737-df51-4c06-ac6f-3ec6d79f1f12", okResult.Value.OwnerId),
+            () => Assert.Equal("Test Recipe 3", okResult.Value.Name),
             () =>
             {
                 Assert.NotNull(okResult.Value.Cuisine);
@@ -172,7 +173,7 @@ public sealed class RecipesApiUnitTests : IDisposable
                 Assert.Equal("Test", okResult.Value.Cuisine.Name);
             },
             () => Assert.Equal("This is a test.", okResult.Value.Description),
-            () => Assert.Equal(new DateTime(638412046990521543, DateTimeKind.Utc), okResult.Value.Created),
+            () => Assert.Equal(new DateTime(638412047224957774, DateTimeKind.Utc), okResult.Value.Created),
             () => Assert.Null(okResult.Value.Modified),
             () =>
             {
@@ -227,6 +228,7 @@ public sealed class RecipesApiUnitTests : IDisposable
 
         Assert.Multiple(
             () => Assert.True(currentId < createdResult.Value.Id),
+            () => Assert.Equal(_services.UserManager.GetUserId(_adminUser), createdResult.Value.OwnerId),
             () => Assert.Equal(newRecipe.Name, createdResult.Value.Name),
             () =>
             {
@@ -259,6 +261,30 @@ public sealed class RecipesApiUnitTests : IDisposable
     }
 
     [Fact]
+    public async void PostAsyncReturnsForbidForAnonymousUser()
+    {
+        // Arrange
+        RecipeCreateOrUpdateDto newRecipe = new()
+        {
+            Name = "New Recipe",
+            CuisineId = 2,
+            Description = "This is a new recipe.",
+            Ingredients =
+            [
+                "1 lb of new ingredient 1",
+                "3 oz of new ingredient 2"
+            ],
+            Instructions = "This is new."
+        };
+
+        // Act
+        var result = await RecipesApi.PostAsync(_services, new ClaimsPrincipal(), newRecipe);
+
+        // Assert
+        Assert.IsType<ForbidHttpResult>(result.Result);
+    }
+
+    [Fact]
     public async void PutAsyncReturnsArticleForValidModel()
     {
         // Arrange
@@ -287,6 +313,7 @@ public sealed class RecipesApiUnitTests : IDisposable
 
         Assert.Multiple(
             () => Assert.Equal(6462416804118528, okResult.Value.Id),
+            () => Assert.Equal("73edf737-df51-4c06-ac6f-3ec6d79f1f12", okResult.Value.OwnerId),
             () => Assert.Equal(updatedRecipe.Name, okResult.Value.Name),
             () =>
             {
@@ -344,6 +371,82 @@ public sealed class RecipesApiUnitTests : IDisposable
     }
 
     [Fact]
+    public async void PutAsyncReturnsArticleForNonOwnerAdministratorUser()
+    {
+        // Arrange
+        RecipeCreateOrUpdateDto updatedRecipe = new()
+        {
+            Name = "Updated Recipe",
+            CuisineId = 3,
+            Description = "This is an updated recipe.",
+            Ingredients =
+            [
+                "2 tbsp of updated ingredient 1",
+                "3 updated ingredient 2"
+            ],
+            Instructions = "This is updated."
+        };
+
+        var utcNow = DateTime.UtcNow;
+
+        // Act
+        var result = await RecipesApi.PutAsync(_services, _adminUser, 6462160192405504, updatedRecipe);
+
+        // Assert
+        Assert.IsType<Ok<RecipeWithCuisineDto>>(result.Result);
+        var okResult = (Ok<RecipeWithCuisineDto>)result.Result;
+        Assert.NotNull(okResult.Value);
+
+        Assert.Multiple(
+            () => Assert.Equal(6462160192405504, okResult.Value.Id),
+            () => Assert.Equal("d7df5331-1c53-491f-8b71-91989846874f", okResult.Value.OwnerId),
+            () => Assert.Equal(updatedRecipe.Name, okResult.Value.Name),
+            () =>
+            {
+                Assert.NotNull(okResult.Value.Cuisine);
+                Assert.Equal(3, okResult.Value.Cuisine.Id);
+                Assert.Equal("Updated", okResult.Value.Cuisine.Name);
+            },
+            () => Assert.Equal(updatedRecipe.Description, okResult.Value.Description),
+            () => Assert.Equal(new DateTime(638412046990521543, DateTimeKind.Utc), okResult.Value.Created),
+            () => Assert.NotNull(okResult.Value.Modified),
+            () => Assert.True(utcNow < okResult.Value.Modified),
+            () =>
+            {
+                Assert.NotNull(okResult.Value.Ingredients);
+                Assert.Collection(okResult.Value.Ingredients,
+                    x => Assert.Equal("2 tbsp of updated ingredient 1", x),
+                    x => Assert.Equal("3 updated ingredient 2", x));
+            },
+            () => Assert.Equal(updatedRecipe.Instructions, okResult.Value.Instructions?.Markdown),
+            () => Assert.Equal("<p>This is updated.</p>\n", okResult.Value.Instructions?.Html));
+    }
+
+    [Fact]
+    public async void PutAsyncReturnsForbidForNonOwnerNonAdministratorUser()
+    {
+        // Arrange
+        RecipeCreateOrUpdateDto updatedRecipe = new()
+        {
+            Name = "Updated Recipe",
+            CuisineId = 3,
+            Description = "This is an updated recipe.",
+            Ingredients =
+            [
+                "2 tbsp of updated ingredient 1",
+                "3 updated ingredient 2"
+            ],
+            Instructions = "This is updated."
+        };
+
+        // Act
+        var result = await RecipesApi.PutAsync(_services, _user, 6462416804118528, updatedRecipe);
+
+        // Assert
+        Assert.IsType<ForbidHttpResult>(result.Result);
+    }
+
+    [Fact]
     public async void DeleteAsyncReturnsNoContentForValidId()
     {
         // Act
@@ -361,5 +464,25 @@ public sealed class RecipesApiUnitTests : IDisposable
 
         // Assert
         Assert.IsType<NotFound>(result.Result);
+    }
+
+    [Fact]
+    public async void DeleteAsyncReturnsNoContentForNonOwnerAdministratorUser()
+    {
+        // Act
+        var result = await RecipesApi.DeleteAsync(_services, _adminUser, 6462318867120128);
+
+        // Assert
+        Assert.IsType<NoContent>(result.Result);
+    }
+
+    [Fact]
+    public async void DeleteAsyncReturnsForbidForNonOwnerNonAdministratorUser()
+    {
+        // Act
+        var result = await RecipesApi.DeleteAsync(_services, _user, 6462416804118528);
+
+        // Assert
+        Assert.IsType<ForbidHttpResult>(result.Result);
     }
 }

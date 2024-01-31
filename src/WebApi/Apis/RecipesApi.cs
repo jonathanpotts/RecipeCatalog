@@ -219,6 +219,7 @@ public static class RecipesApi
         return TypedResults.Created($"/api/v1/recipes/{recipe.Id}", new RecipeWithCuisineDto
         {
             Id = recipe.Id,
+            OwnerId = recipe.OwnerId,
             Name = recipe.Name,
             Cuisine = recipe.Cuisine == null
                 ? null

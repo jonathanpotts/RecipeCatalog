@@ -10,7 +10,8 @@ RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a 
 
 [AIDataGenerator](src/AIDataGenerator/) is a console app that uses generative AI to generate sample data for the catalog. Technologies used:
 
-- [.NET generic host](https://learn.microsoft.com/dotnet/core/extensions/generic-host)
+- [.NET](https://dotnet.microsoft.com/)
+    - [Generic Host](https://learn.microsoft.com/dotnet/core/extensions/generic-host)
 - [OpenAI](https://openai.com/) / [Azure OpenAI Service](https://azure.microsoft.com/products/ai-services/openai-service/) ([Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net))
     - [Chat Completions](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in [JSON Mode](https://platform.openai.com/docs/guides/text-generation/json-mode): [Updated GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) / [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo)
     - [Image Generation](https://platform.openai.com/docs/guides/images): [DALL-E 2 / DALL-E 3](https://platform.openai.com/docs/models/dall-e)
@@ -21,16 +22,19 @@ RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a 
 
 [WebApi](src/WebApi/) is a web API that provides CRUD operations for managing recipes. Technologies used:
 
-- [ASP.NET Core minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
+- [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
+    - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
+    - [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
+    - [Resource-based Authorization](https://learn.microsoft.com/aspnet/core/security/authorization/resourcebased)
 - [Entity Framework Core](https://learn.microsoft.com/ef/core/)
     - [SQLite](https://www.sqlite.org/)
-- [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
-    - [Resource-based Authorization](https://learn.microsoft.com/aspnet/core/security/authorization/resourcebased)
 - Markdown ([Markdig](https://github.com/xoofx/markdig))
 - Snowflake IDs ([IdGen](https://github.com/RobThree/IdGen))
 
-### WebApi.Tests
+### Tests
 
-[WebApi.Tests](tests/WebApi.Tests/) is a suite of unit tests for the WebApi project. Technologies used:
+#### WebApi.Tests
+
+[WebApi.Tests](tests/WebApi.Tests/) is a project containing tests for the [WebApi](src/WebApi/) project. Technologies used:
 
 - [xUnit](https://xunit.net/)
