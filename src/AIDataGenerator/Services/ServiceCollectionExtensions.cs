@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAITextGenerator(this IServiceCollection services,
         IConfiguration namedConfigurationSection)
     {
-        if (namedConfigurationSection.GetValue<bool>("UseAzureOpenAI"))
+        if (!string.IsNullOrWhiteSpace(namedConfigurationSection.GetValue<string>("Endpoint")))
         {
             services.AddAzureOpenAITextGenerator(namedConfigurationSection);
         }
@@ -23,9 +23,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddAIImageGenerator(this IServiceCollection services,
         IConfiguration namedConfigurationSection)
     {
-        if (namedConfigurationSection.GetValue<bool>("UseAzureOpenAI"))
+        if (!string.IsNullOrWhiteSpace(namedConfigurationSection.GetValue<string>("Endpoint")))
         {
-            if (namedConfigurationSection.GetValue<bool>("UseDallE3"))
+            if (!string.IsNullOrWhiteSpace(namedConfigurationSection.GetValue<string>("DeploymentName")))
             {
                 services.AddAzureOpenAIImageGenerator(namedConfigurationSection);
             }

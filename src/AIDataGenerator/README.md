@@ -17,15 +17,12 @@ Configuration can be provided in appsettings.json, user secrets, environment var
 The following configuration options are available:
 
 - AITextGenerator
-    - UseAzureOpenAI - Set to true if using Azure OpenAI Service
     - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
     - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
     - ChatCompletionsDeploymentName
         - OpenAI - Chat Completions model (defaults to gpt-3.5-turbo-0125); supports gpt-3.5-turbo-0125 or gpt-4-turbo-preview
         - Azure OpenAI Service - **(Required)** Deployment name for Chat Completions model; supports gpt-35-turbo (1106) or gpt-4 (1106-preview)
 - AIImageGenerator
-    - UseAzureOpenAI - Set to true if using Azure OpenAI Service
-    - UseDallE3 - Only used with Azure OpenAI Service; set to true if using DALL-E 3
     - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
     - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
     - DeploymentName
