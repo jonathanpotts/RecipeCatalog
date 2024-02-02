@@ -32,7 +32,7 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Cuisines");
+                    b.ToTable("Cuisines", (string)null);
                 });
 
             modelBuilder.Entity("JonathanPotts.RecipeCatalog.WebApi.Models.Recipe", b =>
@@ -70,7 +70,7 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Recipes");
+                    b.ToTable("Recipes", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -279,7 +279,7 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("JonathanPotts.RecipeCatalog.WebApi.Models.ImageData", "CoverImage", b1 =>
+                    b.OwnsOne("JonathanPotts.RecipeCatalog.WebApi.Models.Recipe.CoverImage#JonathanPotts.RecipeCatalog.WebApi.Models.ImageData", "CoverImage", b1 =>
                         {
                             b1.Property<long>("RecipeId")
                                 .HasColumnType("INTEGER");
@@ -293,13 +293,13 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
 
                             b1.HasKey("RecipeId");
 
-                            b1.ToTable("Recipes");
+                            b1.ToTable("Recipes", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("RecipeId");
                         });
 
-                    b.OwnsOne("JonathanPotts.RecipeCatalog.WebApi.Models.MarkdownData", "Instructions", b1 =>
+                    b.OwnsOne("JonathanPotts.RecipeCatalog.WebApi.Models.Recipe.Instructions#JonathanPotts.RecipeCatalog.WebApi.Models.MarkdownData", "Instructions", b1 =>
                         {
                             b1.Property<long>("RecipeId")
                                 .HasColumnType("INTEGER");
@@ -314,7 +314,7 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
 
                             b1.HasKey("RecipeId");
 
-                            b1.ToTable("Recipes");
+                            b1.ToTable("Recipes", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("RecipeId");

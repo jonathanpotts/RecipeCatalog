@@ -1,8 +1,10 @@
+using FluentValidation;
 using IdGen;
 using IdGen.DependencyInjection;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
 using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,11 +26,15 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 
 builder.Services.AddScoped<DbMigrator>();
 
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 builder.Services.AddProblemDetails();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddFluentValidationRulesToSwagger();
 
 // Add IdGen for creating Snowflake IDs
 var generatorId = builder.Configuration.GetValue("GeneratorId", 0);

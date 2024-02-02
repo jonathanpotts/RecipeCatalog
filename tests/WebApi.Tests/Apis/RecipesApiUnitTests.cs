@@ -326,16 +326,6 @@ public sealed class RecipesApiUnitTests : IDisposable
     }
 
     [Fact]
-    public async void PostAsyncReturnsValidationProblemForInvalidModel()
-    {
-        // Act
-        var result = await RecipesApi.PostAsync(_services, _user, new RecipeCreateOrUpdateDto());
-
-        // Assert
-        Assert.IsType<ValidationProblem>(result.Result);
-    }
-
-    [Fact]
     public async void PostAsyncReturnsForbidForAnonymousUser()
     {
         // Arrange
@@ -409,16 +399,6 @@ public sealed class RecipesApiUnitTests : IDisposable
             },
             () => Assert.Equal(updatedRecipe.Instructions, okResult.Value.Instructions?.Markdown),
             () => Assert.Equal("<p>This is updated.</p>\n", okResult.Value.Instructions?.Html));
-    }
-
-    [Fact]
-    public async void PutAsyncReturnsValidationProblemForInvalidModel()
-    {
-        // Act
-        var result = await RecipesApi.PutAsync(_services, _adminUser, 6462416804118528, new RecipeCreateOrUpdateDto());
-
-        // Assert
-        Assert.IsType<ValidationProblem>(result.Result);
     }
 
     [Fact]

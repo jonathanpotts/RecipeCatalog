@@ -5,6 +5,7 @@ using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
 
@@ -13,6 +14,7 @@ public static class CuisinesApi
     public static IEndpointRouteBuilder MapCuisinesApi(this IEndpointRouteBuilder builder)
     {
         var group = builder.MapGroup("/api/v1/cuisines")
+            .AddFluentValidationAutoValidation()
             .WithTags("Cuisines");
 
         group.MapGet("/", GetListAsync);
@@ -61,23 +63,11 @@ public static class CuisinesApi
     }
 
     [Authorize]
-    public static async Task<Results<Created<CuisineDto>, ValidationProblem, ForbidHttpResult>> PostAsync(
+    public static async Task<Results<Created<CuisineDto>, ForbidHttpResult>> PostAsync(
         [AsParameters] Services services,
         ClaimsPrincipal user,
         CuisineDto dto)
     {
-        Dictionary<string, string[]> errors = [];
-
-        if (string.IsNullOrWhiteSpace(dto.Name))
-        {
-            errors.Add(nameof(dto.Name), ["Value is required."]);
-        }
-
-        if (errors.Count != 0)
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
         Cuisine cuisine = new()
         {
             Name = dto.Name
@@ -101,24 +91,12 @@ public static class CuisinesApi
     }
 
     [Authorize]
-    public static async Task<Results<Ok<CuisineDto>, ValidationProblem, NotFound, ForbidHttpResult>> PutAsync(
+    public static async Task<Results<Ok<CuisineDto>, NotFound, ForbidHttpResult>> PutAsync(
         [AsParameters] Services services,
         ClaimsPrincipal user,
         int id,
         CuisineDto dto)
     {
-        Dictionary<string, string[]> errors = [];
-
-        if (string.IsNullOrWhiteSpace(dto.Name))
-        {
-            errors.Add(nameof(dto.Name), ["Value is required."]);
-        }
-
-        if (errors.Count != 0)
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
         var cuisine = await services.Context.Cuisines
             .FirstOrDefaultAsync(x => x.Id == id);
 

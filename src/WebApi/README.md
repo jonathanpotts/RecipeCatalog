@@ -9,6 +9,7 @@ WebApi is a REST Web API that provides CRUD operations for managing recipes. Tec
 - [Entity Framework Core](https://learn.microsoft.com/ef/core/)
     - [Migrations](https://learn.microsoft.com/ef/core/managing-schemas/migrations/)
     - [SQLite](https://www.sqlite.org/)
+- [FluentValidation](https://github.com/FluentValidation/FluentValidation)
 - Markdown ([Markdig](https://github.com/xoofx/markdig))
 - Snowflake IDs ([IdGen](https://github.com/RobThree/IdGen))
 

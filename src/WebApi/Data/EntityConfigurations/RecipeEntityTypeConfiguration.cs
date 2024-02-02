@@ -17,17 +17,45 @@ public class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Recipe>
             x => x != null ? utcConverter.ConvertToProviderTyped(x.Value) : null,
             x => x != null ? utcConverter.ConvertFromProviderTyped(x.Value) : null);
 
-        builder.OwnsOne(x => x.CoverImage);
+        builder.OwnsOne(x => x.CoverImage, ownedBuilder =>
+        {
+            ownedBuilder.Property(x => x.Url)
+                .IsRequired();
+        });
 
-        builder.OwnsOne(x => x.Instructions);
+        builder.OwnsOne(x => x.Instructions, ownedBuilder =>
+        {
+            ownedBuilder.Property(x => x.Markdown)
+                .IsRequired();
+
+            ownedBuilder.Property(x => x.Html)
+                .IsRequired();
+        });
+
+        builder.Navigation(x => x.Instructions)
+            .IsRequired();
+
+        builder.HasOne(x => x.Owner).WithMany()
+            .HasForeignKey(x => x.OwnerId)
+            .IsRequired();
+
+        builder.HasOne(x => x.Cuisine).WithMany(x => x.Recipes)
+            .HasForeignKey(x => x.CuisineId)
+            .IsRequired();
 
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
+
+        builder.Property(x => x.Name)
+            .IsRequired();
 
         builder.Property(x => x.Created)
             .HasConversion(utcConverter);
 
         builder.Property(x => x.Modified)
             .HasConversion(nullableUtcConverter);
+
+        builder.Property(x => x.Ingredients)
+            .IsRequired();
     }
 }

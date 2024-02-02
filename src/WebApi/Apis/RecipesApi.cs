@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
 
@@ -27,6 +28,7 @@ public static class RecipesApi
     public static IEndpointRouteBuilder MapRecipesApi(this IEndpointRouteBuilder builder)
     {
         var group = builder.MapGroup("/api/v1/recipes")
+            .AddFluentValidationAutoValidation()
             .WithTags("Recipes");
 
         group.MapGet("/", GetListAsync);
@@ -48,12 +50,10 @@ public static class RecipesApi
     {
         if (top is < 1 or > MaxItemsPerPage)
         {
-            Dictionary<string, string[]> errors = new()
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]>
             {
                 { nameof(top), [$"Value must be between 1 and {MaxItemsPerPage}."] }
-            };
-
-            return TypedResults.ValidationProblem(errors);
+            });
         }
 
         IQueryable<Recipe> recipes = services.Context.Recipes;
@@ -163,33 +163,11 @@ public static class RecipesApi
     }
 
     [Authorize]
-    public static async Task<Results<Created<RecipeWithCuisineDto>, ValidationProblem, ForbidHttpResult>> PostAsync(
+    public static async Task<Results<Created<RecipeWithCuisineDto>, ForbidHttpResult>> PostAsync(
         [AsParameters] Services services,
         ClaimsPrincipal user,
         RecipeCreateOrUpdateDto dto)
     {
-        Dictionary<string, string[]> errors = [];
-
-        if (string.IsNullOrWhiteSpace(dto.Name))
-        {
-            errors.Add(nameof(dto.Name), ["Value is required."]);
-        }
-
-        if (dto.Ingredients?.Length == 0 || (dto.Ingredients?.Any(string.IsNullOrWhiteSpace) ?? false))
-        {
-            errors.Add(nameof(dto.Ingredients), ["Value is required."]);
-        }
-
-        if (string.IsNullOrWhiteSpace(dto.Instructions))
-        {
-            errors.Add(nameof(dto.Instructions), ["Value is required."]);
-        }
-
-        if (errors.Count != 0)
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
         Recipe recipe = new()
         {
             Id = services.IdGenerator.CreateId(),
@@ -237,34 +215,12 @@ public static class RecipesApi
     }
 
     [Authorize]
-    public static async Task<Results<Ok<RecipeWithCuisineDto>, ValidationProblem, NotFound, ForbidHttpResult>> PutAsync(
+    public static async Task<Results<Ok<RecipeWithCuisineDto>, NotFound, ForbidHttpResult>> PutAsync(
         [AsParameters] Services services,
         ClaimsPrincipal user,
         long id,
         RecipeCreateOrUpdateDto dto)
     {
-        Dictionary<string, string[]> errors = [];
-
-        if (string.IsNullOrWhiteSpace(dto.Name))
-        {
-            errors.Add(nameof(dto.Name), ["Value is required."]);
-        }
-
-        if (dto.Ingredients?.Length == 0 || (dto.Ingredients?.Any(string.IsNullOrWhiteSpace) ?? false))
-        {
-            errors.Add(nameof(dto.Ingredients), ["Value is required."]);
-        }
-
-        if (string.IsNullOrWhiteSpace(dto.Instructions))
-        {
-            errors.Add(nameof(dto.Instructions), ["Value is required."]);
-        }
-
-        if (errors.Count != 0)
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
         var recipe = await services.Context.Recipes
             .FirstOrDefaultAsync(x => x.Id == id);
 

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Models;
 
@@ -8,10 +7,8 @@ public class RecipeDto
     [JsonNumberHandling(JsonNumberHandling.WriteAsString | JsonNumberHandling.AllowReadingFromString)]
     public long Id { get; set; }
 
-    [Required]
     public string? OwnerId { get; set; }
 
-    [Required]
     public string? Name { get; set; }
 
     public ImageData? CoverImage { get; set; }

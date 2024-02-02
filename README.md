@@ -29,6 +29,7 @@ RecipeCatalog is a [.NET](https://dotnet.microsoft.com/) 8 project showcasing a 
 - [Entity Framework Core](https://learn.microsoft.com/ef/core/)
     - [Migrations](https://learn.microsoft.com/ef/core/managing-schemas/migrations/)
     - [SQLite](https://www.sqlite.org/)
+- [FluentValidation](https://github.com/FluentValidation/FluentValidation)
 - Markdown ([Markdig](https://github.com/xoofx/markdig))
 - Snowflake IDs ([IdGen](https://github.com/RobThree/IdGen))
 
