@@ -5,7 +5,7 @@ namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 
 public class OpenAIImageGenerator(IOptions<OpenAIImageGeneratorOptions> options) : BaseOpenAIImageGenerator
 {
-    private readonly string _deploymentName = options.Value.DeploymentName ?? "dall-e-2";
+    private readonly string _deploymentName = options.Value.DeploymentName ?? "dall-e-3";
     private readonly string? _quality = options.Value.Quality;
     private readonly string? _size = options.Value.Size;
     private readonly string? _style = options.Value.Style;

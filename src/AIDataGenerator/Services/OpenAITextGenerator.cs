@@ -6,10 +6,10 @@ namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 public class OpenAITextGenerator(IOptions<OpenAITextGeneratorOptions> options) : BaseOpenAITextGenerator
 {
     private readonly string _chatCompletionsDeploymentName =
-        options.Value.ChatCompletionsDeploymentName ?? "gpt-3.5-turbo-1106";
+        options.Value.ChatCompletionsDeploymentName ?? "gpt-3.5-turbo-0125";
 
     private readonly string _embeddingsDeploymentName =
-        options.Value.EmbeddingsDeploymentName ?? "text-embedding-ada-002";
+        options.Value.EmbeddingsDeploymentName ?? "text-embedding-3-small";
 
     protected override OpenAIClient Client { get; init; } = new(options.Value.ApiKey);
 

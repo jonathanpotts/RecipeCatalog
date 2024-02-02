@@ -21,7 +21,7 @@ The following configuration options are available:
     - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
     - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
     - ChatCompletionsDeploymentName
-        - OpenAI - Chat Completions model (defaults to gpt-3.5-turbo-1106); supports gpt-3.5-turbo-1106 or gpt-4-turbo-preview
+        - OpenAI - Chat Completions model (defaults to gpt-3.5-turbo-0125); supports gpt-3.5-turbo-0125 or gpt-4-turbo-preview
         - Azure OpenAI Service - **(Required)** Deployment name for Chat Completions model; supports gpt-35-turbo (1106) or gpt-4 (1106-preview)
 - AIImageGenerator
     - UseAzureOpenAI - Set to true if using Azure OpenAI Service
@@ -29,7 +29,7 @@ The following configuration options are available:
     - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
     - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
     - DeploymentName
-        - OpenAI - Image Generation model (defaults to dall-e-2); supports dall-e-2 or dall-e-3
+        - OpenAI - Image Generation model (defaults to dall-e-3); supports dall-e-2 or dall-e-3
         - Azure OpenAI Service - **(Required for DALL-E 3)** Deployment name for Image Generation model; supports dall-e-3
     - Size - Size of generated image (defaults to 1024x1024)
         - DALL-E 2 - Supports 256x256, 512x512, or 1024x1024
