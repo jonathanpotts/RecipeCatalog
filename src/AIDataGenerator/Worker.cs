@@ -29,21 +29,37 @@ internal class Worker(
     {
         AnsiConsole.Write(new FigletText(nameof(AIDataGenerator)).Color(Color.DodgerBlue1));
 
-        var grid = new Grid();
-        grid.AddColumns(2);
-        grid.AddRow("Chat Completions",
-            "[bold]:sparkles:Updated GPT-3.5 Turbo[/] [dim]gpt-3.5-turbo-1106[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4-turbo-preview[/]");
-        //grid.AddRow("Embeddings",
+        var openAIGrid = new Grid();
+        openAIGrid.AddColumns(2);
+        openAIGrid.AddRow("Chat Completions",
+            "[bold]:sparkles:Updated GPT-3.5 Turbo[/] [dim]gpt-3.5-turbo-0125[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4-turbo-preview[/]");
+        //openAIGrid.AddRow("Embeddings",
         //    "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
-        grid.AddRow("Image Generation",
+        openAIGrid.AddRow("Image Generation",
             "[bold]:sparkles:DALL-E 2[/] [dim]dall-e-2[/] / [bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
 
-        var panel = new Panel(grid)
+        var openAIPanel = new Panel(openAIGrid)
         {
             Header = new PanelHeader("[bold]Supported OpenAI Models[/]")
         };
 
-        AnsiConsole.Write(panel);
+        AnsiConsole.Write(openAIPanel);
+
+        var azureOpenAIGrid = new Grid();
+        azureOpenAIGrid.AddColumns(2);
+        azureOpenAIGrid.AddRow("Chat Completions",
+            "[bold]:sparkles:Updated GPT-3.5 Turbo[/] [dim]gpt-35-turbo (1106)[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4 (1106-preview)[/]");
+        //azureOpenAIGrid.AddRow("Embeddings",
+        //    "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002 (version 2)[/]");
+        azureOpenAIGrid.AddRow("Image Generation",
+            "[bold]:sparkles:DALL-E 2[/] [dim]dall-e-2[/] / [bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
+
+        var azureOpenAIPanel = new Panel(azureOpenAIGrid)
+        {
+            Header = new PanelHeader("[bold]Supported Azure OpenAI Service Models[/]")
+        };
+
+        AnsiConsole.Write(azureOpenAIPanel);
 
         var recipeList = await GenerateRecipeListAsync(stoppingToken);
 
