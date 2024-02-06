@@ -114,7 +114,7 @@ internal class Worker(
             {
                 var recipeListTask = ctx.AddTask("Recipe list");
 
-                recipeList = await textGenerator.GenerateDataFromChatCompletions(
+                recipeList = await textGenerator.GenerateDataFromChatCompletionsAsync(
                     new GeneratedRecipeList
                     {
                         Cuisines =
@@ -166,7 +166,7 @@ internal class Worker(
 
                             try
                             {
-                                var generatedRecipe = await textGenerator.GenerateDataFromChatCompletions(
+                                var generatedRecipe = await textGenerator.GenerateDataFromChatCompletionsAsync(
                                     new GeneratedRecipe
                                     {
                                         CoverImagePrompt =

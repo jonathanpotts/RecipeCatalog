@@ -13,10 +13,10 @@ public class OpenAITextGenerator(IOptions<OpenAITextGeneratorOptions> options) :
 
     protected override OpenAIClient Client { get; init; } = new(options.Value.ApiKey);
 
-    public override Task<T?> GenerateDataFromChatCompletions<T>(T exampleData, string systemMessage, string prompt,
+    public override Task<T?> GenerateDataFromChatCompletionsAsync<T>(T exampleData, string systemMessage, string prompt,
         CancellationToken cancellationToken = default) where T : default
     {
-        return GenerateDataFromChatCompletions(_chatCompletionsDeploymentName, exampleData, systemMessage, prompt,
+        return GenerateDataFromChatCompletionsAsync(_chatCompletionsDeploymentName, exampleData, systemMessage, prompt,
             cancellationToken);
     }
 

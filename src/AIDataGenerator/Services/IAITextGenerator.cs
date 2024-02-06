@@ -2,7 +2,7 @@
 
 public interface IAITextGenerator
 {
-    public Task<T?> GenerateDataFromChatCompletions<T>(T exampleData, string systemMessage, string prompt,
+    public Task<T?> GenerateDataFromChatCompletionsAsync<T>(T exampleData, string systemMessage, string prompt,
         CancellationToken cancellationToken = default);
 
     public Task<ReadOnlyMemory<float>> GenerateEmbeddingsAsync(string input,

@@ -7,13 +7,13 @@ public abstract class BaseOpenAITextGenerator : IAITextGenerator
 {
     protected abstract OpenAIClient Client { get; init; }
 
-    public abstract Task<T?> GenerateDataFromChatCompletions<T>(T exampleData, string systemMessage, string prompt,
+    public abstract Task<T?> GenerateDataFromChatCompletionsAsync<T>(T exampleData, string systemMessage, string prompt,
         CancellationToken cancellationToken = default);
 
     public abstract Task<ReadOnlyMemory<float>> GenerateEmbeddingsAsync(string input,
         CancellationToken cancellationToken = default);
 
-    protected async Task<T?> GenerateDataFromChatCompletions<T>(string deploymentName, T exampleData,
+    protected async Task<T?> GenerateDataFromChatCompletionsAsync<T>(string deploymentName, T exampleData,
         string systemMessage, string prompt, CancellationToken cancellationToken = default)
     {
         var json = JsonSerializer.Serialize(exampleData);
