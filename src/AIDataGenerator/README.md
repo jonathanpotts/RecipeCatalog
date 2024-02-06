@@ -1,5 +1,7 @@
 # AIDataGenerator
 
+![Screenshot](screenshot.png)
+
 AIDataGenerator is a console app that uses generative AI to generate sample data for the catalog. Technologies used:
 
 - [.NET](https://dotnet.microsoft.com/)
