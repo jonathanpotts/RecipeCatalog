@@ -36,6 +36,8 @@ builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.EnableAnnotations();
+
     c.AddSecurityDefinition("Identity", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,

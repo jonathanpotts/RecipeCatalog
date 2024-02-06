@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
 
@@ -144,6 +145,7 @@ public static class RecipesApi
         });
     }
 
+    [SwaggerResponse(200, contentTypes: "image/webp")]
     public static async Task<Results<PhysicalFileHttpResult, NotFound>> GetCoverImageAsync(
         [AsParameters] Services services,
         long id)
