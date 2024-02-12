@@ -8,7 +8,7 @@ using System;
 
 #nullable disable
 
-namespace BlazorApp.Migrations
+namespace JonathanPotts.RecipeCatalog.BlazorApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace BlazorApp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BlazorApp.Data.ApplicationUser", b =>
+            modelBuilder.Entity("JonathanPotts.RecipeCatalog.BlazorApp.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -231,7 +231,7 @@ namespace BlazorApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("BlazorApp.Data.ApplicationUser", null)
+                    b.HasOne("JonathanPotts.RecipeCatalog.BlazorApp.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -240,7 +240,7 @@ namespace BlazorApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("BlazorApp.Data.ApplicationUser", null)
+                    b.HasOne("JonathanPotts.RecipeCatalog.BlazorApp.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -255,7 +255,7 @@ namespace BlazorApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BlazorApp.Data.ApplicationUser", null)
+                    b.HasOne("JonathanPotts.RecipeCatalog.BlazorApp.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -264,7 +264,7 @@ namespace BlazorApp.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("BlazorApp.Data.ApplicationUser", null)
+                    b.HasOne("JonathanPotts.RecipeCatalog.BlazorApp.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

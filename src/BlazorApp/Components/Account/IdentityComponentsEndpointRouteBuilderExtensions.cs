@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Text.Json;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account.Pages;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account.Pages.Manage;
 using JonathanPotts.RecipeCatalog.BlazorApp.Data;
@@ -9,107 +7,107 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using System.Security.Claims;
+using System.Text.Json;
 
-namespace JonathanPotts.RecipeCatalog.BlazorApp.Components.Account;
-
-internal static class IdentityComponentsEndpointRouteBuilderExtensions
+namespace Microsoft.AspNetCore.Routing
 {
-    // These endpoints are required by the Identity Razor components defined in the /Components/Account/Pages directory of this project.
-    public static IEndpointConventionBuilder MapAdditionalIdentityEndpoints(this IEndpointRouteBuilder endpoints)
+    internal static class IdentityComponentsEndpointRouteBuilderExtensions
     {
-        ArgumentNullException.ThrowIfNull(endpoints);
-
-        var accountGroup = endpoints.MapGroup("/Account");
-
-        accountGroup.MapPost("/PerformExternalLogin", (
-            HttpContext context,
-            [FromServices] SignInManager<ApplicationUser> signInManager,
-            [FromForm] string provider,
-            [FromForm] string returnUrl) =>
+        // These endpoints are required by the Identity Razor components defined in the /Components/Account/Pages directory of this project.
+        public static IEndpointConventionBuilder MapAdditionalIdentityEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            IEnumerable<KeyValuePair<string, StringValues>> query =
-            [
-                new KeyValuePair<string, StringValues>("ReturnUrl", returnUrl),
-                new KeyValuePair<string, StringValues>("Action", ExternalLogin.LoginCallbackAction)
-            ];
+            ArgumentNullException.ThrowIfNull(endpoints);
 
-            var redirectUrl = UriHelper.BuildRelative(
-                context.Request.PathBase,
-                "/Account/ExternalLogin",
-                QueryString.Create(query));
+            var accountGroup = endpoints.MapGroup("/Account");
 
-            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return TypedResults.Challenge(properties, [provider]);
-        });
-
-        accountGroup.MapPost("/Logout", async (
-            ClaimsPrincipal user,
-            SignInManager<ApplicationUser> signInManager,
-            [FromForm] string returnUrl) =>
-        {
-            await signInManager.SignOutAsync();
-            return TypedResults.LocalRedirect($"~/{returnUrl}");
-        });
-
-        var manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
-
-        manageGroup.MapPost("/LinkExternalLogin", async (
-            HttpContext context,
-            [FromServices] SignInManager<ApplicationUser> signInManager,
-            [FromForm] string provider) =>
-        {
-            // Clear the existing external cookie to ensure a clean login process
-            await context.SignOutAsync(IdentityConstants.ExternalScheme);
-
-            var redirectUrl = UriHelper.BuildRelative(
-                context.Request.PathBase,
-                "/Account/Manage/ExternalLogins",
-                QueryString.Create("Action", ExternalLogins.LinkLoginCallbackAction));
-
-            var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl,
-                signInManager.UserManager.GetUserId(context.User));
-            return TypedResults.Challenge(properties, [provider]);
-        });
-
-        var loggerFactory = endpoints.ServiceProvider.GetRequiredService<ILoggerFactory>();
-        var downloadLogger = loggerFactory.CreateLogger("DownloadPersonalData");
-
-        manageGroup.MapPost("/DownloadPersonalData", async (
-            HttpContext context,
-            [FromServices] UserManager<ApplicationUser> userManager,
-            [FromServices] AuthenticationStateProvider authenticationStateProvider) =>
-        {
-            var user = await userManager.GetUserAsync(context.User);
-            if (user is null)
+            accountGroup.MapPost("/PerformExternalLogin", (
+                HttpContext context,
+                [FromServices] SignInManager<ApplicationUser> signInManager,
+                [FromForm] string provider,
+                [FromForm] string returnUrl) =>
             {
-                return Results.NotFound($"Unable to load user with ID '{userManager.GetUserId(context.User)}'.");
-            }
+                IEnumerable<KeyValuePair<string, StringValues>> query = [
+                    new("ReturnUrl", returnUrl),
+                    new("Action", ExternalLogin.LoginCallbackAction)];
 
-            var userId = await userManager.GetUserIdAsync(user);
-            downloadLogger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
+                var redirectUrl = UriHelper.BuildRelative(
+                    context.Request.PathBase,
+                    "/Account/ExternalLogin",
+                    QueryString.Create(query));
 
-            // Only include personal data for download
-            var personalData = new Dictionary<string, string>();
-            var personalDataProps = typeof(ApplicationUser).GetProperties().Where(
-                prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
-            foreach (var p in personalDataProps)
+                var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+                return TypedResults.Challenge(properties, [provider]);
+            });
+
+            accountGroup.MapPost("/Logout", async (
+                ClaimsPrincipal user,
+                SignInManager<ApplicationUser> signInManager,
+                [FromForm] string returnUrl) =>
             {
-                personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
-            }
+                await signInManager.SignOutAsync();
+                return TypedResults.LocalRedirect($"~/{returnUrl}");
+            });
 
-            var logins = await userManager.GetLoginsAsync(user);
-            foreach (var l in logins)
+            var manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
+
+            manageGroup.MapPost("/LinkExternalLogin", async (
+                HttpContext context,
+                [FromServices] SignInManager<ApplicationUser> signInManager,
+                [FromForm] string provider) =>
             {
-                personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
-            }
+                // Clear the existing external cookie to ensure a clean login process
+                await context.SignOutAsync(IdentityConstants.ExternalScheme);
 
-            personalData.Add("Authenticator Key", (await userManager.GetAuthenticatorKeyAsync(user))!);
-            var fileBytes = JsonSerializer.SerializeToUtf8Bytes(personalData);
+                var redirectUrl = UriHelper.BuildRelative(
+                    context.Request.PathBase,
+                    "/Account/Manage/ExternalLogins",
+                    QueryString.Create("Action", ExternalLogins.LinkLoginCallbackAction));
 
-            context.Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json");
-            return TypedResults.File(fileBytes, "application/json", "PersonalData.json");
-        });
+                var properties = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, signInManager.UserManager.GetUserId(context.User));
+                return TypedResults.Challenge(properties, [provider]);
+            });
 
-        return accountGroup;
+            var loggerFactory = endpoints.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            var downloadLogger = loggerFactory.CreateLogger("DownloadPersonalData");
+
+            manageGroup.MapPost("/DownloadPersonalData", async (
+                HttpContext context,
+                [FromServices] UserManager<ApplicationUser> userManager,
+                [FromServices] AuthenticationStateProvider authenticationStateProvider) =>
+            {
+                var user = await userManager.GetUserAsync(context.User);
+                if (user is null)
+                {
+                    return Results.NotFound($"Unable to load user with ID '{userManager.GetUserId(context.User)}'.");
+                }
+
+                var userId = await userManager.GetUserIdAsync(user);
+                downloadLogger.LogInformation("User with ID '{UserId}' asked for their personal data.", userId);
+
+                // Only include personal data for download
+                var personalData = new Dictionary<string, string>();
+                var personalDataProps = typeof(ApplicationUser).GetProperties().Where(
+                    prop => Attribute.IsDefined(prop, typeof(PersonalDataAttribute)));
+                foreach (var p in personalDataProps)
+                {
+                    personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
+                }
+
+                var logins = await userManager.GetLoginsAsync(user);
+                foreach (var l in logins)
+                {
+                    personalData.Add($"{l.LoginProvider} external login provider key", l.ProviderKey);
+                }
+
+                personalData.Add("Authenticator Key", (await userManager.GetAuthenticatorKeyAsync(user))!);
+                var fileBytes = JsonSerializer.SerializeToUtf8Bytes(personalData);
+
+                context.Response.Headers.TryAdd("Content-Disposition", "attachment; filename=PersonalData.json");
+                return TypedResults.File(fileBytes, contentType: "application/json", fileDownloadName: "PersonalData.json");
+            });
+
+            return accountGroup;
+        }
     }
 }

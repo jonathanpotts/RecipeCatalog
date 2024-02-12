@@ -1,5 +1,6 @@
-﻿@using JonathanPotts.RecipeCatalog.BlazorApp.Data
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
+@using JonathanPotts.RecipeCatalog.BlazorApp.Data
+
 @inject SignInManager<ApplicationUser> SignInManager
 
 <ul class="nav nav-pills flex-column">
@@ -33,5 +34,4 @@
     {
         hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
     }
-
 }

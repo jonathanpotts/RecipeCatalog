@@ -1,10 +1,11 @@
 ﻿@page "/Account/Register"
+
+@using System.ComponentModel.DataAnnotations
+@using System.Text
+@using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using JonathanPotts.RecipeCatalog.BlazorApp.Data
-@using System.Text
-@using System.Text.Encodings.Web
-@using System.ComponentModel.DataAnnotations
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
@@ -20,26 +21,26 @@
 
 <div class="row">
     <div class="col-md-4">
-        <StatusMessage Message="@Message"/>
+        <StatusMessage Message="@Message" />
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator/>
+            <DataAnnotationsValidator />
             <h2>Create a new account.</h2>
-            <hr/>
-            <ValidationSummary class="text-danger" role="alert"/>
+            <hr />
+            <ValidationSummary class="text-danger" role="alert" />
             <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com"/>
+                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label for="email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger"/>
+                <ValidationMessage For="() => Input.Email" class="text-danger" />
             </div>
             <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password"/>
+                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label for="password">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger"/>
+                <ValidationMessage For="() => Input.Password" class="text-danger" />
             </div>
             <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password"/>
+                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
                 <label for="confirm-password">Confirm Password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
+                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </EditForm>
@@ -47,8 +48,8 @@
     <div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to register.</h3>
-            <hr/>
-            <ExternalLoginPicker/>
+            <hr />
+            <ExternalLoginPicker />
         </section>
     </div>
 </div>
@@ -56,9 +57,11 @@
 @code {
     private IEnumerable<IdentityError>? identityErrors;
 
-    [SupplyParameterFromForm] private InputModel Input { get; } = new();
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
 
-    [SupplyParameterFromQuery] private string? ReturnUrl { get; }
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
 
     private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
 
@@ -92,10 +95,10 @@
         {
             RedirectManager.RedirectTo(
                 "Account/RegisterConfirmation",
-                new Dictionary<string, object?> { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
+                new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
         }
 
-        await SignInManager.SignInAsync(user, false);
+        await SignInManager.SignInAsync(user, isPersistent: false);
         RedirectManager.RedirectTo(ReturnUrl);
     }
 
@@ -108,7 +111,7 @@
         catch
         {
             throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                                                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
+                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor.");
         }
     }
 
@@ -118,7 +121,6 @@
         {
             throw new NotSupportedException("The default UI requires a user store with email support.");
         }
-
         return (IUserEmailStore<ApplicationUser>)UserStore;
     }
 
@@ -140,5 +142,4 @@
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = "";
     }
-
 }

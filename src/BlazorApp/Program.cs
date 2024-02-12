@@ -1,10 +1,10 @@
+using JonathanPotts.RecipeCatalog.BlazorApp.Client.Pages;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account;
 using JonathanPotts.RecipeCatalog.BlazorApp.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using _Imports = JonathanPotts.RecipeCatalog.BlazorApp.Client._Imports;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +25,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -48,7 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Error", true);
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -61,7 +60,7 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(_Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(JonathanPotts.RecipeCatalog.BlazorApp.Client._Imports).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

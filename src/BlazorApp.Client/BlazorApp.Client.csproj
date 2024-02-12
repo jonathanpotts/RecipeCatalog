@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
-    <RootNamespace>JonathanPotts.RecipeCatalog.BlazorApp.Client</RootNamespace>
     <AssemblyName>RecipeCatalog.BlazorApp.Client</AssemblyName>
+    <RootNamespace>JonathanPotts.RecipeCatalog.BlazorApp.Client</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

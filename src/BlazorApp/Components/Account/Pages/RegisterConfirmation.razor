@@ -1,8 +1,9 @@
 ﻿@page "/Account/RegisterConfirmation"
-@using JonathanPotts.RecipeCatalog.BlazorApp.Data
+
+@using System.Text
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
-@using System.Text
+@using JonathanPotts.RecipeCatalog.BlazorApp.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IEmailSender<ApplicationUser> EmailSender
@@ -13,7 +14,7 @@
 
 <h1>Register confirmation</h1>
 
-<StatusMessage Message="@statusMessage"/>
+<StatusMessage Message="@statusMessage" />
 
 @if (emailConfirmationLink is not null)
 {
@@ -31,11 +32,14 @@ else
     private string? emailConfirmationLink;
     private string? statusMessage;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
 
-    [SupplyParameterFromQuery] private string? Email { get; }
+    [SupplyParameterFromQuery]
+    private string? Email { get; set; }
 
-    [SupplyParameterFromQuery] private string? ReturnUrl { get; }
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,5 +65,4 @@ else
                 new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
         }
     }
-
 }

@@ -3,7 +3,7 @@ using System;
 
 #nullable disable
 
-namespace BlazorApp.Migrations
+namespace JonathanPotts.RecipeCatalog.BlazorApp.Migrations
 {
     /// <inheritdoc />
     public partial class CreateIdentitySchema : Migration

@@ -1,11 +1,12 @@
 ﻿@page "/Account/ExternalLogin"
+
+@using System.ComponentModel.DataAnnotations
 @using System.Security.Claims
 @using System.Text
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using JonathanPotts.RecipeCatalog.BlazorApp.Data
-@using System.ComponentModel.DataAnnotations
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -17,12 +18,12 @@
 
 <PageTitle>Register</PageTitle>
 
-<StatusMessage Message="@message"/>
+<StatusMessage Message="@message" />
 <h1>Register</h1>
 <h2>Associate your @ProviderDisplayName account.</h2>
-<hr/>
+<hr />
 
-<div class="alert alert-info">
+<div  class="alert alert-info">
     You've successfully authenticated with <strong>@ProviderDisplayName</strong>.
     Please enter an email address for this site below and click the Register button to finish
     logging in.
@@ -31,12 +32,12 @@
 <div class="row">
     <div class="col-md-4">
         <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="confirmation" method="post">
-            <DataAnnotationsValidator/>
-            <ValidationSummary class="text-danger" role="alert"/>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
             <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="email" placeholder="Please enter your email."/>
+                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="email" placeholder="Please enter your email." />
                 <label for="email" class="form-label">Email</label>
-                <ValidationMessage For="() => Input.Email"/>
+                <ValidationMessage For="() => Input.Email" />
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </EditForm>
@@ -49,15 +50,20 @@
     private string? message;
     private ExternalLoginInfo externalLoginInfo = default!;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
 
-    [SupplyParameterFromForm] private InputModel Input { get; } = new();
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
 
-    [SupplyParameterFromQuery] private string? RemoteError { get; }
+    [SupplyParameterFromQuery]
+    private string? RemoteError { get; set; }
 
-    [SupplyParameterFromQuery] private string? ReturnUrl { get; }
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
 
-    [SupplyParameterFromQuery] private string? Action { get; }
+    [SupplyParameterFromQuery]
+    private string? Action { get; set; }
 
     private string? ProviderDisplayName => externalLoginInfo.ProviderDisplayName;
 
@@ -96,8 +102,8 @@
         var result = await SignInManager.ExternalLoginSignInAsync(
             externalLoginInfo.LoginProvider,
             externalLoginInfo.ProviderKey,
-            false,
-            true);
+            isPersistent: false,
+            bypassTwoFactor: true);
 
         if (result.Succeeded)
         {
@@ -147,10 +153,10 @@
                 // If account confirmation is required, we need to show the link if we don't have a real email sender
                 if (UserManager.Options.SignIn.RequireConfirmedAccount)
                 {
-                    RedirectManager.RedirectTo("Account/RegisterConfirmation", new Dictionary<string, object?> { ["email"] = Input.Email });
+                    RedirectManager.RedirectTo("Account/RegisterConfirmation", new() { ["email"] = Input.Email });
                 }
 
-                await SignInManager.SignInAsync(user, false, externalLoginInfo.LoginProvider);
+                await SignInManager.SignInAsync(user, isPersistent: false, externalLoginInfo.LoginProvider);
                 RedirectManager.RedirectTo(ReturnUrl);
             }
         }
@@ -167,7 +173,7 @@
         catch
         {
             throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                                                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor");
+                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor");
         }
     }
 
@@ -177,13 +183,13 @@
         {
             throw new NotSupportedException("The default UI requires a user store with email support.");
         }
-
         return (IUserEmailStore<ApplicationUser>)UserStore;
     }
 
     private sealed class InputModel
     {
-        [Required] [EmailAddress] public string Email { get; set; } = "";
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "";
     }
-
 }

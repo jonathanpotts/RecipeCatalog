@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-BlazorApp-3826a677-d748-4632-a61b-2f30607a6532</UserSecretsId>
-    <RootNamespace>JonathanPotts.RecipeCatalog.BlazorApp</RootNamespace>
+    <UserSecretsId>aspnet-JonathanPotts.RecipeCatalog.BlazorApp-b59fd04c-b0cb-4a92-b299-c9e800f0958c</UserSecretsId>
     <AssemblyName>RecipeCatalog.BlazorApp</AssemblyName>
+    <RootNamespace>JonathanPotts.RecipeCatalog.BlazorApp</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
   </ItemGroup>
 
 </Project>
