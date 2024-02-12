@@ -1,4 +1,5 @@
-﻿using JonathanPotts.RecipeCatalog.WebApi.Models;
+﻿using JonathanPotts.RecipeCatalog.Shared.Models;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Tests.Apis;

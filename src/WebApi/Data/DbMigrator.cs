@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using IdGen;
+using JonathanPotts.RecipeCatalog.Shared.Models;
 using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Markdig;
 using Microsoft.AspNetCore.Identity;
@@ -56,7 +57,18 @@ public class DbMigrator(
             identityResult = userManager.AddToRoleAsync(adminUser, adminRole.Name).Result;
 
             var json = File.ReadAllText(s_jsonFile);
-            var cuisines = JsonSerializer.Deserialize<Cuisine[]>(json);
+            var cuisines = JsonSerializer.Deserialize<CuisineWithRecipesDto[]>(json)?.Select(c => new Cuisine
+            {
+                Name = c.Name,
+                Recipes = c.Recipes?.Select(r => new Recipe
+                {
+                    Name = r.Name,
+                    CoverImage = r.CoverImage,
+                    Description = r.Description,
+                    Ingredients = r.Ingredients,
+                    Instructions = r.Instructions
+                }).ToList()
+            }).ToArray();
 
             foreach (var recipe in cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<Recipe>()) ??
                                    Enumerable.Empty<Recipe>())

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
-using JonathanPotts.RecipeCatalog.WebApi.Models;
+using JonathanPotts.RecipeCatalog.Shared.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -69,10 +69,10 @@ internal class Worker(
 
         await GenerateImagesAsync(recipeList, outputDirectory, stoppingToken);
 
-        var cuisines = recipeList.Cuisines?.Select(x => new Cuisine
+        var cuisines = recipeList.Cuisines?.Select(x => new CuisineWithRecipesDto
         {
             Name = x.Name,
-            Recipes = x.Recipes?.Select(y => new Recipe
+            Recipes = x.Recipes?.Select(y => new RecipeDto
             {
                 Name = y.Name,
                 CoverImage = new ImageData

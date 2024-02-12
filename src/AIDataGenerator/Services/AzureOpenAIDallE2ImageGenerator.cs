@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Json;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Services.Models;
 using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Retry;
 
 namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 
@@ -55,63 +57,52 @@ public class AzureOpenAIDallE2ImageGenerator : IAIImageGenerator
 
     private async Task<string> GetGeneratedImageAsync(string operationId, CancellationToken cancellationToken)
     {
-        var retries = 0;
+        var pipeline = new ResiliencePipelineBuilder()
+            .AddRetry(new RetryStrategyOptions
+            {
+                BackoffType = DelayBackoffType.Exponential,
+                Delay = TimeSpan.FromMilliseconds(_retryDelay),
+                MaxRetryAttempts = _maxRetries
+            })
+            .Build();
 
-        while (retries < _maxRetries)
+        var state = new
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            OperationId = operationId,
+            Client = _client
+        };
 
+        return await pipeline.ExecuteAsync(static async (state, token) =>
+        {
             HttpRequestMessage request = new(
                 HttpMethod.Get,
-                $"{_imageOperationUrl}/{operationId}?api-version={_apiVersion}");
+                $"{_imageOperationUrl}/{state.OperationId}?api-version={_apiVersion}");
 
-            var response = await _client.SendAsync(request, cancellationToken);
+            var response = await state.Client.SendAsync(request, token);
 
-            if (response.IsSuccessStatusCode)
+            response.EnsureSuccessStatusCode();
+
+            var content =
+                await response.Content.ReadFromJsonAsync<AzureOpenAIImageOperationResponse>(token);
+
+            if (string.Equals(content?.Status, AzureOpenAIImageOperationStatus.Cancelled,
+                    StringComparison.OrdinalIgnoreCase)
+                || string.Equals(content?.Status, AzureOpenAIImageOperationStatus.Failed,
+                    StringComparison.OrdinalIgnoreCase)
+                || string.Equals(content?.Status, AzureOpenAIImageOperationStatus.Deleted,
+                    StringComparison.OrdinalIgnoreCase))
             {
-                var content =
-                    await response.Content.ReadFromJsonAsync<AzureOpenAIImageOperationResponse>(cancellationToken);
-
-                if (string.Equals(content?.Status, AzureOpenAIImageOperationStatus.Succeeded,
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    return content?.Result?.Data?.FirstOrDefault()?.Url
-                           ?? throw new Exception("The returned content is invalid");
-                }
-
-                if (string.Equals(content?.Status, AzureOpenAIImageOperationStatus.Cancelled,
-                        StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(content?.Status, AzureOpenAIImageOperationStatus.Failed,
-                        StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(content?.Status, AzureOpenAIImageOperationStatus.Deleted,
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new Exception($"The operation did not complete: {content?.Status}");
-                }
+                throw new OperationCanceledException($"The operation did not complete: {content?.Status}");
             }
 
-            if (response.Headers.RetryAfter?.Delta != null)
+            if (!string.Equals(content?.Status, AzureOpenAIImageOperationStatus.Succeeded,
+                    StringComparison.OrdinalIgnoreCase))
             {
-                await Task.Delay(response.Headers.RetryAfter.Delta.Value, cancellationToken);
-            }
-            else if (response.Headers.RetryAfter?.Date != null)
-            {
-                var delta = response.Headers.RetryAfter.Date.Value - DateTimeOffset.UtcNow;
-
-                if (delta.Ticks > 0)
-                {
-                    await Task.Delay(delta, cancellationToken);
-                }
-            }
-            else
-            {
-                // Use exponential backoff
-                await Task.Delay(_retryDelay * (int)Math.Pow(2, retries), cancellationToken);
+                throw new Exception("The operating is still pending");
             }
 
-            retries++;
-        }
-
-        throw new Exception("Max retry attempts reached");
+            return content?.Result?.Data?.FirstOrDefault()?.Url
+                   ?? throw new OperationCanceledException("The returned content is invalid");
+        }, state, cancellationToken);
     }
 }

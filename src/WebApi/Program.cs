@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var generatorId = builder.Configuration.GetValue("GeneratorId", 0);
 builder.Services.AddWebApiServices(generatorId);
+builder.Services.AddDbMigrator();
 
 var app = builder.Build();
 

@@ -1,4 +1,4 @@
-﻿namespace JonathanPotts.RecipeCatalog.WebApi.Models;
+﻿namespace JonathanPotts.RecipeCatalog.Shared.Models;
 
 public class CuisineCreateOrUpdateDto
 {

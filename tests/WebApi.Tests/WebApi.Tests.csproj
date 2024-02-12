@@ -8,6 +8,7 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <RootNamespace>JonathanPotts.RecipeCatalog.WebApi.Tests</RootNamespace>
+    <AssemblyName>RecipeCatalog.WebApi.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

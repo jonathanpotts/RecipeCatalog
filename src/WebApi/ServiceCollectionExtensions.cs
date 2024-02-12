@@ -18,7 +18,8 @@ public static class ServiceCollectionExtensions
     {
         // Add services to the container.
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite($"Data Source={Path.Combine(AppContext.BaseDirectory, $"{nameof(ApplicationDbContext)}.db")}"));
+            options.UseSqlite(
+                $"Data Source={Path.Combine(AppContext.BaseDirectory, $"{nameof(ApplicationDbContext)}.db")}"));
 
         services.AddAuthorization();
 
@@ -28,8 +29,6 @@ public static class ServiceCollectionExtensions
         services.AddIdentityApiEndpoints<IdentityUser>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
-
-        services.AddScoped<DbMigrator>();
 
         services.AddValidatorsFromAssemblyContaining<Program>();
 
@@ -57,6 +56,13 @@ public static class ServiceCollectionExtensions
         // Add IdGen for creating Snowflake IDs
         var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         services.AddIdGen(generatorId, () => new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
+
+        return services;
+    }
+
+    public static IServiceCollection AddDbMigrator(this IServiceCollection services)
+    {
+        services.AddScoped<DbMigrator>();
 
         return services;
     }

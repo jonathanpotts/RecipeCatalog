@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Models;
+namespace JonathanPotts.RecipeCatalog.Shared.Models;
 
 public class RecipeDto
 {

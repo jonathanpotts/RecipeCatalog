@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using IdGen;
 using IdGen.DependencyInjection;
+using JonathanPotts.RecipeCatalog.Shared.Models;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
 using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
-using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
