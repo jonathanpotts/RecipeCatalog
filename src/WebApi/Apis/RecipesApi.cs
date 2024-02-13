@@ -300,7 +300,7 @@ public static class RecipesApi
         ApplicationDbContext context,
         IdGenerator idGenerator,
         IAuthorizationService authorizationService,
-        UserManager<IdentityUser> userManager)
+        UserManager<ApplicationUser> userManager)
     {
         public ApplicationDbContext Context { get; set; } = context;
 
@@ -308,6 +308,6 @@ public static class RecipesApi
 
         public IAuthorizationService AuthorizationService { get; } = authorizationService;
 
-        public UserManager<IdentityUser> UserManager { get; } = userManager;
+        public UserManager<ApplicationUser> UserManager { get; } = userManager;
     }
 }

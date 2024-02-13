@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlazorApp.Client\BlazorApp.Client.csproj" />
+    <ProjectReference Include="..\WebApi\WebApi.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />

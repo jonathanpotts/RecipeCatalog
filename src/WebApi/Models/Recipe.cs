@@ -9,7 +9,7 @@ public class Recipe
 
     public string? OwnerId { get; set; }
 
-    public IdentityUser? Owner { get; set; }
+    public ApplicationUser? Owner { get; set; }
 
     public string? Name { get; set; }
 

@@ -5,6 +5,7 @@ using JonathanPotts.RecipeCatalog.Shared.Models;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
 using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -47,7 +48,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         serviceCollection.AddAuthorization();
         serviceCollection.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
 
-        serviceCollection.AddIdentityCore<IdentityUser>()
+        serviceCollection.AddIdentityCore<ApplicationUser>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -58,19 +59,19 @@ public sealed class RecipesApiUnitTests : IDisposable
 
         var idGenerator = serviceProvider.GetRequiredService<IdGenerator>();
         var authorizationService = serviceProvider.GetRequiredService<IAuthorizationService>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         _services = new RecipesApi.Services(context, idGenerator, authorizationService, userManager);
 
-        _adminUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-        {
+        _adminUser = new ClaimsPrincipal(new ClaimsIdentity(
+        [
             new(ClaimTypes.NameIdentifier, "73edf737-df51-4c06-ac6f-3ec6d79f1f12")
-        }, "Test"));
+        ], "Test"));
 
-        _user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-        {
+        _user = new ClaimsPrincipal(new ClaimsIdentity(
+        [
             new(ClaimTypes.NameIdentifier, "d7df5331-1c53-491f-8b71-91989846874f")
-        }, "Test"));
+        ], "Test"));
     }
 
     public void Dispose()

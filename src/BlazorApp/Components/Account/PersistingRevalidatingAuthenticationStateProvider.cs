@@ -1,5 +1,5 @@
 using JonathanPotts.RecipeCatalog.BlazorApp.Client;
-using JonathanPotts.RecipeCatalog.BlazorApp.Data;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;

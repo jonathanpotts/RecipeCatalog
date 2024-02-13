@@ -12,7 +12,7 @@ public class DbMigrator(
     IConfiguration configuration,
     ApplicationDbContext context,
     IdGenerator idGenerator,
-    UserManager<IdentityUser> userManager,
+    UserManager<ApplicationUser> userManager,
     RoleManager<IdentityRole> roleManager)
 {
     private static readonly string s_dataDirectory = Path.Combine(AppContext.BaseDirectory, "Data");
@@ -38,7 +38,7 @@ public class DbMigrator(
                 Directory.CreateDirectory(s_imagesDirectory);
             }
 
-            IdentityUser adminUser = new()
+            ApplicationUser adminUser = new()
             {
                 UserName = "admin@example.com",
                 Email = "admin@example.com",

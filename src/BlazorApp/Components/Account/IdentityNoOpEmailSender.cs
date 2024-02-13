@@ -1,4 +1,4 @@
-using JonathanPotts.RecipeCatalog.BlazorApp.Data;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 

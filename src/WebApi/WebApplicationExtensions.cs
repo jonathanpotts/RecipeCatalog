@@ -1,6 +1,6 @@
 ﻿using JonathanPotts.RecipeCatalog.WebApi.Apis;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
-using Microsoft.AspNetCore.Identity;
+using JonathanPotts.RecipeCatalog.WebApi.Models;
 
 namespace JonathanPotts.RecipeCatalog.WebApi;
 
@@ -18,7 +18,7 @@ public static class WebApplicationExtensions
 
     public static WebApplication MapWebApi(this WebApplication app)
     {
-        app.MapGroup("/api/v1/identity").WithTags("Identity").MapIdentityApi<IdentityUser>();
+        app.MapGroup("/api/v1/identity").WithTags("Identity").MapIdentityApi<ApplicationUser>();
 
         app.MapCuisinesApi();
         app.MapRecipesApi();

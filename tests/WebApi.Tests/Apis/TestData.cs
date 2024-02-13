@@ -6,9 +6,9 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Tests.Apis;
 
 public static class TestData
 {
-    public static readonly IdentityUser[] Users =
+    public static readonly ApplicationUser[] Users =
     [
-        new IdentityUser
+        new ApplicationUser
         {
             Id = "d7df5331-1c53-491f-8b71-91989846874f",
             SecurityStamp = "RHML6N4NEUJRDDORVUQIEZFNWO5HEOLR",
@@ -19,7 +19,7 @@ public static class TestData
             NormalizedUserName = "USER@EXAMPLE.COM",
             EmailConfirmed = true
         },
-        new IdentityUser
+        new ApplicationUser
         {
             Id = "73edf737-df51-4c06-ac6f-3ec6d79f1f12",
             SecurityStamp = "BNCWIPXASUB44SSFFBSFRLKXKGMYOWPZ",

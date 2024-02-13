@@ -5,7 +5,6 @@ using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -25,10 +24,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IAuthorizationHandler, CuisineAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
-
-        services.AddIdentityApiEndpoints<IdentityUser>()
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddValidatorsFromAssemblyContaining<Program>();
 
