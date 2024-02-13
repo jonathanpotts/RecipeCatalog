@@ -19,4 +19,3 @@ csharp_prefer_braces = true:silent
 csharp_force_attribute_style = separate
 csharp_place_attribute_on_same_line = false
 csharp_place_record_field_attribute_on_same_line = if_owner_is_single_line
-resharper_auto_property_can_be_made_get_only_global_highlighting = none
