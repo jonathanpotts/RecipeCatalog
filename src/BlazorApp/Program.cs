@@ -1,5 +1,6 @@
 using JonathanPotts.RecipeCatalog.BlazorApp.Components;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account;
+using JonathanPotts.RecipeCatalog.BlazorApp.Services;
 using JonathanPotts.RecipeCatalog.WebApi;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using JonathanPotts.RecipeCatalog.WebApi.Models;
@@ -36,6 +37,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+builder.Services.AddScoped<IRecipesService, ServerRecipesService>();
 
 var app = builder.Build();
 

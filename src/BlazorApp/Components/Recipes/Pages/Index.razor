@@ -1,0 +1,30 @@
+﻿@page "/recipes"
+@inject IRecipesService RecipesService
+
+<PageTitle>Recipes</PageTitle>
+
+<h1>Recipes</h1>
+
+@if (recipes == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var recipe in recipes)
+        {
+            <RecipeCard Recipe="recipe" />
+        }
+    </ul>
+}
+
+@code {
+    IEnumerable<RecipeWithCuisineDto>? recipes = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await RecipesService.GetListAsync();
+        recipes = result.Items;
+    }
+}
