@@ -298,17 +298,17 @@ public static class RecipesApi
     }
 
     public class Services(
-        ApplicationDbContext context,
+        RecipeCatalogDbContext context,
         IdGenerator idGenerator,
         IAuthorizationService authorizationService,
-        UserManager<ApplicationUser> userManager)
+        UserManager<User> userManager)
     {
-        public ApplicationDbContext Context { get; set; } = context;
+        public RecipeCatalogDbContext Context { get; set; } = context;
 
         public IdGenerator IdGenerator { get; } = idGenerator;
 
         public IAuthorizationService AuthorizationService { get; } = authorizationService;
 
-        public UserManager<ApplicationUser> UserManager { get; } = userManager;
+        public UserManager<User> UserManager { get; } = userManager;
     }
 }

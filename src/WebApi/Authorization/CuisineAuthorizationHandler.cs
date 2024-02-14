@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Authorization;
 
-public class CuisineAuthorizationHandler(UserManager<ApplicationUser> userManager)
+public class CuisineAuthorizationHandler(UserManager<User> userManager)
     : AuthorizationHandler<OperationAuthorizationRequirement, Cuisine>
 {
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JonathanPotts.RecipeCatalog.Domain.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(RecipeCatalogDbContext))]
     [Migration("20240213212417_AddApplicationUser")]
     partial class AddApplicationUser
     {

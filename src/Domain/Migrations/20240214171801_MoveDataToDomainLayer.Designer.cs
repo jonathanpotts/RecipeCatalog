@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JonathanPotts.RecipeCatalog.Domain.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(RecipeCatalogDbContext))]
     [Migration("20240214171801_MoveDataToDomainLayer")]
     partial class MoveDataToDomainLayer
     {

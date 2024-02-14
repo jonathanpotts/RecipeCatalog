@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @using JonathanPotts.RecipeCatalog.Domain.Entities
 
-@inject SignInManager<ApplicationUser> SignInManager
+@inject SignInManager<User> SignInManager
 @inject IdentityRedirectManager RedirectManager
 
 @if (externalLogins.Length == 0)

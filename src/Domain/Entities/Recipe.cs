@@ -8,7 +8,7 @@ public class Recipe
 
     public string? OwnerId { get; set; }
 
-    public ApplicationUser? Owner { get; set; }
+    public User? Owner { get; set; }
 
     public string? Name { get; set; }
 

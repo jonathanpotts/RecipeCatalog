@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Identity;
 namespace JonathanPotts.RecipeCatalog.BlazorApp.Services;
 
 public class ServerRecipesService(
-    ApplicationDbContext context,
+    RecipeCatalogDbContext context,
     IdGenerator idGenerator,
     IAuthorizationService authorizationService,
-    UserManager<ApplicationUser> userManager)
+    UserManager<User> userManager)
     : IRecipesService
 {
     private readonly RecipesApi.Services _services = new(context, idGenerator, authorizationService, userManager);

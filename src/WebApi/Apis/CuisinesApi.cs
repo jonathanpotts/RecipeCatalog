@@ -151,10 +151,10 @@ public static class CuisinesApi
     }
 
     public class Services(
-        ApplicationDbContext context,
+        RecipeCatalogDbContext context,
         IAuthorizationService authorizationService)
     {
-        public ApplicationDbContext Context { get; set; } = context;
+        public RecipeCatalogDbContext Context { get; set; } = context;
 
         public IAuthorizationService AuthorizationService { get; } = authorizationService;
     }

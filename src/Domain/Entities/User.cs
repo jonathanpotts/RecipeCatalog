@@ -2,6 +2,6 @@
 
 namespace JonathanPotts.RecipeCatalog.Domain.Entities;
 
-public class ApplicationUser : IdentityUser
+public class User : IdentityUser
 {
 }

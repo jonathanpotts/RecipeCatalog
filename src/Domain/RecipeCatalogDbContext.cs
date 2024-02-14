@@ -1,12 +1,12 @@
-﻿using JonathanPotts.RecipeCatalog.Domain.EntityConfigurations;
-using JonathanPotts.RecipeCatalog.Domain.Entities;
+﻿using JonathanPotts.RecipeCatalog.Domain.Entities;
+using JonathanPotts.RecipeCatalog.Domain.EntityConfigurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace JonathanPotts.RecipeCatalog.Domain;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : IdentityDbContext<ApplicationUser>(options)
+public class RecipeCatalogDbContext(DbContextOptions<RecipeCatalogDbContext> options)
+    : IdentityDbContext<User>(options)
 {
     public DbSet<Cuisine> Cuisines => Set<Cuisine>();
 

@@ -1,8 +1,8 @@
+using JonathanPotts.RecipeCatalog.Application;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account;
 using JonathanPotts.RecipeCatalog.BlazorApp.Services;
-using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.WebApi;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -24,20 +24,9 @@ var generatorId = builder.Configuration.GetValue("GeneratorId", 0);
 builder.Services.AddWebApiServices(generatorId);
 builder.Services.AddDbMigrator();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-})
-    .AddIdentityCookies();
+builder.Services.AddBlazorIdentity();
 
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
 builder.Services.AddScoped<IRecipesService, ServerRecipesService>();
 

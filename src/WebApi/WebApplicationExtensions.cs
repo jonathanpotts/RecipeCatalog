@@ -18,7 +18,7 @@ public static class WebApplicationExtensions
 
     public static WebApplication MapWebApi(this WebApplication app)
     {
-        app.MapGroup("/api/v1/identity").WithTags("Identity").MapIdentityApi<ApplicationUser>();
+        app.MapGroup("/api/v1/identity").WithTags("Identity").MapIdentityApi<User>();
 
         app.MapCuisinesApi();
         app.MapRecipesApi();

@@ -11,9 +11,9 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Data;
 
 public class DbMigrator(
     IConfiguration configuration,
-    ApplicationDbContext context,
+    RecipeCatalogDbContext context,
     IdGenerator idGenerator,
-    UserManager<ApplicationUser> userManager,
+    UserManager<User> userManager,
     RoleManager<IdentityRole> roleManager)
 {
     private static readonly string s_dataDirectory = Path.Combine(AppContext.BaseDirectory, "Data");
@@ -39,7 +39,7 @@ public class DbMigrator(
                 Directory.CreateDirectory(s_imagesDirectory);
             }
 
-            ApplicationUser adminUser = new()
+            User adminUser = new()
             {
                 UserName = "admin@example.com",
                 Email = "admin@example.com",

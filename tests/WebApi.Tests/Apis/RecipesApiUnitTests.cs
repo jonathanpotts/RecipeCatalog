@@ -27,11 +27,11 @@ public sealed class RecipesApiUnitTests : IDisposable
         _connection = new SqliteConnection("Filename=:memory:");
         _connection.Open();
 
-        var contextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
+        var contextOptions = new DbContextOptionsBuilder<RecipeCatalogDbContext>()
             .UseSqlite(_connection)
             .Options;
 
-        ApplicationDbContext context = new(contextOptions);
+        RecipeCatalogDbContext context = new(contextOptions);
         context.Database.EnsureCreated();
 
         context.Users.AddRange(TestData.Users);
@@ -48,9 +48,9 @@ public sealed class RecipesApiUnitTests : IDisposable
         serviceCollection.AddAuthorization();
         serviceCollection.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
 
-        serviceCollection.AddIdentityCore<ApplicationUser>()
+        serviceCollection.AddIdentityCore<User>()
             .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<RecipeCatalogDbContext>();
 
         var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         serviceCollection.AddIdGen(0, () => new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
@@ -59,7 +59,7 @@ public sealed class RecipesApiUnitTests : IDisposable
 
         var idGenerator = serviceProvider.GetRequiredService<IdGenerator>();
         var authorizationService = serviceProvider.GetRequiredService<IAuthorizationService>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
         _services = new RecipesApi.Services(context, idGenerator, authorizationService, userManager);
 

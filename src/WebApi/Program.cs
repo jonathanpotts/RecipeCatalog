@@ -1,7 +1,5 @@
-using JonathanPotts.RecipeCatalog.Domain;
-using JonathanPotts.RecipeCatalog.Domain.Entities;
+using JonathanPotts.RecipeCatalog.Application;
 using JonathanPotts.RecipeCatalog.WebApi;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +8,7 @@ var generatorId = builder.Configuration.GetValue("GeneratorId", 0);
 builder.Services.AddWebApiServices(generatorId);
 builder.Services.AddDbMigrator();
 
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity();
 
 var app = builder.Build();
 
