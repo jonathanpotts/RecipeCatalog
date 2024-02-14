@@ -1,4 +1,4 @@
-﻿using JonathanPotts.RecipeCatalog.WebApi.Models;
+﻿using JonathanPotts.RecipeCatalog.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;

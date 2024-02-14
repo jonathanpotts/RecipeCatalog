@@ -1,9 +1,9 @@
-﻿using JonathanPotts.RecipeCatalog.WebApi.Data.EntityConfigurations;
-using JonathanPotts.RecipeCatalog.WebApi.Models;
+﻿using JonathanPotts.RecipeCatalog.Domain.Data.EntityConfigurations;
+using JonathanPotts.RecipeCatalog.Domain.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Data;
+namespace JonathanPotts.RecipeCatalog.Domain.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<ApplicationUser>(options)

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Models;
+namespace JonathanPotts.RecipeCatalog.Domain.Models;
 
 public class ApplicationUser : IdentityUser
 {

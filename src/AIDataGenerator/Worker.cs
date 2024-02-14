@@ -2,6 +2,7 @@
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+using JonathanPotts.RecipeCatalog.Domain.Shared.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

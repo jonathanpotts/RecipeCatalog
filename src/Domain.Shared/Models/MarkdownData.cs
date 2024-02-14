@@ -1,4 +1,4 @@
-﻿namespace JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+﻿namespace JonathanPotts.RecipeCatalog.Domain.Shared.Models;
 
 public class MarkdownData
 {

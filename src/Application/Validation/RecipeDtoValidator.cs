@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Validation;
+namespace JonathanPotts.RecipeCatalog.Application.Validation;
 
 public class RecipeDtoValidator : AbstractValidator<RecipeDto>
 {

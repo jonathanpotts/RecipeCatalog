@@ -1,8 +1,8 @@
 ﻿using IdGen;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+using JonathanPotts.RecipeCatalog.Domain.Data;
+using JonathanPotts.RecipeCatalog.Domain.Models;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
-using JonathanPotts.RecipeCatalog.WebApi.Data;
-using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;

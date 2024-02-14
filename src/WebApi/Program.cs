@@ -1,6 +1,6 @@
+using JonathanPotts.RecipeCatalog.Domain.Data;
+using JonathanPotts.RecipeCatalog.Domain.Models;
 using JonathanPotts.RecipeCatalog.WebApi;
-using JonathanPotts.RecipeCatalog.WebApi.Data;
-using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);

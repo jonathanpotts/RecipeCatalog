@@ -1,6 +1,6 @@
-﻿using JonathanPotts.RecipeCatalog.WebApi.Apis;
+﻿using JonathanPotts.RecipeCatalog.Domain.Models;
+using JonathanPotts.RecipeCatalog.WebApi.Apis;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
-using JonathanPotts.RecipeCatalog.WebApi.Models;
 
 namespace JonathanPotts.RecipeCatalog.WebApi;
 

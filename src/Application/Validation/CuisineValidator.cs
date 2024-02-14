@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using JonathanPotts.RecipeCatalog.WebApi.Models;
+using JonathanPotts.RecipeCatalog.Domain.Models;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Validation;
+namespace JonathanPotts.RecipeCatalog.Application.Validation;
 
 public class CuisineValidator : AbstractValidator<Cuisine>
 {

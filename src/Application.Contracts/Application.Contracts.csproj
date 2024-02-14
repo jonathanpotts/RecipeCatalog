@@ -8,4 +8,8 @@
     <AssemblyName>RecipeCatalog.Application.Contracts</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Shared\Domain.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

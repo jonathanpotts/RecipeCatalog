@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using IdGen;
 using IdGen.DependencyInjection;
+using JonathanPotts.RecipeCatalog.Domain.Data;
 using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;

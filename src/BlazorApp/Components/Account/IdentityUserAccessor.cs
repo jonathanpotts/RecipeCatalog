@@ -1,4 +1,4 @@
-using JonathanPotts.RecipeCatalog.WebApi.Models;
+using JonathanPotts.RecipeCatalog.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace JonathanPotts.RecipeCatalog.BlazorApp.Components.Account

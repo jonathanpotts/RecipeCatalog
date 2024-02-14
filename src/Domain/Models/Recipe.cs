@@ -1,6 +1,6 @@
-﻿using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+﻿using JonathanPotts.RecipeCatalog.Domain.Shared.Models;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Models;
+namespace JonathanPotts.RecipeCatalog.Domain.Models;
 
 public class Recipe
 {

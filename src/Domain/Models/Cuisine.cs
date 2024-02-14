@@ -1,4 +1,4 @@
-﻿namespace JonathanPotts.RecipeCatalog.WebApi.Models;
+﻿namespace JonathanPotts.RecipeCatalog.Domain.Models;
 
 public class Cuisine
 {

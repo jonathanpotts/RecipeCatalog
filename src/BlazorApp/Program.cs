@@ -1,9 +1,9 @@
 using JonathanPotts.RecipeCatalog.BlazorApp.Components;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account;
 using JonathanPotts.RecipeCatalog.BlazorApp.Services;
+using JonathanPotts.RecipeCatalog.Domain.Data;
+using JonathanPotts.RecipeCatalog.Domain.Models;
 using JonathanPotts.RecipeCatalog.WebApi;
-using JonathanPotts.RecipeCatalog.WebApi.Data;
-using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 

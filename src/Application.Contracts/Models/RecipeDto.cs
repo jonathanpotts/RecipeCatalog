@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using JonathanPotts.RecipeCatalog.Domain.Shared.Models;
 
 namespace JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 
