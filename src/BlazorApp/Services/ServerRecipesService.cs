@@ -1,5 +1,5 @@
 ﻿using IdGen;
-using JonathanPotts.RecipeCatalog.Shared.Models;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using JonathanPotts.RecipeCatalog.WebApi.Models;

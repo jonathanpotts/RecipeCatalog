@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using JonathanPotts.RecipeCatalog.Shared.Models;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 using JonathanPotts.RecipeCatalog.WebApi.Models;

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using IdGen;
-using JonathanPotts.RecipeCatalog.Shared.Models;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.WebApi.Models;
 using Markdig;
 using Microsoft.AspNetCore.Identity;

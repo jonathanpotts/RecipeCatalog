@@ -1,4 +1,4 @@
-﻿using JonathanPotts.RecipeCatalog.Shared.Models;
+﻿using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 
 namespace JonathanPotts.RecipeCatalog.BlazorApp.Services;
 

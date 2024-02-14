@@ -12,19 +12,20 @@
 else
 {
     <ul>
-        @foreach (var recipe in recipes)
+        @foreach (var recipe in recipes.Items)
         {
             <RecipeCard Recipe="recipe" />
         }
     </ul>
+
+    <p><strong>Total:</strong> @recipes.Total</p>
 }
 
 @code {
-    IEnumerable<RecipeWithCuisineDto>? recipes = null;
+    PagedResult<RecipeWithCuisineDto>? recipes = null;
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await RecipesService.GetListAsync();
-        recipes = result.Items;
+        recipes = await RecipesService.GetListAsync();
     }
 }
