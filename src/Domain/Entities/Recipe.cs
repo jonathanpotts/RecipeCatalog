@@ -1,6 +1,6 @@
-﻿using JonathanPotts.RecipeCatalog.Domain.Shared.Models;
+﻿using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 
-namespace JonathanPotts.RecipeCatalog.Domain.Models;
+namespace JonathanPotts.RecipeCatalog.Domain.Entities;
 
 public class Recipe
 {

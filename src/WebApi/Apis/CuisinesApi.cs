@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
-using JonathanPotts.RecipeCatalog.Domain.Data;
-using JonathanPotts.RecipeCatalog.Domain.Models;
+using JonathanPotts.RecipeCatalog.Domain;
+using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;

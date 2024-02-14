@@ -1,4 +1,4 @@
-﻿using JonathanPotts.RecipeCatalog.Domain.Models;
+﻿using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
 

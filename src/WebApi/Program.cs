@@ -1,5 +1,5 @@
-using JonathanPotts.RecipeCatalog.Domain.Data;
-using JonathanPotts.RecipeCatalog.Domain.Models;
+using JonathanPotts.RecipeCatalog.Domain;
+using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.WebApi;
 using Microsoft.AspNetCore.Identity;
 

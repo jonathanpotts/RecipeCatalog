@@ -1,4 +1,4 @@
-﻿namespace JonathanPotts.RecipeCatalog.Domain.Shared.Models;
+﻿namespace JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 
 public class MarkdownData
 {

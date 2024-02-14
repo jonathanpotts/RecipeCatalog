@@ -2,9 +2,9 @@
 using System.Security.Claims;
 using IdGen;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
-using JonathanPotts.RecipeCatalog.Domain.Data;
-using JonathanPotts.RecipeCatalog.Domain.Models;
-using JonathanPotts.RecipeCatalog.Domain.Shared.Models;
+using JonathanPotts.RecipeCatalog.Domain;
+using JonathanPotts.RecipeCatalog.Domain.Entities;
+using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using Markdig;
 using Microsoft.AspNetCore.Authorization;

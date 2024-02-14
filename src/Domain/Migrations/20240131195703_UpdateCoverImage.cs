@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Data.Migrations
+namespace JonathanPotts.RecipeCatalog.Domain.Migrations
 {
     /// <inheritdoc />
     public partial class UpdateCoverImage : Migration

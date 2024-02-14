@@ -2,7 +2,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account.Pages;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account.Pages.Manage;
-using JonathanPotts.RecipeCatalog.Domain.Models;
+using JonathanPotts.RecipeCatalog.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;

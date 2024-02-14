@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using JonathanPotts.RecipeCatalog.Domain.Shared.Models;
+using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 
 namespace JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 

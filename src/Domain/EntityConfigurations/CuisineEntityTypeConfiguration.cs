@@ -1,8 +1,8 @@
-﻿using JonathanPotts.RecipeCatalog.Domain.Models;
+﻿using JonathanPotts.RecipeCatalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace JonathanPotts.RecipeCatalog.Domain.Data.EntityConfigurations;
+namespace JonathanPotts.RecipeCatalog.Domain.EntityConfigurations;
 
 public class CuisineEntityTypeConfiguration : IEntityTypeConfiguration<Cuisine>
 {

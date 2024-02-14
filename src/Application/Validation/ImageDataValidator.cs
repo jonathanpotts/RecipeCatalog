@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using JonathanPotts.RecipeCatalog.Domain.Shared.Models;
+using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 
 namespace JonathanPotts.RecipeCatalog.Application.Validation;
 
