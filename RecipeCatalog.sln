@@ -5,25 +5,25 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2EBE491B-755F-429D-8A6C-062314CB1FDE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "src\WebApi\WebApi.csproj", "{BE6286E8-6102-40BA-8905-79D4E20C7ECF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A1E0BEA1-7E0A-456B-BF8F-E8EDA328CC05}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Tests", "tests\WebApi.Tests\WebApi.Tests.csproj", "{07012470-72CB-4DC1-8C4A-B4BD3A8D33C4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AIDataGenerator", "src\AIDataGenerator\AIDataGenerator.csproj", "{8963D17B-8704-4A9A-A4A6-4D81008258A6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp", "src\BlazorApp\BlazorApp.csproj", "{5715CA30-CC47-465A-BA0B-225BE9A6D149}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Client", "src\BlazorApp.Client\BlazorApp.Client.csproj", "{68F79FB9-5DBB-4680-9E21-16B42E109775}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "src\WebApi\WebApi.csproj", "{BE6286E8-6102-40BA-8905-79D4E20C7ECF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AIDataGenerator", "src\AIDataGenerator\AIDataGenerator.csproj", "{8963D17B-8704-4A9A-A4A6-4D81008258A6}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{B118E237-A6CB-4352-BAB8-4F7B10BA1FA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Shared", "src\Domain.Shared\Domain.Shared.csproj", "{BEF86F1A-7DAB-44CE-989F-3B514263A9E1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Application\Application.csproj", "{9F1FE48B-C316-4E97-8AC7-CE33087D7F65}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.Contracts", "src\Application.Contracts\Application.Contracts.csproj", "{7C4C8E52-3645-4605-ACC1-7EC004AE95DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Shared", "src\Domain.Shared\Domain.Shared.csproj", "{BEF86F1A-7DAB-44CE-989F-3B514263A9E1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A1E0BEA1-7E0A-456B-BF8F-E8EDA328CC05}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Tests", "tests\WebApi.Tests\WebApi.Tests.csproj", "{07012470-72CB-4DC1-8C4A-B4BD3A8D33C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
