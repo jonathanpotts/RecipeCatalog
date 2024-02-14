@@ -1,3 +1,4 @@
+using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Account;
 using JonathanPotts.RecipeCatalog.BlazorApp.Services;

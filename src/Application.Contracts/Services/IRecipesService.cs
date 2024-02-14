@@ -1,6 +1,6 @@
 ﻿using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 
-namespace JonathanPotts.RecipeCatalog.BlazorApp.Services;
+namespace JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 
 public interface IRecipesService
 {
