@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using IdGen;
 using IdGen.DependencyInjection;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
+using JonathanPotts.RecipeCatalog.Application.Services;
 using JonathanPotts.RecipeCatalog.Application.Validation;
 using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
@@ -20,10 +22,12 @@ public static class Extensions
         var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         services.AddIdGen(generatorId, () => new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
 
+        services.AddScoped<IRecipesService, RecipesService>();
+
         return services;
     }
 
-    public static IServiceCollection AddIdentity(this IServiceCollection services)
+    public static IServiceCollection AddIdentityApiEndpoints(this IServiceCollection services)
     {
         services.AddIdentityApiEndpoints<User>()
             .AddRoles<IdentityRole>()
@@ -32,20 +36,15 @@ public static class Extensions
         return services;
     }
 
-    public static IServiceCollection AddBlazorIdentity(this IServiceCollection services)
+    public static IServiceCollection AddIdentityBlazor(this IServiceCollection services)
     {
+        services.AddIdentityApiEndpoints();
+
         services.AddAuthentication(options =>
         {
             options.DefaultScheme = IdentityConstants.ApplicationScheme;
             options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-        })
-        .AddIdentityCookies();
-
-        services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddRoles<IdentityRole>()
-            .AddDomainStores()
-            .AddSignInManager()
-            .AddDefaultTokenProviders();
+        });
 
         return services;
     }

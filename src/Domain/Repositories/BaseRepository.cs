@@ -1,7 +1,9 @@
 ﻿using System.Linq.Expressions;
+using JonathanPotts.RecipeCatalog.Domain.EntityFrameworkCore;
+using JonathanPotts.RecipeCatalog.Domain.Queryable;
 using Microsoft.EntityFrameworkCore;
 
-namespace JonathanPotts.RecipeCatalog.Domain.Services;
+namespace JonathanPotts.RecipeCatalog.Domain.Repositories;
 
 public abstract class BaseRepository<T>(RecipeCatalogDbContext context)
     : IRepository<T> where T : class
@@ -10,9 +12,24 @@ public abstract class BaseRepository<T>(RecipeCatalogDbContext context)
 
     protected DbSet<T> DbSet { get; } = context.Set<T>();
 
-    public async Task<List<T>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<List<T>> GetListAsync(bool noTracking = false, CancellationToken cancellationToken = default)
     {
-        return await DbSet.ToListAsync(cancellationToken);
+        return await DbSet.ApplyNoTracking(noTracking).ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, bool noTracking = false, CancellationToken cancellationToken = default)
+    {
+        return await DbSet.ApplyNoTracking(noTracking).Where(predicate).ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<T>> GetPagedListAsync(int skip, int take, List<Ordering<T>>? orderBy = null, bool noTracking = false, CancellationToken cancellationToken = default)
+    {
+        return await DbSet.ApplyNoTracking(noTracking).ApplyOrdering(orderBy).Skip(skip).Take(take).ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<T>> GetPagedListAsync(Expression<Func<T, bool>> predicate, int skip, int take, List<Ordering<T>>? orderBy = null, bool noTracking = false, CancellationToken cancellationToken = default)
+    {
+        return await DbSet.ApplyNoTracking(noTracking).Where(predicate).ApplyOrdering(orderBy).Skip(skip).Take(take).ToListAsync(cancellationToken);
     }
 
     public async Task<T?> FindAsync(object?[]? keyValues, CancellationToken cancellationToken = default)

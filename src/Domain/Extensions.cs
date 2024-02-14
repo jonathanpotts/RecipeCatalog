@@ -1,5 +1,5 @@
 ﻿using JonathanPotts.RecipeCatalog.Domain.Entities;
-using JonathanPotts.RecipeCatalog.Domain.Services;
+using JonathanPotts.RecipeCatalog.Domain.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
