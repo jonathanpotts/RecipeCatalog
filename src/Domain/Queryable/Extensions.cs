@@ -2,24 +2,27 @@
 
 public static class Extensions
 {
-    public static IQueryable<T> ApplyOrdering<T>(this IQueryable<T> queryable, List<Ordering<T>>? orderBy) where T : class
+    public static IQueryable<T> ApplyOrdering<T>(
+        this IQueryable<T> queryable,
+        List<Ordering<T>>? orderBy)
+        where T : class
     {
-        foreach (var ordering in orderBy ?? Enumerable.Empty<Ordering<T>>())
+        if (orderBy == null || orderBy.Count == 0)
         {
-            if (queryable is IOrderedQueryable<T> orderedQueryable)
-            {
-                queryable = ordering.Descending
-                    ? orderedQueryable.ThenByDescending(ordering.KeySelector)
-                    : orderedQueryable.ThenBy(ordering.KeySelector);
-            }
-            else
-            {
-                queryable = ordering.Descending
-                    ? queryable.OrderByDescending(ordering.KeySelector)
-                    : queryable.OrderBy(ordering.KeySelector);
-            }
+            return queryable;
         }
 
-        return queryable;
+        var orderedQueryable = orderBy[0].Descending
+            ? queryable.OrderByDescending(orderBy[0].KeySelector)
+            : queryable.OrderBy(orderBy[0].KeySelector);
+
+        foreach (var ordering in orderBy.Skip(1) ?? [])
+        {
+            orderedQueryable = ordering.Descending
+                ? orderedQueryable.ThenByDescending(ordering.KeySelector)
+                : orderedQueryable.ThenBy(ordering.KeySelector);
+        }
+
+        return orderedQueryable;
     }
 }

@@ -12,54 +12,196 @@ public abstract class BaseRepository<T>(RecipeCatalogDbContext context)
 
     protected DbSet<T> DbSet { get; } = context.Set<T>();
 
-    public async Task<List<T>> GetListAsync(bool noTracking = false, CancellationToken cancellationToken = default)
+    public async Task<List<T>> GetListAsync(
+        List<Expression<Func<T, object?>>>? include = null,
+        bool noTracking = false,
+        CancellationToken cancellationToken = default)
     {
-        return await DbSet.ApplyNoTracking(noTracking).ToListAsync(cancellationToken);
+        return await DbSet
+            .ApplyNoTracking(noTracking)
+            .ApplyEagerLoading(include)
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<T>> GetListAsync(Expression<Func<T, bool>> predicate, bool noTracking = false, CancellationToken cancellationToken = default)
+    public async Task<List<T>> GetListAsync(
+        Expression<Func<T, bool>> predicate,
+        List<Expression<Func<T, object?>>>? include = null,
+        bool noTracking = false,
+        CancellationToken cancellationToken = default)
     {
-        return await DbSet.ApplyNoTracking(noTracking).Where(predicate).ToListAsync(cancellationToken);
+        return await DbSet
+            .ApplyNoTracking(noTracking)
+            .ApplyEagerLoading(include)
+            .Where(predicate)
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<T>> GetPagedListAsync(int skip, int take, List<Ordering<T>>? orderBy = null, bool noTracking = false, CancellationToken cancellationToken = default)
+    public async Task<List<T>> GetPagedListAsync(
+        int skip,
+        int take,
+        List<Ordering<T>>? orderBy = null,
+        List<Expression<Func<T, object?>>>? include = null,
+        bool noTracking = false,
+        CancellationToken cancellationToken = default)
     {
-        return await DbSet.ApplyNoTracking(noTracking).ApplyOrdering(orderBy).Skip(skip).Take(take).ToListAsync(cancellationToken);
+        return await DbSet
+            .ApplyNoTracking(noTracking)
+            .ApplyEagerLoading(include)
+            .ApplyOrdering(orderBy)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<T>> GetPagedListAsync(Expression<Func<T, bool>> predicate, int skip, int take, List<Ordering<T>>? orderBy = null, bool noTracking = false, CancellationToken cancellationToken = default)
+    public async Task<List<T>> GetPagedListAsync(
+        Expression<Func<T, bool>> predicate,
+        int skip,
+        int take,
+        List<Ordering<T>>? orderBy = null,
+        List<Expression<Func<T, object?>>>? include = null,
+        bool noTracking = false,
+        CancellationToken cancellationToken = default)
     {
-        return await DbSet.ApplyNoTracking(noTracking).Where(predicate).ApplyOrdering(orderBy).Skip(skip).Take(take).ToListAsync(cancellationToken);
+        return await DbSet
+            .ApplyNoTracking(noTracking)
+            .ApplyEagerLoading(include)
+            .Where(predicate)
+            .ApplyOrdering(orderBy)
+            .Skip(skip)
+            .Take(take)
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<T?> FindAsync(object?[]? keyValues, CancellationToken cancellationToken = default)
+    public async Task<int> CountAsync(CancellationToken cancellationToken = default)
     {
-        return await DbSet.FindAsync(keyValues, cancellationToken);
+        return await DbSet.CountAsync(cancellationToken);
     }
 
-    public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task<int> CountAsync(
+        Expression<Func<T, bool>> predicate,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet.CountAsync(predicate, cancellationToken);
+    }
+
+    public async Task<long> LongCountAsync(CancellationToken cancellationToken = default)
+    {
+        return await DbSet.LongCountAsync(cancellationToken);
+    }
+
+    public async Task<long> LongCountAsync(
+        Expression<Func<T, bool>> predicate,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet.LongCountAsync(predicate, cancellationToken);
+    }
+
+    public async Task<T?> FindAsync(
+        object?[]? keyValues,
+        List<Expression<Func<T, object?>>>? include = null,
+        bool noTracking = false,
+        CancellationToken cancellationToken = default)
+    {
+        var dbSet = (DbSet<T>)DbSet
+            .ApplyNoTracking(noTracking)
+            .ApplyEagerLoading(include);
+
+        return await dbSet.FindAsync(keyValues, cancellationToken);
+    }
+
+    public async Task AddAsync(
+        T entity,
+        bool saveChanges = false,
+        CancellationToken cancellationToken = default)
     {
         await DbSet.AddAsync(entity, cancellationToken);
-        await Context.SaveChangesAsync(cancellationToken);
+
+        if (saveChanges)
+        {
+            await SaveChangesAsync(cancellationToken);
+        }
     }
 
-    public async Task<T> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task AddRangeAsync(
+        IEnumerable<T> entities,
+        bool saveChanges = false,
+        CancellationToken cancellationToken = default)
     {
-        var update = DbSet.Update(entity);
-        await Context.SaveChangesAsync(cancellationToken);
+        await DbSet.AddRangeAsync(entities, cancellationToken);
 
-        return update.Entity;
+        if (saveChanges)
+        {
+            await SaveChangesAsync(cancellationToken);
+        }
     }
 
-    public async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(
+        T entity,
+        bool saveChanges = false,
+        CancellationToken cancellationToken = default)
+    {
+        DbSet.Update(entity);
+
+        if (saveChanges)
+        {
+            await SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public async Task UpdateRangeAsync(
+        IEnumerable<T> entities,
+        bool saveChanges = false,
+        CancellationToken cancellationToken = default)
+    {
+        DbSet.UpdateRange(entities);
+
+        if (saveChanges)
+        {
+            await SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public async Task DeleteAsync(
+        T entity,
+        bool saveChanges = false,
+        CancellationToken cancellationToken = default)
     {
         DbSet.Remove(entity);
-        await Context.SaveChangesAsync(cancellationToken);
+
+        if (saveChanges)
+        {
+            await SaveChangesAsync(cancellationToken);
+        }
     }
 
-    public async Task DeleteAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(
+        Expression<Func<T, bool>> predicate,
+        bool saveChanges = false,
+        CancellationToken cancellationToken = default)
     {
         DbSet.RemoveRange(DbSet.Where(predicate));
+
+        if (saveChanges)
+        {
+            await SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public async Task DeleteRangeAsync(
+        IEnumerable<T> entities,
+        bool saveChanges = false,
+        CancellationToken cancellationToken = default)
+    {
+        DbSet.RemoveRange(entities);
+
+        if (saveChanges)
+        {
+            await SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
         await Context.SaveChangesAsync(cancellationToken);
     }
 }

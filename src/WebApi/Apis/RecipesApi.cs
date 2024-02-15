@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using IdGen;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
@@ -46,66 +47,29 @@ public static class RecipesApi
 
     public static async Task<Results<Ok<PagedResult<RecipeWithCuisineDto>>, ValidationProblem>> GetListAsync(
         [AsParameters] Services services,
-        [Range(1, MaxItemsPerPage)] int? top,
-        long? last,
+        [Range(0, int.MaxValue)] int? skip,
+        [Range(1, IRecipesService.MaxItemsPerPage)] int? take,
         int[]? cuisineIds,
-        bool? withDetails)
+        bool? withDetails,
+        CancellationToken cancellationToken)
     {
-        if (top is < 1 or > MaxItemsPerPage)
+        try
         {
-            return TypedResults.ValidationProblem(new Dictionary<string, string[]>
-            {
-                { nameof(top), [$"Value must be between 1 and {MaxItemsPerPage}."] }
-            });
+            return TypedResults.Ok(
+                await services.RecipesService.GetPagedResultAsync(
+                    skip,
+                    take,
+                    cuisineIds,
+                    withDetails,
+                    cancellationToken));
         }
-
-        IQueryable<Recipe> recipes = services.Context.Recipes;
-
-        if (cuisineIds?.Length > 0)
+        catch (FluentValidation.ValidationException ex)
         {
-            recipes = recipes.Where(x => cuisineIds.Contains(x.CuisineId));
+            return TypedResults.ValidationProblem(
+                ex.Errors.GroupBy(x => x.PropertyName).ToDictionary(
+                    x => x.Key,
+                    x => x.Select(x => x.ErrorMessage).ToArray()));
         }
-
-        var total = await recipes.CountAsync();
-
-        recipes = recipes.Include(x => x.Cuisine).AsNoTracking();
-
-        if (last.HasValue)
-        {
-            recipes = recipes.Where(x => x.Id < last.Value);
-        }
-
-        recipes = recipes
-            .OrderByDescending(x => x.Id)
-            .Take(top.GetValueOrDefault(DefaultItemsPerPage));
-
-        var items = recipes.Select(x => new RecipeWithCuisineDto
-        {
-            Id = x.Id,
-            OwnerId = x.OwnerId,
-            Name = x.Name,
-            CoverImage = x.CoverImage == null
-                ? null
-                : new ImageData
-                {
-                    Url = $"/api/v1/recipes/{x.Id}/coverImage",
-                    AltText = x.CoverImage.AltText
-                },
-            Cuisine = x.Cuisine == null
-                ? null
-                : new CuisineDto
-                {
-                    Id = x.Cuisine.Id,
-                    Name = x.Cuisine.Name
-                },
-            Description = withDetails.GetValueOrDefault(false) ? x.Description : null,
-            Created = x.Created,
-            Modified = x.Modified,
-            Ingredients = withDetails.GetValueOrDefault(false) ? x.Ingredients : null,
-            Instructions = withDetails.GetValueOrDefault(false) ? x.Instructions : null
-        });
-
-        return TypedResults.Ok(new PagedResult<RecipeWithCuisineDto>(total, await items.ToArrayAsync()));
     }
 
     public static async Task<Results<Ok<RecipeWithCuisineDto>, NotFound>> GetAsync(
@@ -298,12 +262,15 @@ public static class RecipesApi
     }
 
     public class Services(
+        IRecipesService recipesService,
         RecipeCatalogDbContext context,
         IdGenerator idGenerator,
         IAuthorizationService authorizationService,
         UserManager<User> userManager)
     {
-        public RecipeCatalogDbContext Context { get; set; } = context;
+        public IRecipesService RecipesService { get; } = recipesService;
+
+        public RecipeCatalogDbContext Context { get; } = context;
 
         public IdGenerator IdGenerator { get; } = idGenerator;
 
