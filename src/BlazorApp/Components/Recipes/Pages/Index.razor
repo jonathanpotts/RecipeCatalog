@@ -26,6 +26,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        recipes = await RecipesService.GetPagedResultAsync();
+        recipes = await RecipesService.GetListAsync();
     }
 }

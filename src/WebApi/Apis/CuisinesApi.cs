@@ -1,11 +1,10 @@
-﻿using System.Security.Claims;
-using JonathanPotts.RecipeCatalog.Application.Authorization;
+﻿using System.Security;
+using System.Security.Claims;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
-using JonathanPotts.RecipeCatalog.Domain;
-using JonathanPotts.RecipeCatalog.Domain.Entities;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
+using JonathanPotts.RecipeCatalog.Application.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
 
@@ -25,135 +24,104 @@ public static class CuisinesApi
         return builder;
     }
 
-    public static async Task<Ok<CuisineDto[]>> GetListAsync(
-        [AsParameters] Services services)
+    public static async Task<Ok<IEnumerable<CuisineDto>>> GetListAsync(
+        ICuisineService cuisineService,
+        CancellationToken cancellationToken)
     {
-        var cuisines = services.Context.Cuisines.AsNoTracking();
-
-        cuisines = cuisines
-            .OrderBy(x => x.Name);
-
-        var items = cuisines.Select(x => new CuisineDto
-        {
-            Id = x.Id,
-            Name = x.Name
-        });
-
-        return TypedResults.Ok(await items.ToArrayAsync());
+        return TypedResults.Ok(await cuisineService.GetListAsync(cancellationToken));
     }
 
     public static async Task<Results<Ok<CuisineDto>, NotFound>> GetAsync(
-        [AsParameters] Services services,
-        int id)
-    {
-        var cuisine = await services.Context.Cuisines.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id);
-
-        if (cuisine == null)
-        {
-            return TypedResults.NotFound();
-        }
-
-        return TypedResults.Ok(new CuisineDto
-        {
-            Id = cuisine.Id,
-            Name = cuisine.Name
-        });
-    }
-
-    [Authorize]
-    public static async Task<Results<Created<CuisineDto>, ForbidHttpResult>> PostAsync(
-        [AsParameters] Services services,
-        ClaimsPrincipal user,
-        CuisineDto dto)
-    {
-        Cuisine cuisine = new()
-        {
-            Name = dto.Name
-        };
-
-        var authResult = await services.AuthorizationService.AuthorizeAsync(user, cuisine, Operations.Create);
-
-        if (!authResult.Succeeded)
-        {
-            return TypedResults.Forbid();
-        }
-
-        await services.Context.Cuisines.AddAsync(cuisine);
-        await services.Context.SaveChangesAsync();
-
-        return TypedResults.Created($"/api/v1/cuisines/{cuisine.Id}", new CuisineDto
-        {
-            Id = cuisine.Id,
-            Name = cuisine.Name
-        });
-    }
-
-    [Authorize]
-    public static async Task<Results<Ok<CuisineDto>, NotFound, ForbidHttpResult>> PutAsync(
-        [AsParameters] Services services,
-        ClaimsPrincipal user,
+        ICuisineService cuisineService,
         int id,
-        CuisineDto dto)
+        CancellationToken cancellationToken = default)
     {
-        var cuisine = await services.Context.Cuisines
-            .FirstOrDefaultAsync(x => x.Id == id);
+        var cuisine = await cuisineService.GetAsync(id, cancellationToken);
 
         if (cuisine == null)
         {
             return TypedResults.NotFound();
         }
 
-        var authResult = await services.AuthorizationService.AuthorizeAsync(user, cuisine, Operations.Update);
+        return TypedResults.Ok(cuisine);
+    }
 
-        if (!authResult.Succeeded)
+    [Authorize]
+    public static async Task<Results<Created<CuisineDto>, ValidationProblem, ForbidHttpResult>> PostAsync(
+        ICuisineService cuisineService,
+        CreateUpdateCuisineDto dto,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var cuisine = await cuisineService.CreateAsync(
+                dto,
+                user,
+                cancellationToken);
+
+            return TypedResults.Created($"/api/v1/cuisines/{cuisine.Id}", cuisine);
+        }
+        catch (FluentValidation.ValidationException ex)
+        {
+            return TypedResults.ValidationProblem(ex.ToDictionary());
+        }
+        catch (SecurityException)
         {
             return TypedResults.Forbid();
         }
+    }
 
-        services.Context.Entry(cuisine).CurrentValues.SetValues(dto);
-        await services.Context.SaveChangesAsync();
-
-        return TypedResults.Ok(new CuisineDto
+    [Authorize]
+    public static async Task<Results<Ok<CuisineDto>, ValidationProblem, NotFound, ForbidHttpResult>> PutAsync(
+        ICuisineService cuisineService,
+        int id,
+        CreateUpdateCuisineDto dto,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        try
         {
-            Id = cuisine.Id,
-            Name = cuisine.Name
-        });
+            return TypedResults.Ok(await cuisineService.UpdateAsync(
+                id,
+                dto,
+                user,
+                cancellationToken));
+        }
+        catch (FluentValidation.ValidationException ex)
+        {
+            return TypedResults.ValidationProblem(ex.ToDictionary());
+        }
+        catch (KeyNotFoundException)
+        {
+            return TypedResults.NotFound();
+        }
+        catch (SecurityException)
+        {
+            return TypedResults.Forbid();
+        }
     }
 
     [Authorize]
     public static async Task<Results<NoContent, NotFound, ForbidHttpResult>> DeleteAsync(
-        [AsParameters] Services services,
+        ICuisineService cuisineService,
+        int id,
         ClaimsPrincipal user,
-        int id)
+        CancellationToken cancellationToken)
     {
-        var cuisine = await services.Context.Cuisines
-            .FirstOrDefaultAsync(x => x.Id == id);
+        try
+        {
+            await cuisineService.DeleteAsync(id, user, cancellationToken);
 
-        if (cuisine == null)
+            return TypedResults.NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return TypedResults.NotFound();
         }
-
-        var authResult = await services.AuthorizationService.AuthorizeAsync(user, cuisine, Operations.Delete);
-
-        if (!authResult.Succeeded)
+        catch (SecurityException)
         {
             return TypedResults.Forbid();
         }
-
-        services.Context.Cuisines.Remove(cuisine);
-        await services.Context.SaveChangesAsync();
-
-        return TypedResults.NoContent();
-    }
-
-    public class Services(
-        RecipeCatalogDbContext context,
-        IAuthorizationService authorizationService)
-    {
-        public RecipeCatalogDbContext Context { get; set; } = context;
-
-        public IAuthorizationService AuthorizationService { get; } = authorizationService;
     }
 }

@@ -7,7 +7,7 @@ public interface IRecipeService
 {
     public const int MaxItemsPerPage = 50;
 
-    public Task<PagedResult<RecipeWithCuisineDto>> GetPagedResultAsync(
+    public Task<PagedResult<RecipeWithCuisineDto>> GetListAsync(
         int? skip = 0,
         int? take = 20,
         int[]? cuisineIds = null,

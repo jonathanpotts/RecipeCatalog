@@ -37,7 +37,7 @@ public static class RecipesApi
     {
         try
         {
-            var pagedResult = await recipeService.GetPagedResultAsync(
+            var pagedResult = await recipeService.GetListAsync(
                 skip,
                 take,
                 cuisineIds,

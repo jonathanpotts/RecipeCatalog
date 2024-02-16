@@ -46,7 +46,7 @@ public static class RecipeExtensions
             Instructions = new MarkdownData
             {
                 Markdown = dto.Instructions,
-            }
+            },
         };
     }
 }

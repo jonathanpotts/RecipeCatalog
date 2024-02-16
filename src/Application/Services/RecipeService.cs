@@ -34,7 +34,7 @@ public class RecipeService(
     private static readonly string s_imagesDirectory
         = Path.Combine(AppContext.BaseDirectory, "Images");
 
-    public async Task<PagedResult<RecipeWithCuisineDto>> GetPagedResultAsync(
+    public async Task<PagedResult<RecipeWithCuisineDto>> GetListAsync(
         int? skip = null,
         int? take = null,
         int[]? cuisineIds = null,
