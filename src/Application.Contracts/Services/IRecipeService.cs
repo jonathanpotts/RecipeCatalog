@@ -2,7 +2,7 @@
 
 namespace JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 
-public interface IRecipesService
+public interface IRecipeService
 {
     public const int MaxItemsPerPage = 50;
 
@@ -11,5 +11,9 @@ public interface IRecipesService
         int? take = 20,
         int[]? cuisineIds = null,
         bool? withDetails = null,
+        CancellationToken cancellationToken = default);
+
+    public Task<RecipeWithCuisineDto?> GetAsync(
+        long id,
         CancellationToken cancellationToken = default);
 }

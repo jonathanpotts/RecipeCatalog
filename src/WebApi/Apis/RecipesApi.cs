@@ -3,6 +3,7 @@ using System.Security.Claims;
 using IdGen;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
+using JonathanPotts.RecipeCatalog.Application.Validation;
 using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
@@ -12,16 +13,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
 
 public static class RecipesApi
 {
-    private const int MaxItemsPerPage = 50;
-    private const int DefaultItemsPerPage = 20;
-
     private static readonly string s_imagesDirectory = Path.Combine(AppContext.BaseDirectory, "Images");
 
     private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
@@ -32,7 +29,6 @@ public static class RecipesApi
     public static IEndpointRouteBuilder MapRecipesApi(this IEndpointRouteBuilder builder)
     {
         var group = builder.MapGroup("/api/v1/recipes")
-            .AddFluentValidationAutoValidation()
             .WithTags("Recipes");
 
         group.MapGet("/", GetListAsync);
@@ -48,67 +44,41 @@ public static class RecipesApi
     public static async Task<Results<Ok<PagedResult<RecipeWithCuisineDto>>, ValidationProblem>> GetListAsync(
         [AsParameters] Services services,
         [Range(0, int.MaxValue)] int? skip,
-        [Range(1, IRecipesService.MaxItemsPerPage)] int? take,
+        [Range(1, IRecipeService.MaxItemsPerPage)] int? take,
         int[]? cuisineIds,
         bool? withDetails,
         CancellationToken cancellationToken)
     {
         try
         {
-            return TypedResults.Ok(
-                await services.RecipesService.GetPagedResultAsync(
-                    skip,
-                    take,
-                    cuisineIds,
-                    withDetails,
-                    cancellationToken));
+            var pagedResult = await services.RecipeService.GetPagedResultAsync(
+                skip,
+                take,
+                cuisineIds,
+                withDetails,
+                cancellationToken);
+
+            return TypedResults.Ok(pagedResult);
         }
         catch (FluentValidation.ValidationException ex)
         {
-            return TypedResults.ValidationProblem(
-                ex.Errors.GroupBy(x => x.PropertyName).ToDictionary(
-                    x => x.Key,
-                    x => x.Select(x => x.ErrorMessage).ToArray()));
+            return TypedResults.ValidationProblem(ex.ToDictionary());
         }
     }
 
     public static async Task<Results<Ok<RecipeWithCuisineDto>, NotFound>> GetAsync(
         [AsParameters] Services services,
-        long id)
+        long id,
+        CancellationToken cancellationToken)
     {
-        var recipe = await services.Context.Recipes.Include(x => x.Cuisine).AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id);
+        var item = await services.RecipeService.GetAsync(id, cancellationToken);
 
-        if (recipe == null)
+        if (item == null)
         {
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(new RecipeWithCuisineDto
-        {
-            Id = recipe.Id,
-            OwnerId = recipe.OwnerId,
-            Name = recipe.Name,
-            CoverImage = recipe.CoverImage == null
-                ? null
-                : new ImageData
-                {
-                    Url = $"/api/v1/recipes/{recipe.Id}/coverImage",
-                    AltText = recipe.CoverImage.AltText
-                },
-            Cuisine = recipe.Cuisine == null
-                ? null
-                : new CuisineDto
-                {
-                    Id = recipe.Cuisine.Id,
-                    Name = recipe.Cuisine.Name
-                },
-            Description = recipe.Description,
-            Created = recipe.Created,
-            Modified = recipe.Modified,
-            Ingredients = recipe.Ingredients,
-            Instructions = recipe.Instructions
-        });
+        return TypedResults.Ok(item);
     }
 
     [SwaggerResponse(200, contentTypes: "image/webp")]
@@ -262,13 +232,13 @@ public static class RecipesApi
     }
 
     public class Services(
-        IRecipesService recipesService,
+        IRecipeService recipeService,
         RecipeCatalogDbContext context,
         IdGenerator idGenerator,
         IAuthorizationService authorizationService,
         UserManager<User> userManager)
     {
-        public IRecipesService RecipesService { get; } = recipesService;
+        public IRecipeService RecipeService { get; } = recipeService;
 
         public RecipeCatalogDbContext Context { get; } = context;
 

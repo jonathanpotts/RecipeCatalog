@@ -6,7 +6,6 @@ using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
 
@@ -15,7 +14,6 @@ public static class CuisinesApi
     public static IEndpointRouteBuilder MapCuisinesApi(this IEndpointRouteBuilder builder)
     {
         var group = builder.MapGroup("/api/v1/cuisines")
-            .AddFluentValidationAutoValidation()
             .WithTags("Cuisines");
 
         group.MapGet("/", GetListAsync);

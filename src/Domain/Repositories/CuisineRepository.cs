@@ -2,7 +2,7 @@
 
 namespace JonathanPotts.RecipeCatalog.Domain.Repositories;
 
-public class CuisinesRepository(RecipeCatalogDbContext context)
+public class CuisineRepository(RecipeCatalogDbContext context)
     : BaseRepository<Cuisine>(context)
 {
 }

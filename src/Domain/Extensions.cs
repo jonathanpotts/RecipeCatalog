@@ -14,8 +14,8 @@ public static class Extensions
             options.UseSqlite(
                 $"Data Source={Path.Combine(AppContext.BaseDirectory, $"{nameof(RecipeCatalogDbContext)}.db")}"));
 
-        services.AddScoped<IRepository<Cuisine>, CuisinesRepository>();
-        services.AddScoped<IRepository<Recipe>, RecipesRepository>();
+        services.AddScoped<IRepository<Cuisine>, CuisineRepository>();
+        services.AddScoped<IRepository<Recipe>, RecipeRepository>();
 
         return services;
     }

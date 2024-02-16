@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
+using JonathanPotts.RecipeCatalog.Application.Mapping;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Repositories;
-using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 
 namespace JonathanPotts.RecipeCatalog.Application.Services;
 
-public class RecipesService(IRepository<Recipe> repository) : IRecipesService
+public class RecipeService(IRepository<Recipe> repository) : IRecipeService
 {
     private const int DefaultItemsPerPage = 20;
 
@@ -30,7 +30,7 @@ public class RecipesService(IRepository<Recipe> repository) : IRecipesService
             InlineValidator<int> validator = [];
             validator.RuleFor(x => x)
                 .GreaterThan(0)
-                .LessThanOrEqualTo(IRecipesService.MaxItemsPerPage);
+                .LessThanOrEqualTo(IRecipeService.MaxItemsPerPage);
             validator.ValidateAndThrow(take.Value);
         }
 
@@ -62,34 +62,20 @@ public class RecipesService(IRepository<Recipe> repository) : IRecipesService
 
         return new PagedResult<RecipeWithCuisineDto>(
             count,
-            recipes.Select(x => new RecipeWithCuisineDto
-            {
-                Id = x.Id,
-                OwnerId = x.OwnerId,
-                Name = x.Name,
-                CoverImage = x.CoverImage == null
-                ? null
-                : new ImageData
-                {
-                    Url = $"/api/v1/recipes/{x.Id}/coverImage",
-                    AltText = x.CoverImage.AltText
-                },
-                Cuisine = x.Cuisine == null
-                ? null
-                : new CuisineDto
-                {
-                    Id = x.Cuisine.Id,
-                    Name = x.Cuisine.Name
-                },
-                Description = withDetails.GetValueOrDefault(false) ? x.Description : null,
-                Created = x.Created,
-                Modified = x.Modified,
-                Ingredients = withDetails.GetValueOrDefault(false)
-                    ? x.Ingredients
-                    : null,
-                Instructions = withDetails.GetValueOrDefault(false)
-                    ? x.Instructions
-                    : null
-            }));
+            recipes.Select(
+                x => x.ToRecipeWithCuisineDto(withDetails.GetValueOrDefault(false))));
+    }
+
+    public async Task<RecipeWithCuisineDto?> GetAsync(
+        long id,
+        CancellationToken cancellationToken = default)
+    {
+        var recipe = await repository.FirstOrDefaultAsync(
+            x => x.Id == id,
+            [x => x.Cuisine],
+            true,
+            cancellationToken);
+
+        return recipe?.ToRecipeWithCuisineDto();
     }
 }

@@ -63,10 +63,10 @@ public sealed class RecipesApiUnitTests : IDisposable
         var authorizationService = serviceProvider.GetRequiredService<IAuthorizationService>();
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
-        RecipesRepository recipesRepository = new(context);
-        RecipesService recipesService = new(recipesRepository);
+        RecipeRepository recipeRepository = new(context);
+        RecipeService recipeService = new(recipeRepository);
 
-        _services = new RecipesApi.Services(recipesService, context, idGenerator, authorizationService, userManager);
+        _services = new RecipesApi.Services(recipeService, context, idGenerator, authorizationService, userManager);
 
         _adminUser = new ClaimsPrincipal(new ClaimsIdentity(
         [
@@ -230,7 +230,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetAsyncReturnsRecipeForValidId()
     {
         // Act
-        var result = await RecipesApi.GetAsync(_services, 6462258523668480);
+        var result = await RecipesApi.GetAsync(_services, 6462258523668480, default);
 
         // Assert
         Assert.IsType<Ok<RecipeWithCuisineDto>>(result.Result);
@@ -271,7 +271,7 @@ public sealed class RecipesApiUnitTests : IDisposable
     public async void GetAsyncReturnsNotFoundForInvalidId()
     {
         // Act
-        var result = await RecipesApi.GetAsync(_services, 123);
+        var result = await RecipesApi.GetAsync(_services, 123, default);
 
         // Assert
         Assert.IsType<NotFound>(result.Result);

@@ -45,8 +45,8 @@ public interface IRepository<T> where T : class
         Expression<Func<T, bool>> predicate,
         CancellationToken cancellationToken = default);
 
-    public Task<T?> FindAsync(
-        object?[]? keyValues,
+    public Task<T?> FirstOrDefaultAsync(
+        Expression<Func<T, bool>>? predicate = null,
         List<Expression<Func<T, object?>>>? include = null,
         bool noTracking = false,
         CancellationToken cancellationToken = default);

@@ -22,7 +22,7 @@ public static class Extensions
         var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         services.AddIdGen(generatorId, () => new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
 
-        services.AddScoped<IRecipesService, RecipesService>();
+        services.AddScoped<IRecipeService, RecipeService>();
 
         return services;
     }

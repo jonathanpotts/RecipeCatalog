@@ -96,17 +96,17 @@ public abstract class BaseRepository<T>(RecipeCatalogDbContext context)
         return await DbSet.LongCountAsync(predicate, cancellationToken);
     }
 
-    public async Task<T?> FindAsync(
-        object?[]? keyValues,
+    public async Task<T?> FirstOrDefaultAsync(
+        Expression<Func<T, bool>>? predicate = null,
         List<Expression<Func<T, object?>>>? include = null,
         bool noTracking = false,
         CancellationToken cancellationToken = default)
     {
-        var dbSet = (DbSet<T>)DbSet
-            .ApplyNoTracking(noTracking)
-            .ApplyEagerLoading(include);
+        var queryable = DbSet.ApplyNoTracking(noTracking).ApplyEagerLoading(include);
 
-        return await dbSet.FindAsync(keyValues, cancellationToken);
+        return predicate == null
+            ? await queryable.FirstOrDefaultAsync(cancellationToken)
+            : await queryable.FirstOrDefaultAsync(predicate, cancellationToken);
     }
 
     public async Task AddAsync(
