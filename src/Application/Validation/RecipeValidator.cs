@@ -11,6 +11,12 @@ public class RecipeValidator : AbstractValidator<Recipe>
         RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => x.CuisineId).NotEmpty();
         RuleFor(x => x.Ingredients).NotEmpty();
-        RuleFor(x => x.Ingredients).NotEmpty();
+        RuleFor(x => x.Instructions!).NotNull()
+            .SetValidator(new MarkdownDataValidator());
+
+        When(x => x.CoverImage != null, () =>
+        {
+            RuleFor(x => x.CoverImage!).SetValidator(new ImageDataValidator());
+        });
     }
 }

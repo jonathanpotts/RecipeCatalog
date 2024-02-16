@@ -10,5 +10,10 @@ public class RecipeDtoValidator : AbstractValidator<RecipeDto>
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.OwnerId).NotEmpty();
         RuleFor(x => x.Name).NotEmpty();
+
+        When(x => x.Instructions != null, () =>
+        {
+            RuleFor(x => x.Instructions!).SetValidator(new MarkdownDataValidator());
+        });
     }
 }
