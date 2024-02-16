@@ -34,4 +34,19 @@ public static class RecipeExtensions
             Instructions = withDetails ? recipe.Instructions : null,
         };
     }
+
+    public static Recipe ToRecipe(this CreateUpdateRecipeDto dto)
+    {
+        return new Recipe
+        {
+            Name = dto.Name,
+            CuisineId = dto.CuisineId,
+            Description = dto.Description,
+            Ingredients = dto.Ingredients,
+            Instructions = new MarkdownData
+            {
+                Markdown = dto.Instructions,
+            }
+        };
+    }
 }

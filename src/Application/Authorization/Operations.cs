@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization.Infrastructure;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Authorization;
+namespace JonathanPotts.RecipeCatalog.Application.Authorization;
 
 public static class Operations
 {

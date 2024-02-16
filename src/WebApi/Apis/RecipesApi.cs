@@ -1,31 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security;
 using System.Security.Claims;
-using IdGen;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.Application.Validation;
-using JonathanPotts.RecipeCatalog.Domain;
-using JonathanPotts.RecipeCatalog.Domain.Entities;
-using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
-using JonathanPotts.RecipeCatalog.WebApi.Authorization;
-using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
 
 public static class RecipesApi
 {
-    private static readonly string s_imagesDirectory = Path.Combine(AppContext.BaseDirectory, "Images");
-
-    private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
-        .DisableHtml()
-        .UseReferralLinks(["ugc"])
-        .Build();
-
     public static IEndpointRouteBuilder MapRecipesApi(this IEndpointRouteBuilder builder)
     {
         var group = builder.MapGroup("/api/v1/recipes")
@@ -42,7 +28,7 @@ public static class RecipesApi
     }
 
     public static async Task<Results<Ok<PagedResult<RecipeWithCuisineDto>>, ValidationProblem>> GetListAsync(
-        [AsParameters] Services services,
+        IRecipeService recipeService,
         [Range(0, int.MaxValue)] int? skip,
         [Range(1, IRecipeService.MaxItemsPerPage)] int? take,
         int[]? cuisineIds,
@@ -51,7 +37,7 @@ public static class RecipesApi
     {
         try
         {
-            var pagedResult = await services.RecipeService.GetPagedResultAsync(
+            var pagedResult = await recipeService.GetPagedResultAsync(
                 skip,
                 take,
                 cuisineIds,
@@ -67,185 +53,115 @@ public static class RecipesApi
     }
 
     public static async Task<Results<Ok<RecipeWithCuisineDto>, NotFound>> GetAsync(
-        [AsParameters] Services services,
+        IRecipeService recipeService,
         long id,
         CancellationToken cancellationToken)
     {
-        var item = await services.RecipeService.GetAsync(id, cancellationToken);
+        var recipe = await recipeService.GetAsync(id, cancellationToken);
 
-        if (item == null)
+        if (recipe == null)
         {
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(item);
+        return TypedResults.Ok(recipe);
     }
 
     [SwaggerResponse(200, contentTypes: "image/webp")]
     public static async Task<Results<PhysicalFileHttpResult, NotFound>> GetCoverImageAsync(
-        [AsParameters] Services services,
-        long id)
-    {
-        var recipe = await services.Context.Recipes.AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id);
-
-        if (recipe?.CoverImage?.Url == null)
-        {
-            return TypedResults.NotFound();
-        }
-
-        var imagePath = Path.Combine(s_imagesDirectory, recipe.CoverImage.Url);
-        var lastModified = File.GetLastWriteTimeUtc(imagePath);
-
-        return TypedResults.PhysicalFile(imagePath, "image/webp", lastModified: lastModified);
-    }
-
-    [Authorize]
-    public static async Task<Results<Created<RecipeWithCuisineDto>, ForbidHttpResult>> PostAsync(
-        [AsParameters] Services services,
-        ClaimsPrincipal user,
-        RecipeCreateOrUpdateDto dto)
-    {
-        Recipe recipe = new()
-        {
-            Id = services.IdGenerator.CreateId(),
-            OwnerId = services.UserManager.GetUserId(user),
-            Name = dto.Name,
-            CuisineId = dto.CuisineId,
-            Description = dto.Description,
-            Created = DateTime.UtcNow,
-            Ingredients = dto.Ingredients,
-            Instructions = new MarkdownData
-            {
-                Markdown = dto.Instructions,
-                Html = Markdown.ToHtml(dto.Instructions!, s_pipeline)
-            }
-        };
-
-        var authResult = await services.AuthorizationService.AuthorizeAsync(user, recipe, Operations.Delete);
-
-        if (!authResult.Succeeded)
-        {
-            return TypedResults.Forbid();
-        }
-
-        await services.Context.Recipes.AddAsync(recipe);
-        await services.Context.SaveChangesAsync();
-
-        return TypedResults.Created($"/api/v1/recipes/{recipe.Id}", new RecipeWithCuisineDto
-        {
-            Id = recipe.Id,
-            OwnerId = recipe.OwnerId,
-            Name = recipe.Name,
-            Cuisine = recipe.Cuisine == null
-                ? null
-                : new CuisineDto
-                {
-                    Id = recipe.Cuisine.Id,
-                    Name = recipe.Cuisine.Name
-                },
-            Description = recipe.Description,
-            Created = recipe.Created,
-            Modified = recipe.Modified,
-            Ingredients = recipe.Ingredients,
-            Instructions = recipe.Instructions
-        });
-    }
-
-    [Authorize]
-    public static async Task<Results<Ok<RecipeWithCuisineDto>, NotFound, ForbidHttpResult>> PutAsync(
-        [AsParameters] Services services,
-        ClaimsPrincipal user,
+        IRecipeService recipeService,
         long id,
-        RecipeCreateOrUpdateDto dto)
+        CancellationToken cancellationToken)
     {
-        var recipe = await services.Context.Recipes
-            .FirstOrDefaultAsync(x => x.Id == id);
+        try
+        {
+            var coverImage = await recipeService.GetCoverImageAsync(id, cancellationToken);
 
-        if (recipe == null)
+            var lastModified = File.GetLastWriteTimeUtc(coverImage);
+            return TypedResults.PhysicalFile(coverImage, "image/webp", lastModified: lastModified);
+        }
+        catch (KeyNotFoundException)
         {
             return TypedResults.NotFound();
         }
+    }
 
-        var authResult = await services.AuthorizationService.AuthorizeAsync(user, recipe, Operations.Update);
+    [Authorize]
+    public static async Task<Results<Created<RecipeWithCuisineDto>, ValidationProblem, ForbidHttpResult>> PostAsync(
+        IRecipeService recipeService,
+        CreateUpdateRecipeDto dto,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var recipe = await recipeService.CreateAsync(
+                dto,
+                user,
+                cancellationToken);
 
-        if (!authResult.Succeeded)
+            return TypedResults.Created($"/api/v1/recipes/{recipe.Id}", recipe);
+        }
+        catch (FluentValidation.ValidationException ex)
+        {
+            return TypedResults.ValidationProblem(ex.ToDictionary());
+        }
+        catch (SecurityException)
         {
             return TypedResults.Forbid();
         }
+    }
 
-        services.Context.Entry(recipe).CurrentValues.SetValues(dto);
-
-        recipe.Instructions ??= new MarkdownData();
-        recipe.Instructions.Markdown = dto.Instructions;
-        recipe.Instructions.Html = Markdown.ToHtml(dto.Instructions!, s_pipeline);
-
-        recipe.Modified = DateTime.UtcNow;
-
-        await services.Context.SaveChangesAsync();
-
-        return TypedResults.Ok(new RecipeWithCuisineDto
+    [Authorize]
+    public static async Task<Results<Ok<RecipeWithCuisineDto>, ValidationProblem, NotFound, ForbidHttpResult>> PutAsync(
+        IRecipeService recipeService,
+        long id,
+        CreateUpdateRecipeDto dto,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        try
         {
-            Id = recipe.Id,
-            OwnerId = recipe.OwnerId,
-            Name = recipe.Name,
-            Cuisine = recipe.Cuisine == null
-                ? null
-                : new CuisineDto
-                {
-                    Id = recipe.Cuisine.Id,
-                    Name = recipe.Cuisine.Name
-                },
-            Description = recipe.Description,
-            Created = recipe.Created,
-            Modified = recipe.Modified,
-            Ingredients = recipe.Ingredients,
-            Instructions = recipe.Instructions
-        });
+            return TypedResults.Ok(await recipeService.UpdateAsync(
+                id,
+                dto,
+                user,
+                cancellationToken));
+        }
+        catch (FluentValidation.ValidationException ex)
+        {
+            return TypedResults.ValidationProblem(ex.ToDictionary());
+        }
+        catch (KeyNotFoundException)
+        {
+            return TypedResults.NotFound();
+        }
+        catch (SecurityException)
+        {
+            return TypedResults.Forbid();
+        }
     }
 
     [Authorize]
     public static async Task<Results<NoContent, NotFound, ForbidHttpResult>> DeleteAsync(
-        [AsParameters] Services services,
+        IRecipeService recipeService,
+        long id,
         ClaimsPrincipal user,
-        long id)
+        CancellationToken cancellationToken)
     {
-        var recipe = await services.Context.Recipes
-            .FirstOrDefaultAsync(x => x.Id == id);
+        try
+        {
+            await recipeService.DeleteAsync(id, user, cancellationToken);
 
-        if (recipe == null)
+            return TypedResults.NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return TypedResults.NotFound();
         }
-
-        var authResult = await services.AuthorizationService.AuthorizeAsync(user, recipe, Operations.Delete);
-
-        if (!authResult.Succeeded)
+        catch (SecurityException)
         {
             return TypedResults.Forbid();
         }
-
-        services.Context.Recipes.Remove(recipe);
-        await services.Context.SaveChangesAsync();
-
-        return TypedResults.NoContent();
-    }
-
-    public class Services(
-        IRecipeService recipeService,
-        RecipeCatalogDbContext context,
-        IdGenerator idGenerator,
-        IAuthorizationService authorizationService,
-        UserManager<User> userManager)
-    {
-        public IRecipeService RecipeService { get; } = recipeService;
-
-        public RecipeCatalogDbContext Context { get; } = context;
-
-        public IdGenerator IdGenerator { get; } = idGenerator;
-
-        public IAuthorizationService AuthorizationService { get; } = authorizationService;
-
-        public UserManager<User> UserManager { get; } = userManager;
     }
 }

@@ -1,6 +1,4 @@
-﻿using JonathanPotts.RecipeCatalog.Domain.Entities;
-using JonathanPotts.RecipeCatalog.Domain.Repositories;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,9 +11,6 @@ public static class Extensions
         services.AddDbContext<RecipeCatalogDbContext>(options =>
             options.UseSqlite(
                 $"Data Source={Path.Combine(AppContext.BaseDirectory, $"{nameof(RecipeCatalogDbContext)}.db")}"));
-
-        services.AddScoped<IRepository<Cuisine>, CuisineRepository>();
-        services.AddScoped<IRepository<Recipe>, RecipeRepository>();
 
         return services;
     }

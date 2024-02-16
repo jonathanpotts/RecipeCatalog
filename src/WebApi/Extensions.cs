@@ -1,9 +1,7 @@
 ﻿using JonathanPotts.RecipeCatalog.Application;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.WebApi.Apis;
-using JonathanPotts.RecipeCatalog.WebApi.Authorization;
 using JonathanPotts.RecipeCatalog.WebApi.Data;
-using Microsoft.AspNetCore.Authorization;
 
 namespace JonathanPotts.RecipeCatalog.WebApi;
 
@@ -12,11 +10,6 @@ public static class Extensions
     public static IServiceCollection AddWebApiServices(this IServiceCollection services, int generatorId = 0)
     {
         services.AddApplicationServices(generatorId);
-
-        services.AddAuthorization();
-
-        services.AddScoped<IAuthorizationHandler, CuisineAuthorizationHandler>();
-        services.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
 
         services.AddProblemDetails();
 

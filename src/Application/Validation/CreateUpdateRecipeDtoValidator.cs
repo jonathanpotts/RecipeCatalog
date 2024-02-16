@@ -3,9 +3,9 @@ using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 
 namespace JonathanPotts.RecipeCatalog.Application.Validation;
 
-public class RecipeCreateOrUpdateDtoValidator : AbstractValidator<RecipeCreateOrUpdateDto>
+public class CreateUpdateRecipeDtoValidator : AbstractValidator<CreateUpdateRecipeDto>
 {
-    public RecipeCreateOrUpdateDtoValidator()
+    public CreateUpdateRecipeDtoValidator()
     {
         RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => x.CuisineId).NotEmpty();

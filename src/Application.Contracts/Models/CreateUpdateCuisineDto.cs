@@ -1,6 +1,6 @@
 ﻿namespace JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 
-public class CuisineCreateOrUpdateDto
+public class CreateUpdateCuisineDto
 {
     public string? Name { get; set; }
 }

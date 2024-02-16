@@ -1,11 +1,11 @@
-﻿using FluentValidation;
-using IdGen;
+﻿using IdGen;
 using IdGen.DependencyInjection;
+using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.Application.Services;
-using JonathanPotts.RecipeCatalog.Application.Validation;
 using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,12 +17,15 @@ public static class Extensions
     {
         services.AddDomainServices();
 
-        services.AddValidatorsFromAssemblyContaining<RecipeDtoValidator>();
-
         var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         services.AddIdGen(generatorId, () => new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
 
         services.AddScoped<IRecipeService, RecipeService>();
+
+        services.AddAuthorization();
+
+        services.AddScoped<IAuthorizationHandler, CuisineAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
 
         return services;
     }

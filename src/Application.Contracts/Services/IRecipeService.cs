@@ -1,4 +1,5 @@
-﻿using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+﻿using System.Security.Claims;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 
 namespace JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 
@@ -15,5 +16,25 @@ public interface IRecipeService
 
     public Task<RecipeWithCuisineDto?> GetAsync(
         long id,
+        CancellationToken cancellationToken = default);
+
+    public Task<string> GetCoverImageAsync(
+        long id,
+        CancellationToken cancellationToken = default);
+
+    public Task<RecipeWithCuisineDto> CreateAsync(
+        CreateUpdateRecipeDto dto,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken = default);
+
+    public Task<RecipeWithCuisineDto> UpdateAsync(
+        long id,
+        CreateUpdateRecipeDto dto,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken = default);
+
+    public Task DeleteAsync(
+        long id,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken = default);
 }

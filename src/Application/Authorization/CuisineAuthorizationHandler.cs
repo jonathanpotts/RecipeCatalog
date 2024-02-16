@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Authorization;
+namespace JonathanPotts.RecipeCatalog.Application.Authorization;
 
 public class CuisineAuthorizationHandler(UserManager<User> userManager)
     : AuthorizationHandler<OperationAuthorizationRequirement, Cuisine>
