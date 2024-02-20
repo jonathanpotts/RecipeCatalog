@@ -3,13 +3,13 @@
     <div class="card" style="width: 18rem;">
         @if (Recipe.CoverImage != null)
         {
-            <img src="@Recipe.CoverImage.Url" class="card-img-top" alt="@Recipe.CoverImage.AltText">
+            <img src="@Recipe.CoverImage.Url" class="card-img-top" alt="@Recipe.CoverImage.AltText" />
         }
 
         <div class="card-body">
             <h5 class="card-title">@Recipe.Name</h5>
             <p class="card-text">@Recipe.Description</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <NavLink href=@($"recipes/{Recipe.Id}") class="btn btn-primary">Go somewhere</NavLink>
         </div>
     </div>
 }

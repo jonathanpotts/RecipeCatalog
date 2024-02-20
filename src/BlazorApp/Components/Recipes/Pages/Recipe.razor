@@ -1,0 +1,52 @@
+﻿@page "/recipes/{Id:long}"
+@inject IRecipeService RecipeService
+
+@if (recipe == null)
+{
+    <PageTitle>Recipe</PageTitle>
+    <h1>Recipe</h1>
+
+    <p>Loading...</p>
+}
+else
+{
+    <PageTitle>@recipe.Name</PageTitle>
+    <h1>@recipe.Name</h1>
+
+    @if (!string.IsNullOrEmpty(recipe.Description))
+    {
+        <p>@recipe.Description</p>
+    }
+
+    @if(recipe.CoverImage != null)
+    {
+        <img src="@recipe.CoverImage.Url" alt="@recipe.CoverImage.AltText" />
+    }
+
+    <h2>Ingredients</h2>
+
+    <ul>
+        @foreach (var ingredient in recipe.Ingredients ?? Enumerable.Empty<string>())
+        {
+            <li>@ingredient</li>
+        }
+    </ul>
+
+    <h2>Instructions</h2>
+
+    <section>
+        @((MarkupString)recipe.Instructions!.Html!)
+    </section>
+}
+
+@code {
+    [Parameter]
+    public long Id { get; set; }
+
+    private RecipeWithCuisineDto? recipe = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        recipe = await RecipeService.GetAsync(Id);
+    }
+}

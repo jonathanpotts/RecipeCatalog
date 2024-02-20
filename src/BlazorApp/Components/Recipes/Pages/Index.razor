@@ -1,5 +1,7 @@
 ﻿@page "/recipes"
-@inject IRecipeService RecipesService
+@inject ICuisineService CuisineService
+@inject IRecipeService RecipeService
+@rendermode InteractiveServer
 
 <PageTitle>Recipes</PageTitle>
 
@@ -11,6 +13,22 @@
 }
 else
 {
+    foreach (var cuisine in cuisines ?? Enumerable.Empty<CuisineDto>())
+    {
+        <div class="form-check form-check-inline">
+            <input type="checkbox"
+                class="form-check-input"
+                id=@($"cuisine_{cuisine.Id}")
+                checked="@cuisineFilter.Contains(cuisine.Id)"
+                @onchange="async e => await CuisineFilterChanged(cuisine.Id, e.Value)" />
+            <label
+                class="form-check-label"
+                for=@($"cuisine_{cuisine.Id}")>
+                @cuisine.Name
+            </label>
+        </div>
+    }
+
     <ul>
         @foreach (var recipe in recipes.Items)
         {
@@ -22,10 +40,35 @@ else
 }
 
 @code {
-    PagedResult<RecipeWithCuisineDto>? recipes = null;
+    private IEnumerable<CuisineDto>? cuisines = null;
+    private PagedResult<RecipeWithCuisineDto>? recipes = null;
+
+    private HashSet<int> cuisineFilter = [];
 
     protected override async Task OnInitializedAsync()
     {
-        recipes = await RecipesService.GetListAsync();
+        cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
+        await ReloadRecipesAsync();
+    }
+
+    private async Task ReloadRecipesAsync()
+    {
+        var cuisineIds = cuisineFilter.Count > 0 ? cuisineFilter.ToArray() : null;
+
+        recipes = await RecipeService.GetListAsync(cuisineIds: cuisineIds);
+    }
+
+    private async Task CuisineFilterChanged(int id, object? value)
+    {
+        if (value is true)
+        {
+            cuisineFilter.Add(id);
+        }
+        else
+        {
+            cuisineFilter.Remove(id);
+        }
+
+        await ReloadRecipesAsync();
     }
 }
