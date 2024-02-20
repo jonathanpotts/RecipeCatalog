@@ -45,7 +45,7 @@ else
 
     [Parameter]
     [SupplyParameterFromQuery]
-    public int Page { get; set; }
+    public int? Page { get; set; }
 
     [Parameter]
     [SupplyParameterFromQuery]
@@ -58,18 +58,21 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Page ??= 1;
+
         foreach (var id in CuisineIds ?? Enumerable.Empty<int>())
         {
             _cuisineFilter.Add(id);
         }
 
         _cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
+
         await ReloadRecipesAsync();
     }
 
     private async Task ReloadRecipesAsync()
     {
-        _recipes = await RecipeService.GetListAsync(Page * PageSize, PageSize, _cuisineFilter.ToArray());
+        _recipes = await RecipeService.GetListAsync((Page - 1) * PageSize, PageSize, _cuisineFilter.ToArray());
     }
 
     private async Task CuisineFilterChanged(int id, object? value)
@@ -82,6 +85,8 @@ else
         {
             _cuisineFilter.Remove(id);
         }
+
+        Page = 1;
 
         var newUri = NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>()
         {
