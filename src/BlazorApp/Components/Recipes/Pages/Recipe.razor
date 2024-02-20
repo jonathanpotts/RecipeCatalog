@@ -13,6 +13,8 @@ else
     <PageTitle>@recipe.Name</PageTitle>
     <h1>@recipe.Name</h1>
 
+    <p>@recipe.Cuisine!.Name</p>
+
     @if (!string.IsNullOrEmpty(recipe.Description))
     {
         <p>@recipe.Description</p>

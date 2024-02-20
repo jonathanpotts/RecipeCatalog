@@ -1,25 +1,26 @@
 ﻿@page "/recipes"
 @inject ICuisineService CuisineService
 @inject IRecipeService RecipeService
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
 <PageTitle>Recipes</PageTitle>
 
 <h1>Recipes</h1>
 
-@if (recipes == null)
+@if (_recipes == null)
 {
     <p>Loading...</p>
 }
 else
 {
-    foreach (var cuisine in cuisines ?? Enumerable.Empty<CuisineDto>())
+    foreach (var cuisine in _cuisines ?? Enumerable.Empty<CuisineDto>())
     {
         <div class="form-check form-check-inline">
             <input type="checkbox"
                 class="form-check-input"
                 id=@($"cuisine_{cuisine.Id}")
-                checked="@cuisineFilter.Contains(cuisine.Id)"
+                checked="@_cuisineFilter.Contains(cuisine.Id)"
                 @onchange="async e => await CuisineFilterChanged(cuisine.Id, e.Value)" />
             <label
                 class="form-check-label"
@@ -30,45 +31,65 @@ else
     }
 
     <ul>
-        @foreach (var recipe in recipes.Items)
+        @foreach (var recipe in _recipes.Items)
         {
             <RecipeCard Recipe="recipe" />
         }
     </ul>
 
-    <p><strong>Total:</strong> @recipes.Total</p>
+    <p><strong>Total:</strong> @_recipes.Total</p>
 }
 
 @code {
-    private IEnumerable<CuisineDto>? cuisines = null;
-    private PagedResult<RecipeWithCuisineDto>? recipes = null;
+    private const int PageSize = 20;
 
-    private HashSet<int> cuisineFilter = [];
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int Page { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int[]? CuisineIds { get; set; }
+
+    private IEnumerable<CuisineDto>? _cuisines = null;
+    private PagedResult<RecipeWithCuisineDto>? _recipes = null;
+
+    private HashSet<int> _cuisineFilter = [];
 
     protected override async Task OnInitializedAsync()
     {
-        cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
+        foreach (var id in CuisineIds ?? Enumerable.Empty<int>())
+        {
+            _cuisineFilter.Add(id);
+        }
+
+        _cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
         await ReloadRecipesAsync();
     }
 
     private async Task ReloadRecipesAsync()
     {
-        var cuisineIds = cuisineFilter.Count > 0 ? cuisineFilter.ToArray() : null;
-
-        recipes = await RecipeService.GetListAsync(cuisineIds: cuisineIds);
+        _recipes = await RecipeService.GetListAsync(Page * PageSize, PageSize, _cuisineFilter.ToArray());
     }
 
     private async Task CuisineFilterChanged(int id, object? value)
     {
         if (value is true)
         {
-            cuisineFilter.Add(id);
+            _cuisineFilter.Add(id);
         }
         else
         {
-            cuisineFilter.Remove(id);
+            _cuisineFilter.Remove(id);
         }
 
+        var newUri = NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>()
+        {
+            { "cuisineIds", _cuisineFilter.ToArray() },
+            { "page", null }
+        });
+
+        NavigationManager.NavigateTo(newUri);
         await ReloadRecipesAsync();
     }
 }
