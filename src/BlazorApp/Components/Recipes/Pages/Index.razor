@@ -42,29 +42,45 @@ else
     <nav aria-label="Page navigation" class="py-4">
         <ul class="pagination justify-content-center">
             <li class=@(Page is null or 1 ? "page-item disabled" : "page-item")>
-                <NavLink class="page-link" href=@(Page is null or 1 ? null : "test")>Previous</NavLink>
+                <NavLink
+                    class="page-link"
+                    href=@(Page is null or 1 ? null : GetPageUri(Page - 1))>
+                    Previous
+                </NavLink>
             </li>
-            <li class="page-item">
-                <NavLink class="page-link" href="@GetPageUri(null)" Match="NavLinkMatch.All">1</NavLink>
-            </li>
-            <li class="page-item">
-                <NavLink class="page-link" href="@GetPageUri(2)">2</NavLink>
-            </li>
-            <li class="page-item">
-                <NavLink class="page-link" href="@GetPageUri(3)">3</NavLink>
-            </li>
-            <li class="page-item">
-                <span class="page-link disabled">...</span>
-            </li>
+            @foreach (var page in GetPagination())
+            {
+                if (page > 0)
+                {
+                    <li class="page-item">
+                        <NavLink
+                            class=@(page == 1 && NavigationManager.Uri == GetPageUri(null) ? "page-link active" : "page-link")
+                            href="@GetPageUri(page)">
+                            @(page)
+                        </NavLink>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <span class="page-link disabled">...</span>
+                    </li>
+                }
+            }
             <li class=@((_totalPages == 1 || Page == _totalPages) ? "page-item disabled" : "page-item")>
-                <NavLink class="page-link" href=@((_totalPages == 1 || Page == _totalPages) ? null : "test")>Next</NavLink>
+                <NavLink
+                    class="page-link"
+                    href=@((_totalPages == 1 || Page == _totalPages) ? null : GetPageUri((Page ?? 1) + 1))>
+                    Next
+                </NavLink>
             </li>
         </ul>
     </nav>
 }
 
 @code {
-    private const int PageSize = 20;
+    private const int PageSize = 3;
+    private const int PaginatorSize = 7;
 
     [Parameter]
     [SupplyParameterFromQuery]
@@ -128,5 +144,40 @@ else
         }
 
         UpdateQueryString();
+    }
+
+    private IEnumerable<int> GetPagination()
+    {
+        if (_totalPages <= PaginatorSize)
+        {
+            return Enumerable.Range(1, _totalPages);
+        }
+
+        List<int> pages = [];
+
+        var half = PaginatorSize / 2;
+
+        if ((Page ?? 1) <= half + 1)
+        {
+            pages.AddRange(Enumerable.Range(1, PaginatorSize - 2));
+            pages.Add(-1);
+            pages.Add(_totalPages);
+        }
+        else if ((Page ?? 1) >= _totalPages - half)
+        {
+            pages.Add(1);
+            pages.Add(-1);
+            pages.AddRange(Enumerable.Range(_totalPages - PaginatorSize + 3, PaginatorSize - 2));
+        }
+        else
+        {
+            pages.Add(1);
+            pages.Add(-1);
+            pages.AddRange(Enumerable.Range((Page ?? 1) - half + 2, PaginatorSize - 4));
+            pages.Add(-1);
+            pages.Add(_totalPages);
+        }
+
+        return pages;
     }
 }
