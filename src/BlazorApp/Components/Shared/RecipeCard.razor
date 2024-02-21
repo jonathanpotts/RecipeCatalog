@@ -1,0 +1,28 @@
+﻿@rendermode InteractiveServer
+
+@if (Recipe != null)
+{
+    <MudCard Class="mud-height-full d-flex flex-column">
+        @if (Recipe.CoverImage != null)
+        {
+            <MudCardMedia Image="@Recipe.CoverImage.Url" Height="300" />
+        }
+        else
+        {
+            <MudPaper Elevation="0" Height="300px" Class="rounded-b-0 mud-background-gray" />
+        }
+        <MudCardContent>
+            <MudText Typo="Typo.h6">@Recipe.Name</MudText>
+        </MudCardContent>
+        <MudSpacer />
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"recipes/{Recipe.Id}")">View</MudButton>
+        </MudCardActions>
+    </MudCard>
+}
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public RecipeWithCuisineDto? Recipe { get; set; }
+}

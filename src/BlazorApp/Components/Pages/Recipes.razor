@@ -4,9 +4,9 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Recipes</PageTitle>
+<PageTitle>Recipe Catalog</PageTitle>
 
-<h1>Recipes</h1>
+<MudText Typo="Typo.h4">Recipes</MudText>
 
 @if (_recipes == null)
 {
@@ -30,56 +30,22 @@ else
         </div>
     }
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-3">
+    <MudGrid Spacing="3">
         @foreach (var recipe in _recipes.Items)
         {
-            <div class="col">
+            <MudItem xs="12" sm="6" md="4" lg="3">
                 <RecipeCard Recipe="recipe" />
-            </div>
+            </MudItem>
         }
-    </div>
+    </MudGrid>
 
-    <nav aria-label="Page navigation" class="py-4">
-        <ul class="pagination justify-content-center">
-            <li class=@(Page is null or 1 ? "page-item disabled" : "page-item")>
-                <NavLink
-                    class="page-link"
-                    href=@(Page is null or 1 ? null : GetPageUri(Page - 1))>
-                    Previous
-                </NavLink>
-            </li>
-            @foreach (var page in GetPagination())
-            {
-                if (page > 0)
-                {
-                    <li class="page-item">
-                        <NavLink
-                            class=@(page == 1 && NavigationManager.Uri == GetPageUri(null) ? "page-link active" : "page-link")
-                            href="@GetPageUri(page)">
-                            @(page)
-                        </NavLink>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item">
-                        <span class="page-link disabled">...</span>
-                    </li>
-                }
-            }
-            <li class=@((_totalPages == 1 || Page == _totalPages) ? "page-item disabled" : "page-item")>
-                <NavLink
-                    class="page-link"
-                    href=@((_totalPages == 1 || Page == _totalPages) ? null : GetPageUri((Page ?? 1) + 1))>
-                    Next
-                </NavLink>
-            </li>
-        </ul>
-    </nav>
+    <div class="d-flex flex-column align-center my-4">
+        <MudPagination Count="_totalPages" Selected="_selectedPage" SelectedChanged="PageSelected" />
+    </div>
 }
 
 @code {
-    private const int PageSize = 3;
+    private const int PageSize = 20;
     private const int PaginatorSize = 7;
 
     [Parameter]
@@ -96,8 +62,12 @@ else
     private HashSet<int>? _cuisineFilter;
     private int _totalPages;
 
+    private int _selectedPage;
+
     protected override async Task OnParametersSetAsync()
     {
+        _selectedPage = Page ?? 1;
+
         _cuisineFilter = [..CuisineIds];
 
         _cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
@@ -146,38 +116,11 @@ else
         UpdateQueryString();
     }
 
-    private IEnumerable<int> GetPagination()
+    private void PageSelected(int page)
     {
-        if (_totalPages <= PaginatorSize)
+        if ((Page ?? 1) != page)
         {
-            return Enumerable.Range(1, _totalPages);
+            NavigationManager.NavigateTo(GetPageUri(page));
         }
-
-        List<int> pages = [];
-
-        var half = PaginatorSize / 2;
-
-        if ((Page ?? 1) <= half + 1)
-        {
-            pages.AddRange(Enumerable.Range(1, PaginatorSize - 2));
-            pages.Add(-1);
-            pages.Add(_totalPages);
-        }
-        else if ((Page ?? 1) >= _totalPages - half)
-        {
-            pages.Add(1);
-            pages.Add(-1);
-            pages.AddRange(Enumerable.Range(_totalPages - PaginatorSize + 3, PaginatorSize - 2));
-        }
-        else
-        {
-            pages.Add(1);
-            pages.Add(-1);
-            pages.AddRange(Enumerable.Range((Page ?? 1) - half + 2, PaginatorSize - 4));
-            pages.Add(-1);
-            pages.Add(_totalPages);
-        }
-
-        return pages;
     }
 }
