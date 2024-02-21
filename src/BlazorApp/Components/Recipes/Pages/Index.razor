@@ -20,8 +20,8 @@ else
             <input type="checkbox"
                 class="form-check-input"
                 id=@($"cuisine_{cuisine.Id}")
-                checked="@_cuisineFilter.Contains(cuisine.Id)"
-                @onchange="async e => await CuisineFilterChanged(cuisine.Id, e.Value)" />
+                checked="@(_cuisineFilter?.Contains(cuisine.Id) ?? false)"
+                @onchange="e => CuisineFilterChanged(cuisine.Id, e.Value)" />
             <label
                 class="form-check-label"
                 for=@($"cuisine_{cuisine.Id}")>
@@ -30,14 +30,37 @@ else
         </div>
     }
 
-    <ul>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-3">
         @foreach (var recipe in _recipes.Items)
         {
-            <RecipeCard Recipe="recipe" />
+            <div class="col">
+                <RecipeCard Recipe="recipe" />
+            </div>
         }
-    </ul>
+    </div>
 
-    <p><strong>Total:</strong> @_recipes.Total</p>
+    <nav aria-label="Page navigation" class="py-4">
+        <ul class="pagination justify-content-center">
+            <li class=@(Page is null or 1 ? "page-item disabled" : "page-item")>
+                <NavLink class="page-link" href=@(Page is null or 1 ? null : "test")>Previous</NavLink>
+            </li>
+            <li class="page-item">
+                <NavLink class="page-link" href="@GetPageUri(null)" Match="NavLinkMatch.All">1</NavLink>
+            </li>
+            <li class="page-item">
+                <NavLink class="page-link" href="@GetPageUri(2)">2</NavLink>
+            </li>
+            <li class="page-item">
+                <NavLink class="page-link" href="@GetPageUri(3)">3</NavLink>
+            </li>
+            <li class="page-item">
+                <span class="page-link disabled">...</span>
+            </li>
+            <li class=@((_totalPages == 1 || Page == _totalPages) ? "page-item disabled" : "page-item")>
+                <NavLink class="page-link" href=@((_totalPages == 1 || Page == _totalPages) ? null : "test")>Next</NavLink>
+            </li>
+        </ul>
+    </nav>
 }
 
 @code {
@@ -54,29 +77,47 @@ else
     private IEnumerable<CuisineDto>? _cuisines = null;
     private PagedResult<RecipeWithCuisineDto>? _recipes = null;
 
-    private HashSet<int> _cuisineFilter = [];
+    private HashSet<int>? _cuisineFilter;
+    private int _totalPages;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        Page ??= 1;
-
-        foreach (var id in CuisineIds ?? Enumerable.Empty<int>())
-        {
-            _cuisineFilter.Add(id);
-        }
+        _cuisineFilter = [..CuisineIds];
 
         _cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
 
-        await ReloadRecipesAsync();
+        var skip = Page != null ? (Page - 1) * PageSize : null;
+        _recipes = await RecipeService.GetListAsync(skip, PageSize, _cuisineFilter?.ToArray());
+
+        _totalPages = _recipes.Total % PageSize > 0
+            ? (_recipes.Total / PageSize) + 1
+            : _recipes.Total / PageSize;
     }
 
-    private async Task ReloadRecipesAsync()
+    private void UpdateQueryString()
     {
-        _recipes = await RecipeService.GetListAsync((Page - 1) * PageSize, PageSize, _cuisineFilter.ToArray());
+        var newUri = NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>()
+        {
+            { "cuisineIds", _cuisineFilter?.ToArray() },
+            { "page", Page }
+        });
+
+        NavigationManager.NavigateTo(newUri);
     }
 
-    private async Task CuisineFilterChanged(int id, object? value)
+    private string GetPageUri(int? page)
     {
+        return NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>()
+        {
+            { "cuisineIds", _cuisineFilter?.ToArray() },
+            { "page", page }
+        });
+    }
+
+    private void CuisineFilterChanged(int id, object? value)
+    {
+        _cuisineFilter ??= [];
+
         if (value is true)
         {
             _cuisineFilter.Add(id);
@@ -86,15 +127,6 @@ else
             _cuisineFilter.Remove(id);
         }
 
-        Page = 1;
-
-        var newUri = NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>()
-        {
-            { "cuisineIds", _cuisineFilter.ToArray() },
-            { "page", null }
-        });
-
-        NavigationManager.NavigateTo(newUri);
-        await ReloadRecipesAsync();
+        UpdateQueryString();
     }
 }
