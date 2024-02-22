@@ -6,7 +6,7 @@ namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 public class OpenAITextGenerator(IOptions<OpenAITextGeneratorOptions> options) : BaseOpenAITextGenerator
 {
     private readonly string _chatCompletionsDeploymentName =
-        options.Value.ChatCompletionsDeploymentName ?? "gpt-3.5-turbo-0125";
+        options.Value.ChatCompletionsDeploymentName ?? "gpt-3.5-turbo";
 
     private readonly string _embeddingsDeploymentName =
         options.Value.EmbeddingsDeploymentName ?? "text-embedding-3-small";
