@@ -51,7 +51,7 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(JonathanPotts.RecipeCatalog.BlazorApp.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(JonathanPotts.RecipeCatalog.BlazorApp.Client.Components._Imports).Assembly);
 
 app.UseDbMigrator();
 

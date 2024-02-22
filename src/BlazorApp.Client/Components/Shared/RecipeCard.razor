@@ -1,0 +1,50 @@
+﻿<MudCard Class="mud-height-full d-flex flex-column">
+    @if (Recipe == null)
+    {
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="300px" />
+    }
+    else if (Recipe.CoverImage != null)
+    {
+        <MudCardMedia Image="@Recipe.CoverImage.Url" Height="300" />
+    }
+    else
+    {
+        <MudPaper Elevation="0" Height="300px" Class="rounded-b-0 mud-background-gray" />
+    }
+    <MudCardContent>
+        @if (Recipe == null)
+        {
+            <MudSkeleton Width="45%" Height="42px" />
+            <MudSkeleton Width="25%" Class="mb-2" />
+            <MudSkeleton Width="100%" />
+            <MudSkeleton Width="90%" />
+            <MudSkeleton Width="95%" />
+        }
+        else
+        {
+            <MudText Typo="Typo.h5">@Recipe.Name</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mb-2">@Recipe.Cuisine!.Name</MudText>
+            <MudText
+                Typo="Typo.body2"
+                Style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden">
+                @Recipe.Description
+            </MudText>
+        }
+    </MudCardContent>
+    <MudSpacer />
+    <MudCardActions>
+        @if (Recipe == null)
+        {
+            <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
+        }
+        else
+        {
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"recipes/{Recipe.Id}")">View</MudButton>
+        }
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public RecipeWithCuisineDto? Recipe { get; set; }
+}

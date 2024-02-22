@@ -27,7 +27,7 @@ public static class RecipeExtensions
                     Id = recipe.Cuisine.Id,
                     Name = recipe.Cuisine.Name,
                 },
-            Description = withDetails ? recipe.Description : null,
+            Description = recipe.Description,
             Created = recipe.Created,
             Modified = recipe.Modified,
             Ingredients = withDetails ? recipe.Ingredients : null,

@@ -114,7 +114,7 @@ public sealed class RecipesApiUnitTests : IDisposable
                 Assert.Equal(1, firstItem.Cuisine.Id);
                 Assert.Equal("Test", firstItem.Cuisine.Name);
             },
-            () => Assert.Null(firstItem.Description),
+            () => Assert.Equal("This is a test.", firstItem.Description),
             () => Assert.Equal(new DateTime(638412047602332665, DateTimeKind.Utc), firstItem.Created),
             () => Assert.Null(firstItem.Modified),
             () => Assert.Null(firstItem.Ingredients),

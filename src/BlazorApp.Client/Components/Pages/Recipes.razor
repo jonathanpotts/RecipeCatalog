@@ -2,43 +2,47 @@
 @inject ICuisineService CuisineService
 @inject IRecipeService RecipeService
 @inject NavigationManager NavigationManager
-@rendermode InteractiveServer
+@rendermode InteractiveAuto
 
 <PageTitle>Recipe Catalog</PageTitle>
 
 <MudText Typo="Typo.h4">Recipes</MudText>
 
-@if (_recipes == null)
+@if (_cuisines != null)
 {
-    <p>Loading...</p>
-}
-else
-{
-    foreach (var cuisine in _cuisines ?? Enumerable.Empty<CuisineDto>())
-    {
-        <div class="form-check form-check-inline">
-            <input type="checkbox"
-                class="form-check-input"
-                id=@($"cuisine_{cuisine.Id}")
-                checked="@(_cuisineFilter?.Contains(cuisine.Id) ?? false)"
-                @onchange="e => CuisineFilterChanged(cuisine.Id, e.Value)" />
-            <label
-                class="form-check-label"
-                for=@($"cuisine_{cuisine.Id}")>
-                @cuisine.Name
-            </label>
+    <MudField Label="Cuisines" Variant="Variant.Outlined" InnerPadding="false" Class="my-4">
+        <div class="d-flex flex-wrap">
+            @foreach (var cuisine in _cuisines ?? Enumerable.Empty<CuisineDto>())
+            {
+                <MudCheckBox T="bool"
+                    Label="@cuisine.Name"
+                    Value="@(_cuisineFilter?.Contains(cuisine.Id) ?? false)"
+                    ValueChanged="value => CuisineFilterChanged(cuisine.Id, value)" />
+            }
         </div>
-    }
+    </MudField>
+}
 
-    <MudGrid Spacing="3">
+<MudGrid Spacing="3" Class="my-4">
+    @if (_recipes == null)
+    {
+        <MudItem xs="12" sm="6" md="4" lg="3">
+            <RecipeCard />
+        </MudItem>
+    }
+    else
+    {
         @foreach (var recipe in _recipes.Items)
         {
             <MudItem xs="12" sm="6" md="4" lg="3">
                 <RecipeCard Recipe="recipe" />
             </MudItem>
         }
-    </MudGrid>
+    }
+</MudGrid>
 
+@if (_recipes != null)
+{
     <div class="d-flex flex-column align-center my-4">
         <MudPagination Count="_totalPages" Selected="_selectedPage" SelectedChanged="PageSelected" />
     </div>
@@ -66,6 +70,9 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
+        _recipes = null;
+        _cuisines = null;
+
         _selectedPage = Page ?? 1;
 
         _cuisineFilter = [..CuisineIds];
@@ -100,11 +107,11 @@ else
         });
     }
 
-    private void CuisineFilterChanged(int id, object? value)
+    private void CuisineFilterChanged(int id, bool value)
     {
         _cuisineFilter ??= [];
 
-        if (value is true)
+        if (value)
         {
             _cuisineFilter.Add(id);
         }
@@ -118,7 +125,7 @@ else
 
     private void PageSelected(int page)
     {
-        if ((Page ?? 1) != page)
+        if (page != (Page ?? 1))
         {
             NavigationManager.NavigateTo(GetPageUri(page));
         }
