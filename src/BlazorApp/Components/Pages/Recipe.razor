@@ -20,10 +20,10 @@ else
     @if (recipe.CoverImage != null)
     {
         <img
-            id="cover-image"
             src="@recipe.CoverImage.Url"
             alt="@recipe.CoverImage.AltText"
-            class="w-100 rounded mb-4" />
+            class="w-100 rounded mb-4 object-fit-cover"
+            height="300" />
     }
 
     <p class="mb-5">@recipe.Description</p>

@@ -4,15 +4,23 @@
         <div class="card-img-top bg-secondary">
             @if (Recipe.CoverImage != null)
             {
-                <img src="@Recipe.CoverImage.Url" class="card-img-top" alt="@Recipe.CoverImage.AltText" />
+                <img
+                    src="@Recipe.CoverImage.Url"
+                    class="card-img-top object-fit-cover"
+                    alt="@Recipe.CoverImage.AltText"
+                    height="300" />
             }
         </div>
 
         <div class="card-body d-flex flex-column">
             <h5 class="card-title">@Recipe.Name</h5>
-            <p class="card-text">@Recipe.Description</p>
+            <p class="card-text line-clamp-3">@Recipe.Description</p>
             <div class="mt-auto">
-                <NavLink href=@($"recipes/{Recipe.Id}") class="btn btn-primary stretched-link">View more</NavLink>
+                <NavLink
+                    href=@($"recipes/{Recipe.Id}")
+                    class="btn btn-primary stretched-link">
+                    View more
+                </NavLink>
             </div>
         </div>
     </div>
