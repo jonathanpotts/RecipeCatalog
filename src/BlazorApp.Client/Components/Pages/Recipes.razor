@@ -2,50 +2,89 @@
 @inject ICuisineService CuisineService
 @inject IRecipeService RecipeService
 @inject NavigationManager NavigationManager
-@rendermode InteractiveAuto
+@rendermode @(new InteractiveAutoRenderMode(prerender: false))
+@attribute [StreamRendering(true)]
 
-<PageTitle>Recipe Catalog</PageTitle>
+<PageTitle>Recipes</PageTitle>
 
-<MudText Typo="Typo.h4">Recipes</MudText>
+<h1>Recipes</h1>
 
-@if (_cuisines != null)
+@if (_recipes == null)
 {
-    <MudField Label="Cuisines" Variant="Variant.Outlined" InnerPadding="false" Class="my-4">
-        <div class="d-flex flex-wrap">
-            @foreach (var cuisine in _cuisines ?? Enumerable.Empty<CuisineDto>())
-            {
-                <MudCheckBox T="bool"
-                    Label="@cuisine.Name"
-                    Value="@(_cuisineFilter?.Contains(cuisine.Id) ?? false)"
-                    ValueChanged="value => CuisineFilterChanged(cuisine.Id, value)" />
-            }
-        </div>
-    </MudField>
+    <p>Loading...</p>
 }
-
-<MudGrid Spacing="3" Class="my-4">
-    @if (_recipes == null)
+else
+{
+    @if (_cuisines?.Any() ?? false)
     {
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <RecipeCard />
-        </MudItem>
+        <div class="card mb-4">
+            <div class="card-header">Cuisines</div>
+            <div class="card-body">
+                @foreach (var cuisine in _cuisines)
+                {
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id=@($"cuisine_{cuisine.Id}")
+                               checked="@(_cuisineFilter?.Contains(cuisine.Id) ?? false)"
+                               @onchange="e => CuisineFilterChanged(cuisine.Id, e.Value)" />
+                        <label class="form-check-label"
+                               for=@($"cuisine_{cuisine.Id}")>
+                            @cuisine.Name
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
     }
-    else
-    {
+
+
+    <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4 g-3 mb-4">
         @foreach (var recipe in _recipes.Items)
         {
-            <MudItem xs="12" sm="6" md="4" lg="3">
+            <div class="col">
                 <RecipeCard Recipe="recipe" />
-            </MudItem>
+            </div>
         }
-    }
-</MudGrid>
-
-@if (_recipes != null)
-{
-    <div class="d-flex flex-column align-center my-4">
-        <MudPagination Count="_totalPages" Selected="_selectedPage" SelectedChanged="PageSelected" />
     </div>
+
+    @if (_totalPages > 0)
+    {
+        <nav aria-label="Page navigation" class="mb-4">
+            <ul class="pagination justify-content-center">
+                <li class=@(Page is null or 1 ? "page-item disabled" : "page-item")>
+                    <a class="page-link"
+                             href=@(Page is null or 1 ? null : GetPageUri(Page - 1))>
+                        Previous
+                    </a>
+                </li>
+                @foreach (var page in GetPagination())
+                {
+                    if (page > 0)
+                    {
+                        <li
+                            class=@(((Page is null or 1 && page is 1) || Page == page) ? "page-item active" : "page-item")>
+                            <a class="page-link" href="@GetPageUri(page)">
+                                @(page)
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item">
+                            <span class="page-link disabled">...</span>
+                        </li>
+                    }
+                }
+                <li class=@((_totalPages == 1 || Page == _totalPages) ? "page-item disabled" : "page-item")>
+                    <a class="page-link"
+                             href=@((_totalPages == 1 || Page == _totalPages) ? null : GetPageUri((Page ?? 1) + 1))>
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
 }
 
 @code {
@@ -66,16 +105,9 @@
     private HashSet<int>? _cuisineFilter;
     private int _totalPages;
 
-    private int _selectedPage;
-
     protected override async Task OnParametersSetAsync()
     {
-        _recipes = null;
-        _cuisines = null;
-
-        _selectedPage = Page ?? 1;
-
-        _cuisineFilter = [..CuisineIds];
+        _cuisineFilter = [.. CuisineIds];
 
         _cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
 
@@ -87,17 +119,6 @@
             : _recipes.Total / PageSize;
     }
 
-    private void UpdateQueryString()
-    {
-        var newUri = NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>()
-        {
-            { "cuisineIds", _cuisineFilter?.ToArray() },
-            { "page", Page }
-        });
-
-        NavigationManager.NavigateTo(newUri);
-    }
-
     private string GetPageUri(int? page)
     {
         return NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>()
@@ -107,11 +128,11 @@
         });
     }
 
-    private void CuisineFilterChanged(int id, bool value)
+    private void CuisineFilterChanged(int id, object? value)
     {
         _cuisineFilter ??= [];
 
-        if (value)
+        if (value is true)
         {
             _cuisineFilter.Add(id);
         }
@@ -120,14 +141,41 @@
             _cuisineFilter.Remove(id);
         }
 
-        UpdateQueryString();
+        NavigationManager.NavigateTo(GetPageUri(1));
     }
 
-    private void PageSelected(int page)
+    private IEnumerable<int> GetPagination()
     {
-        if (page != (Page ?? 1))
+        if (_totalPages <= PaginatorSize)
         {
-            NavigationManager.NavigateTo(GetPageUri(page));
+            return Enumerable.Range(1, _totalPages);
         }
+
+        List<int> pages = [];
+
+        var half = PaginatorSize / 2;
+
+        if ((Page ?? 1) <= half + 1)
+        {
+            pages.AddRange(Enumerable.Range(1, PaginatorSize - 2));
+            pages.Add(-1);
+            pages.Add(_totalPages);
+        }
+        else if ((Page ?? 1) >= _totalPages - half)
+        {
+            pages.Add(1);
+            pages.Add(-1);
+            pages.AddRange(Enumerable.Range(_totalPages - PaginatorSize + 3, PaginatorSize - 2));
+        }
+        else
+        {
+            pages.Add(1);
+            pages.Add(-1);
+            pages.AddRange(Enumerable.Range((Page ?? 1) - half + 2, PaginatorSize - 4));
+            pages.Add(-1);
+            pages.Add(_totalPages);
+        }
+
+        return pages;
     }
 }

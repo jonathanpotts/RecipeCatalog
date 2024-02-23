@@ -36,6 +36,11 @@ main {
         text-overflow: ellipsis;
     }
 
+    .top-row ::deep .bi-github {
+        font-size: 1.5rem;
+        color: #000;
+    }
+
 @media (max-width: 640.98px) {
     .top-row {
         justify-content: space-between;

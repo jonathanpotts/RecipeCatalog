@@ -1,50 +1,25 @@
-﻿<MudCard Class="mud-height-full d-flex flex-column">
-    @if (Recipe == null)
-    {
-        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="300px" />
-    }
-    else if (Recipe.CoverImage != null)
-    {
-        <MudCardMedia Image="@Recipe.CoverImage.Url" Height="300" />
-    }
-    else
-    {
-        <MudPaper Elevation="0" Height="300px" Class="rounded-b-0 mud-background-gray" />
-    }
-    <MudCardContent>
-        @if (Recipe == null)
-        {
-            <MudSkeleton Width="45%" Height="42px" />
-            <MudSkeleton Width="25%" Class="mb-2" />
-            <MudSkeleton Width="100%" />
-            <MudSkeleton Width="90%" />
-            <MudSkeleton Width="95%" />
-        }
-        else
-        {
-            <MudText Typo="Typo.h5">@Recipe.Name</MudText>
-            <MudText Typo="Typo.subtitle1" Class="mb-2">@Recipe.Cuisine!.Name</MudText>
-            <MudText
-                Typo="Typo.body2"
-                Style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden">
-                @Recipe.Description
-            </MudText>
-        }
-    </MudCardContent>
-    <MudSpacer />
-    <MudCardActions>
-        @if (Recipe == null)
-        {
-            <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
-        }
-        else
-        {
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"recipes/{Recipe.Id}")">View</MudButton>
-        }
-    </MudCardActions>
-</MudCard>
+﻿﻿@if (Recipe != null)
+{
+    <div class="card h-100">
+        <div class="card-img-top bg-secondary">
+            @if (Recipe.CoverImage != null)
+            {
+                <img src="@Recipe.CoverImage.Url" class="card-img-top" alt="@Recipe.CoverImage.AltText" />
+            }
+        </div>
+
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">@Recipe.Name</h5>
+            <p class="card-text">@Recipe.Description</p>
+            <div class="mt-auto">
+                <NavLink href=@($"recipes/{Recipe.Id}") class="btn btn-primary stretched-link">View more</NavLink>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
+    [EditorRequired]
     public RecipeWithCuisineDto? Recipe { get; set; }
 }

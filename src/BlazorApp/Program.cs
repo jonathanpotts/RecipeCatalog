@@ -5,7 +5,6 @@ using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.WebApi;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +25,6 @@ builder.Services.AddDbMigrator();
 builder.Services.AddIdentityBlazor();
 
 builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
-
-builder.Services.AddMudServices();
 
 var app = builder.Build();
 
