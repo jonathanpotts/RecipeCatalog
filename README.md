@@ -25,6 +25,8 @@ Recipe Catalog is a multilayer [.NET](https://dotnet.microsoft.com/) 8 project s
 
 - [Resource-based Authorization](https://learn.microsoft.com/aspnet/core/security/authorization/resourcebased)
 - [FluentValidation](https://github.com/FluentValidation/FluentValidation)
+- Markdown ([Markdig](https://github.com/xoofx/markdig))
+- Snowflake IDs ([IdGen](https://github.com/RobThree/IdGen))
 
 ### Application.Contracts
 
