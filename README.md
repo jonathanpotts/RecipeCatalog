@@ -79,4 +79,4 @@ Recipe Catalog is a multilayered [.NET](https://dotnet.microsoft.com/) 8 project
 
 ## Seed Data
 
-Seed data was created using the [AIDataGenerator](../AIDataGenerator/) project with [Updated GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) and [DALL-E 3](https://platform.openai.com/docs/models/dall-e).
+Seed data was created using the [AIDataGenerator](../AIDataGenerator/) project with [GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) and [DALL-E 3](https://platform.openai.com/docs/models/dall-e).
