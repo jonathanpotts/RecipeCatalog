@@ -61,6 +61,7 @@ main {
         height: 100vh;
         position: sticky;
         top: 0;
+        border-right: 1px solid var(--bs-border-color-translucent);
     }
 
     .top-row {
@@ -82,9 +83,10 @@ main {
 }
 
 #blazor-error-ui {
+    color: var(--bs-warning-text-emphasis);
     background: var(--bs-warning-bg-subtle);
     bottom: 0;
-    box-shadow: 0 -1px 2px var(--bs-border-color-translucent);
+    border-top: 1px solid var(--bs-warning-border-subtle);
     display: none;
     left: 0;
     padding: 0.6rem 1.25rem 0.7rem 1.25rem;
@@ -93,9 +95,15 @@ main {
     z-index: 1000;
 }
 
+    #blazor-error-ui a {
+        font-weight: 700;
+        color: var(--bs-warning-text-emphasis);
+    }
+
     #blazor-error-ui .dismiss {
         cursor: pointer;
         position: absolute;
         right: 0.75rem;
         top: 0.5rem;
+        text-decoration: none;
     }
