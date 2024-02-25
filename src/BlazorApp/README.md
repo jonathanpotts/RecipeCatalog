@@ -1,11 +1,13 @@
-# WebAPI
+﻿# BlazorApp
 
-WebApi is a REST Web API that provides CRUD operations for managing recipes. Technologies used:
+BlazorApp is a Blazor web app for viewing and managing recipes. Technologies used:
 
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
-    - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
+    - [Blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor)
     - [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
-- [Swagger / OpenAPI](https://swagger.io/) ([Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore))
+- [Bootstrap](https://getbootstrap.com/)
+    - [Bootstrap Icons](https://icons.getbootstrap.com/)
+    - [Dark Mode](https://getbootstrap.com/docs/5.3/customize/color-modes/)
 
 ## Configuration
 
