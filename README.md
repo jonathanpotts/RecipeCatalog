@@ -2,7 +2,7 @@
 
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeCatalog/dotnet.yml)](https://github.com/jonathanpotts/RecipeCatalog/actions/workflows/dotnet.yml)
 
-Recipe Catalog is a multilayer [.NET](https://dotnet.microsoft.com/) 8 project showcasing a Web catalog for recipes with generative AI capabilities.
+Recipe Catalog is a multilayered [.NET](https://dotnet.microsoft.com/) 8 project showcasing a Web catalog for recipes with generative AI capabilities.
 
 ## Projects
 
