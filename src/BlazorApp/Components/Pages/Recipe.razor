@@ -1,7 +1,7 @@
 ﻿@page "/recipes/{Id:long}"
 @inject IRecipeService RecipeService
 
-@if (recipe == null)
+@if (_recipe == null)
 {
     <PageTitle>Recipe</PageTitle>
 
@@ -11,22 +11,33 @@
 }
 else
 {
-    <PageTitle>@recipe.Name</PageTitle>
+    <PageTitle>@_recipe.Name</PageTitle>
 
-    <h1>@recipe.Name</h1>
+    <div class="d-flex flex-wrap justify-content-between column-gap-3">
+        <h1>@_recipe.Name</h1>
+        <div>
+            <AuthorizeView Policy="@Policies.Update" Resource="_recipe">
+                <div class="mb-2">
+                    <a class="btn btn-primary" href="recipes/@(Id)/edit">
+                        <i class="bi bi-pencil" aria-hidden="true"></i> Edit
+                    </a>
+                </div>
+            </AuthorizeView>
+        </div>
+    </div>
 
-    <p class="lead">@recipe.Cuisine!.Name</p>
+    <p class="lead">@_recipe.Cuisine!.Name</p>
 
-    @if (recipe.CoverImage != null)
+    @if (_recipe.CoverImage != null)
     {
         <img
-            src="@recipe.CoverImage.Url"
-            alt="@recipe.CoverImage.AltText"
+            src="@_recipe.CoverImage.Url"
+            alt="@_recipe.CoverImage.AltText"
             class="w-100 rounded mb-4 object-fit-cover"
             height="300" />
     }
 
-    <p class="mb-5">@recipe.Description</p>
+    <p class="mb-5">@_recipe.Description</p>
 
     <div class="row">
         <div class="col-xl-4 col-xxl-3 mb-5">
@@ -35,7 +46,7 @@ else
                     Ingredients
                 </div>
                 <ul class="list-group list-group-flush">
-                    @foreach (var ingredient in recipe.Ingredients ?? Enumerable.Empty<string>())
+                    @foreach (var ingredient in _recipe.Ingredients ?? Enumerable.Empty<string>())
                     {
                         <li class="list-group-item">@ingredient</li>
                     }
@@ -44,7 +55,7 @@ else
         </div>
         <div class="col-xl-8 col-xxl-9 mb-5">
             <section id="instructions">
-                @((MarkupString)recipe.Instructions!.Html!)
+                @((MarkupString)_recipe.Instructions!.Html!)
             </section>
         </div>
     </div>
@@ -54,10 +65,10 @@ else
     [Parameter]
     public long Id { get; set; }
 
-    private RecipeWithCuisineDto? recipe = null;
+    private RecipeWithCuisineDto? _recipe = null;
 
     protected override async Task OnInitializedAsync()
     {
-        recipe = await RecipeService.GetAsync(Id);
+        _recipe = await RecipeService.GetAsync(Id);
     }
 }

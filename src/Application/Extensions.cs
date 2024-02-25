@@ -1,6 +1,7 @@
 ﻿using IdGen;
 using IdGen.DependencyInjection;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.Application.Services;
 using JonathanPotts.RecipeCatalog.Domain;
@@ -23,10 +24,20 @@ public static class Extensions
         services.AddScoped<ICuisineService, CuisineService>();
         services.AddScoped<IRecipeService, RecipeService>();
 
-        services.AddAuthorization();
+        services.AddAuthorizationBuilder()
+            .AddPolicy(Policies.Create, policy =>
+                policy.AddRequirements(Operations.Create))
+            .AddPolicy(Policies.Read, policy =>
+                policy.AddRequirements(Operations.Read))
+            .AddPolicy(Policies.Update, policy =>
+                policy.AddRequirements(Operations.Update))
+            .AddPolicy(Policies.Delete, policy =>
+                policy.AddRequirements(Operations.Delete));
 
         services.AddScoped<IAuthorizationHandler, CuisineAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, CuisineDtoAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
+        services.AddScoped<IAuthorizationHandler, RecipeDtoAuthorizationHandler>();
 
         return services;
     }

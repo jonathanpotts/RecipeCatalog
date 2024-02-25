@@ -1,9 +1,11 @@
 ﻿@page "/recipes"
+@implements IDisposable
 @inject ICuisineService CuisineService
 @inject IRecipeService RecipeService
 @inject NavigationManager NavigationManager
-@rendermode @(new InteractiveAutoRenderMode(prerender: false))
-@attribute [StreamRendering(true)]
+@inject PersistentComponentState ApplicationState
+@rendermode InteractiveAuto
+@attribute [StreamRendering]
 
 <PageTitle>Recipes</PageTitle>
 
@@ -105,18 +107,50 @@ else
     private HashSet<int>? _cuisineFilter;
     private int _totalPages;
 
+    private PersistingComponentStateSubscription persistingSubscription;
+
+    protected override void OnInitialized()
+    {
+        persistingSubscription =
+            ApplicationState.RegisterOnPersisting(PersistData);
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         _cuisineFilter = [.. CuisineIds];
 
-        _cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
+        if (!ApplicationState.TryTakeFromJson<IEnumerable<CuisineDto>>(
+            "cuisines", out var restoredCuisines))
+        {
+            _cuisines = (await CuisineService.GetListAsync()).OrderBy(x => x.Name);
+        }
+        else
+        {
+            _cuisines = restoredCuisines;
+        }
 
-        var skip = Page != null ? (Page - 1) * PageSize : null;
-        _recipes = await RecipeService.GetListAsync(skip, PageSize, _cuisineFilter?.ToArray());
+        if (!ApplicationState.TryTakeFromJson<PagedResult<RecipeWithCuisineDto>>(
+            "recipes", out var restoredRecipes))
+        {
+            var skip = Page != null ? (Page - 1) * PageSize : null;
+            _recipes = await RecipeService.GetListAsync(skip, PageSize, _cuisineFilter?.ToArray());
+        }
+        else
+        {
+            _recipes = restoredRecipes;
+        }
 
-        _totalPages = _recipes.Total % PageSize > 0
+        _totalPages = _recipes!.Total % PageSize > 0
             ? (_recipes.Total / PageSize) + 1
             : _recipes.Total / PageSize;
+    }
+
+    private Task PersistData()
+    {
+        ApplicationState.PersistAsJson("cuisines", _cuisines);
+        ApplicationState.PersistAsJson("recipes", _recipes);
+
+        return Task.CompletedTask;
     }
 
     private string GetPageUri(int? page)
@@ -177,5 +211,10 @@ else
         }
 
         return pages;
+    }
+
+    void IDisposable.Dispose()
+    {
+        persistingSubscription.Dispose();
     }
 }
