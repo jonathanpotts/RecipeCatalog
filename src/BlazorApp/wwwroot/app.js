@@ -15,4 +15,6 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () 
 Blazor.addEventListener("enhancedload", () => {
     setTheme();
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    document.activeElement?.blur();
+    document.querySelector("h1")?.focus();
 });

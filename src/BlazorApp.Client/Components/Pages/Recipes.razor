@@ -55,7 +55,7 @@ else
                 <li class=@(Page is null or 1 ? "page-item disabled" : "page-item")>
                     <a class="page-link"
                              href=@(Page is null or 1 ? null : GetPageUri(Page - 1))>
-                        Previous
+                        <i class="bi bi-chevron-left" aria-label="Previous"></i>
                     </a>
                 </li>
                 @foreach (var page in GetPagination())
@@ -79,7 +79,7 @@ else
                 <li class=@((_totalPages == 1 || Page == _totalPages) ? "page-item disabled" : "page-item")>
                     <a class="page-link"
                              href=@((_totalPages == 1 || Page == _totalPages) ? null : GetPageUri((Page ?? 1) + 1))>
-                        Next
+                        <i class="bi bi-chevron-right" aria-label="Next"></i>
                     </a>
                 </li>
             </ul>
