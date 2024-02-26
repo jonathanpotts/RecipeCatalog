@@ -5,7 +5,7 @@
 @using System.Text
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
-@using QRCoder
+@using Net.Codecrete.QrCodeGenerator
 @using JonathanPotts.RecipeCatalog.Domain.Entities
 
 @inject UserManager<User> UserManager
@@ -48,7 +48,7 @@ else
                 else
                 {
                     <div>
-                        <img src="@qrCode" alt="" />
+                        <img src="@qrCode" width="240" height="240" alt="" />
                     </div>
                 }
             </li>
@@ -154,13 +154,12 @@ else
             return;
         }
 
-        using QRCodeGenerator qrGenerator = new();
-        using QRCodeData qrCodeData = qrGenerator.CreateQrCode(authenticatorUri, QRCodeGenerator.ECCLevel.Q);
-        using PngByteQRCode pngByteQrCode = new(qrCodeData);
-        var qrCodeBytes = pngByteQrCode.GetGraphic(4);
-        var qrCodeBase64 = Convert.ToBase64String(qrCodeBytes);
+        var qr = QrCode.EncodeText(authenticatorUri, QrCode.Ecc.Medium);
+        var svg = qr.ToSvgString(2);
+        var bytes = Encoding.UTF8.GetBytes(svg);
+        var base64 = Convert.ToBase64String(bytes);
 
-        qrCode = $"data:image/png;base64,{qrCodeBase64}";
+        qrCode = $"data:image/svg+xml;base64,{base64}";
     }
 
     private string FormatKey(string unformattedKey)
