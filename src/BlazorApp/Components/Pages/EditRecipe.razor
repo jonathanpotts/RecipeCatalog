@@ -1,4 +1,5 @@
 ﻿@page "/recipes/{Id:long}/edit"
+@inject ICuisineService CuisineService
 @inject IRecipeService RecipeService
 @attribute [Authorize]
 
@@ -23,6 +24,19 @@ else
                     <label for="name">Name</label>
                     <InputText @bind-Value="_updateRecipeDto.Name" id="name" class="form-control" />
                 </div>
+                @if (_cuisines != null)
+                {
+                    <div class="mb-3">
+                        <label for="cuisine">Cuisine</label>
+                        <InputSelect @bind-Value="_updateRecipeDto.CuisineId" id="cuisine" class="form-select">
+                            <option value="">Select cuisine</option>
+                            @foreach (var cuisine in _cuisines)
+                            {
+                                <option value="@cuisine.Id">@cuisine.Name</option>
+                            }
+                        </InputSelect>
+                    </div>
+                }
                 <div class="mb-3">
                     <label for="description">Description</label>
                     <InputText @bind-Value="_updateRecipeDto.Description" id="description" class="form-control" />
@@ -30,12 +44,13 @@ else
                 <div class="mb-3">
                     <label for="instructions">Instructions</label>
                     <InputTextArea @bind-Value="_updateRecipeDto.Instructions" id="instructions" class="form-control" rows="5" />
+                    <div class="form-text">Markdown is supported.</div>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </EditForm>
         </Authorized>
         <NotAuthorized>
-            <p class="text-danger">You do not have permission to edit this recipe.</p>
+            <p class="text-danger">You do not have permission to edit @_recipe.Name.</p>
         </NotAuthorized>
     </AuthorizeView>
 }
@@ -44,11 +59,14 @@ else
     [Parameter]
     public long Id { get; set; }
 
+    private IEnumerable<CuisineDto>? _cuisines;
     private RecipeWithCuisineDto? _recipe;
     private CreateUpdateRecipeDto? _updateRecipeDto;
 
     protected override async Task OnInitializedAsync()
     {
+        _cuisines = await CuisineService.GetListAsync();
+
         _recipe = await RecipeService.GetAsync(Id);
 
         if (_recipe == null)

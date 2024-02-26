@@ -5,6 +5,7 @@
 @using System.Text
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
+@using QRCoder
 @using JonathanPotts.RecipeCatalog.Domain.Entities
 
 @inject UserManager<User> UserManager
@@ -38,9 +39,18 @@ else
             </li>
             <li>
                 <p>Scan the QR Code or enter this key <kbd>@sharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-                <div class="alert alert-info">Learn how to <a href="https://go.microsoft.com/fwlink/?Linkid=852423">enable QR code generation</a>.</div>
-                <div></div>
-                <div data-url="@authenticatorUri"></div>
+                @if (string.IsNullOrEmpty(qrCode))
+                {
+                    <div class="alert alert-info">Learn how to <a href="https://go.microsoft.com/fwlink/?Linkid=852423">enable QR code generation</a>.</div>
+                    <div></div>
+                    <div data-url="@authenticatorUri"></div>
+                }
+                else
+                {
+                    <div>
+                        <img src="@qrCode" alt="" />
+                    </div>
+                }
             </li>
             <li>
                 <p>
@@ -74,6 +84,7 @@ else
     private string? sharedKey;
     private string? authenticatorUri;
     private IEnumerable<string>? recoveryCodes;
+    private string? qrCode;
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -86,6 +97,8 @@ else
         user = await UserAccessor.GetRequiredUserAsync(HttpContext);
 
         await LoadSharedKeyAndQrCodeUriAsync(user);
+
+        GenerateQrCode();
     }
 
     private async Task OnValidSubmitAsync()
@@ -134,6 +147,22 @@ else
         authenticatorUri = GenerateQrCodeUri(email!, unformattedKey!);
     }
 
+    private void GenerateQrCode()
+    {
+        if (string.IsNullOrEmpty(authenticatorUri))
+        {
+            return;
+        }
+
+        using QRCodeGenerator qrGenerator = new();
+        using QRCodeData qrCodeData = qrGenerator.CreateQrCode(authenticatorUri, QRCodeGenerator.ECCLevel.Q);
+        using PngByteQRCode pngByteQrCode = new(qrCodeData);
+        var qrCodeBytes = pngByteQrCode.GetGraphic(4);
+        var qrCodeBase64 = Convert.ToBase64String(qrCodeBytes);
+
+        qrCode = $"data:image/png;base64,{qrCodeBase64}";
+    }
+
     private string FormatKey(string unformattedKey)
     {
         var result = new StringBuilder();
@@ -156,7 +185,7 @@ else
         return string.Format(
             CultureInfo.InvariantCulture,
             AuthenticatorUriFormat,
-            UrlEncoder.Encode("Microsoft.AspNetCore.Identity.UI"),
+            UrlEncoder.Encode("Recipe Catalog"),
             UrlEncoder.Encode(email),
             unformattedKey);
     }
