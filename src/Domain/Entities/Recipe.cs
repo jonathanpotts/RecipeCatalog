@@ -27,4 +27,6 @@ public class Recipe
     public string[]? Ingredients { get; set; }
 
     public MarkdownData? Instructions { get; set; }
+
+    public float[]? Embedding { get; set; }
 }

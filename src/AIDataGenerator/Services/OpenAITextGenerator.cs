@@ -11,7 +11,9 @@ public class OpenAITextGenerator(IOptions<OpenAITextGeneratorOptions> options) :
     private readonly string _embeddingsDeploymentName =
         options.Value.EmbeddingsDeploymentName ?? "text-embedding-3-small";
 
-    protected override OpenAIClient Client { get; init; } = new(options.Value.ApiKey);
+    protected override OpenAIClient ChatCompletionsClient { get; } = new(options.Value.ApiKey);
+
+    protected override OpenAIClient EmbeddingsClient => ChatCompletionsClient;
 
     public override Task<T?> GenerateDataFromChatCompletionsAsync<T>(T exampleData, string systemMessage, string prompt,
         CancellationToken cancellationToken = default) where T : default

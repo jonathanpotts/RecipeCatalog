@@ -5,7 +5,9 @@ namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 
 public abstract class BaseOpenAITextGenerator : IAITextGenerator
 {
-    protected abstract OpenAIClient Client { get; init; }
+    protected abstract OpenAIClient ChatCompletionsClient { get; }
+
+    protected abstract OpenAIClient EmbeddingsClient { get; }
 
     public abstract Task<T?> GenerateDataFromChatCompletionsAsync<T>(T exampleData, string systemMessage, string prompt,
         CancellationToken cancellationToken = default);
@@ -20,8 +22,7 @@ public abstract class BaseOpenAITextGenerator : IAITextGenerator
 
         ChatCompletionsOptions options = new(
             deploymentName,
-            new List<ChatRequestMessage>
-            {
+            [
                 new ChatRequestSystemMessage($"""
                                               {systemMessage}
 
@@ -29,12 +30,12 @@ public abstract class BaseOpenAITextGenerator : IAITextGenerator
                                               {json}
                                               """),
                 new ChatRequestUserMessage(prompt)
-            })
+            ])
         {
             ResponseFormat = ChatCompletionsResponseFormat.JsonObject
         };
 
-        var completions = await Client.GetChatCompletionsAsync(options, cancellationToken);
+        var completions = await ChatCompletionsClient.GetChatCompletionsAsync(options, cancellationToken);
 
         return JsonSerializer.Deserialize<T>(completions.Value.Choices[0].Message.Content);
     }
@@ -43,7 +44,7 @@ public abstract class BaseOpenAITextGenerator : IAITextGenerator
         CancellationToken cancellationToken = default)
     {
         var embeddings =
-            await Client.GetEmbeddingsAsync(new EmbeddingsOptions(deploymentName, [input]), cancellationToken);
+            await EmbeddingsClient.GetEmbeddingsAsync(new EmbeddingsOptions(deploymentName, [input]), cancellationToken);
 
         return embeddings.Value.Data[0].Embedding;
     }

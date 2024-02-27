@@ -25,6 +25,11 @@ The following configuration options are available:
     - ChatCompletionsDeploymentName
         - OpenAI - Chat Completions model (defaults to gpt-3.5-turbo); supports gpt-3.5-turbo or gpt-4-turbo-preview
         - Azure OpenAI Service - **(Required)** Deployment name for Chat Completions model; supports gpt-35-turbo (0125) or gpt-4 (0125-preview)
+    - EmbeddingsEndpoint - **(Azure OpenAI Service)** Azure OpenAI Service Endpoint to use for embeddings; Defaults to Endpoint
+    - EmbeddingsApiKey - **(Azure OpenAI Service)** API key for Azure OpenAI Service Endpoint to use for embeddings; Defaults to ApiKey
+    - EmbeddingsDeploymentName
+        - OpenAI - Embeddings model (defaults to text-embedding-3-small); supports text-embedding-ada-002 or text-embedding-3-small
+        - Azure OpenAI Service - **(Required)** Deployment name for Embeddings model; supports text-embedding-ada-002 or text-embedding-3-small
 - AIImageGenerator
     - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
     - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
