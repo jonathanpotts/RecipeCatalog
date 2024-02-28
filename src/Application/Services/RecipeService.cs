@@ -4,6 +4,7 @@ using System.Security.Claims;
 using Azure.AI.OpenAI;
 using FluentValidation;
 using IdGen;
+using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
@@ -26,8 +27,7 @@ public class RecipeService(
     IdGenerator idGenerator,
     UserManager<User> userManager,
     IAuthorizationService authorizationService,
-    IServiceProvider serviceProvider,
-    IConfiguration configuration)
+    IServiceProvider serviceProvider)
     : IRecipeService
 {
     private const int DefaultItemsPerPage = 20;
@@ -235,16 +235,11 @@ public class RecipeService(
         skip ??= 0;
         take ??= DefaultItemsPerPage;
 
-        var openAIClient = serviceProvider.GetService<OpenAIClient>();
-        var deploymentName = configuration.GetValue<string>("OpenAI:DeploymentName");
+        var textGenerator = serviceProvider.GetService<IAITextGenerator>();
 
-        if (openAIClient != null && !string.IsNullOrEmpty(deploymentName))
+        if (textGenerator != null)
         {
-            var response = await openAIClient.GetEmbeddingsAsync(
-                new(deploymentName, [query]),
-                cancellationToken);
-
-            var queryEmbeddings = response.Value.Data[0].Embedding;
+            var queryEmbeddings = await textGenerator.GenerateEmbeddingsAsync(query, cancellationToken);
 
             // ideally would use a vector database such as pgvector to perform this search
             // this is an inefficient implementation using basic EF Core functionality
@@ -260,11 +255,11 @@ public class RecipeService(
                 distances.Add(id, distance);
             }
 
-            distances = distances.Where(x => x.Value >= DistanceThreshold).ToDictionary(x => x.Key, x => x.Value);
+            distances = distances.Where(x => x.Value <= DistanceThreshold).ToDictionary(x => x.Key, x => x.Value);
 
             List<Recipe> recipes = [];
 
-            foreach (var (id, distance) in distances.OrderBy(x => x.Value).Skip(skip.Value).Take(take.Value))
+            foreach (var (id, _) in distances.OrderBy(x => x.Value).Skip(skip.Value).Take(take.Value))
             {
                 var recipe = await context.Recipes.AsNoTracking()
                     .Include(x => x.Cuisine)

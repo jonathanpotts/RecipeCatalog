@@ -1,5 +1,6 @@
 ﻿using IdGen;
 using IdGen.DependencyInjection;
+using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
@@ -8,18 +9,21 @@ using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JonathanPotts.RecipeCatalog.Application;
 
 public static class Extensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services, int generatorId = 0)
+    public static IServiceCollection AddApplicationServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddDomainServices();
 
         var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var generatorId = configuration.GetValue("GeneratorId", 0);
         services.AddIdGen(generatorId, () => new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
 
         services.AddScoped<ICuisineService, CuisineService>();
@@ -39,6 +43,13 @@ public static class Extensions
         services.AddScoped<IAuthorizationHandler, CuisineDtoAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, RecipeDtoAuthorizationHandler>();
+
+        var openAIConfiguration = configuration.GetSection("OpenAI");
+
+        if (!string.IsNullOrEmpty(openAIConfiguration.GetValue<string>("ApiKey")))
+        {
+            services.AddAITextGenerator(openAIConfiguration);
+        }
 
         return services;
     }

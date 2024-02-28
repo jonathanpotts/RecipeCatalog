@@ -18,8 +18,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
 
-var generatorId = builder.Configuration.GetValue("GeneratorId", 0);
-builder.Services.AddWebApiServices(generatorId);
+builder.Services.AddWebApiServices(builder.Configuration);
 builder.Services.AddDbMigrator();
 
 builder.Services.AddIdentityBlazor();

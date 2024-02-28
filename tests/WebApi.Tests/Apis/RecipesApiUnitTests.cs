@@ -64,7 +64,7 @@ public sealed class RecipesApiUnitTests : IDisposable
         var authorizationService = serviceProvider.GetRequiredService<IAuthorizationService>();
         var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
-        _recipeService = new(_context, idGenerator, userManager, authorizationService, serviceProvider, null!);
+        _recipeService = new(_context, idGenerator, userManager, authorizationService, serviceProvider);
 
         _adminUser = new ClaimsPrincipal(new ClaimsIdentity(
         [

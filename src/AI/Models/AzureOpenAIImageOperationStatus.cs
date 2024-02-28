@@ -1,4 +1,4 @@
-﻿namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services.Models;
+﻿namespace JonathanPotts.RecipeCatalog.AI.Models;
 
 public static class AzureOpenAIImageOperationStatus
 {

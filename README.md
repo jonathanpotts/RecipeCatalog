@@ -6,16 +6,25 @@ Recipe Catalog is a multilayered [.NET](https://dotnet.microsoft.com/) 8 project
 
 ## Projects
 
+### AI
+
+[AI](src/AI/) is a class library that uses generative AI for text and image generation. Technologies used:
+
+- [.NET](https://dotnet.microsoft.com/)
+    - [Dependency Injection](https://learn.microsoft.com/dotnet/core/extensions/dependency-injection)
+    - [Options Pattern](https://learn.microsoft.com/dotnet/core/extensions/options)
+- [OpenAI](https://openai.com/) / [Azure OpenAI Service](https://azure.microsoft.com/products/ai-services/openai-service/) ([Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net))
+    - [Chat Completions](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in [JSON Mode](https://platform.openai.com/docs/guides/text-generation/json-mode): [GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) / [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo)
+    - [Embeddings](https://platform.openai.com/docs/guides/embeddings): [Ada V2 / Embedding V3 Small](https://platform.openai.com/docs/models/embeddings)
+    - [Image Generation](https://platform.openai.com/docs/guides/images): [DALL-E 2 / DALL-E 3](https://platform.openai.com/docs/models/dall-e)
+- [Polly](https://github.com/App-vNext/Polly)
+
 ### AIDataGenerator
 
-[AIDataGenerator](src/AIDataGenerator/) is a console app that uses generative AI to generate sample data for the catalog. Technologies used:
+[AIDataGenerator](src/AIDataGenerator/) is a console app that uses the [AI class library](src/AI/) to generate example data for the catalog. Technologies used:
 
 - [.NET](https://dotnet.microsoft.com/)
     - [Generic Host](https://learn.microsoft.com/dotnet/core/extensions/generic-host)
-- [OpenAI](https://openai.com/) / [Azure OpenAI Service](https://azure.microsoft.com/products/ai-services/openai-service/) ([Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net))
-    - [Chat Completions](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in [JSON Mode](https://platform.openai.com/docs/guides/text-generation/json-mode): [Updated GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) / [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo)
-    - [Image Generation](https://platform.openai.com/docs/guides/images): [DALL-E 2 / DALL-E 3](https://platform.openai.com/docs/models/dall-e)
-- [Polly](https://github.com/App-vNext/Polly)
 - [SkiaSharp](https://github.com/mono/SkiaSharp)
 - [Spectre.Console](https://spectreconsole.net/)
 

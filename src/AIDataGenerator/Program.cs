@@ -1,6 +1,6 @@
 ﻿using System.Text;
+using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.AIDataGenerator;
-using JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 using Microsoft.Extensions.Hosting;
 using Spectre.Console;
 

@@ -1,10 +1,10 @@
 ﻿using System.Net.Http.Json;
-using JonathanPotts.RecipeCatalog.AIDataGenerator.Services.Models;
+using JonathanPotts.RecipeCatalog.AI.Models;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Retry;
 
-namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
+namespace JonathanPotts.RecipeCatalog.AI;
 
 public class AzureOpenAIDallE2ImageGenerator : IAIImageGenerator
 {

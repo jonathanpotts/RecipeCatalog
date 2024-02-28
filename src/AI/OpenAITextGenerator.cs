@@ -1,7 +1,7 @@
 ﻿using Azure.AI.OpenAI;
 using Microsoft.Extensions.Options;
 
-namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
+namespace JonathanPotts.RecipeCatalog.AI;
 
 public class OpenAITextGenerator(IOptions<OpenAITextGeneratorOptions> options) : BaseOpenAITextGenerator
 {

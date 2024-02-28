@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Azure.AI.OpenAI;
 
-namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
+namespace JonathanPotts.RecipeCatalog.AI;
 
 public abstract class BaseOpenAITextGenerator : IAITextGenerator
 {

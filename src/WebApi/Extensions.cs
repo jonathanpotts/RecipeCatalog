@@ -7,9 +7,11 @@ namespace JonathanPotts.RecipeCatalog.WebApi;
 
 public static class Extensions
 {
-    public static IServiceCollection AddWebApiServices(this IServiceCollection services, int generatorId = 0)
+    public static IServiceCollection AddWebApiServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        services.AddApplicationServices(generatorId);
+        services.AddApplicationServices(configuration);
 
         services.AddProblemDetails();
 

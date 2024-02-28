@@ -7,8 +7,7 @@ using Swashbuckle.AspNetCore.Filters;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var generatorId = builder.Configuration.GetValue("GeneratorId", 0);
-builder.Services.AddWebApiServices(generatorId);
+builder.Services.AddWebApiServices(builder.Configuration);
 builder.Services.AddDbMigrator();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

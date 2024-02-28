@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services.Models;
+namespace JonathanPotts.RecipeCatalog.AI.Models;
 
 public class AzureOpenAIImageGenerationRequest
 {

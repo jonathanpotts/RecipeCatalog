@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
-using JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.Extensions.Hosting;

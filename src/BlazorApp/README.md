@@ -16,3 +16,9 @@ Configuration can be provided in appsettings.json, user secrets, environment var
 The following configuration options are available:
 
 - GeneratorId - ID number for running instance (each concurrently running instance should have a unique value)
+- OpenAI - **(Required for AI Search)**
+    - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
+    - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
+    - EmbeddingsDeploymentName
+        - OpenAI - Embeddings model (defaults to text-embedding-3-small); supports text-embedding-ada-002 or text-embedding-3-small
+        - Azure OpenAI Service - **(Required)** Deployment name for Embeddings model; supports text-embedding-ada-002 or text-embedding-3-small

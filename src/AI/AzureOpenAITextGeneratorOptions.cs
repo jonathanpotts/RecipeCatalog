@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
+namespace JonathanPotts.RecipeCatalog.AI;
 
 public class AzureOpenAITextGeneratorOptions
 {
@@ -10,15 +10,11 @@ public class AzureOpenAITextGeneratorOptions
     [Required]
     public string? ApiKey { get; set; }
 
-    [Required]
     public string? ChatCompletionsDeploymentName { get; set; }
 
-    [Required]
     public string? EmbeddingsEndpoint { get; set; }
 
-    [Required]
     public string? EmbeddingsApiKey { get; set; }
 
-    [Required]
     public string? EmbeddingsDeploymentName { get; set; }
 }
