@@ -1,7 +1,6 @@
 ﻿using System.Numerics.Tensors;
 using System.Security;
 using System.Security.Claims;
-using Azure.AI.OpenAI;
 using FluentValidation;
 using IdGen;
 using JonathanPotts.RecipeCatalog.AI;
@@ -17,7 +16,6 @@ using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JonathanPotts.RecipeCatalog.Application.Services;
@@ -31,7 +29,7 @@ public class RecipeService(
     : IRecipeService
 {
     private const int DefaultItemsPerPage = 20;
-    private const float DistanceThreshold = 0.25f;
+    private const float DistanceThreshold = 0.67f;
 
     private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
         .DisableHtml()
@@ -249,13 +247,14 @@ public class RecipeService(
                 .Select(x => Tuple.Create(x.Id, x.Embeddings))
                 .AsAsyncEnumerable().WithCancellation(cancellationToken))
             {
-
                 var distance = 1 - TensorPrimitives.CosineSimilarity(queryEmbeddings.Span, embeddings);
 
                 distances.Add(id, distance);
             }
 
-            distances = distances.Where(x => x.Value <= DistanceThreshold).ToDictionary(x => x.Key, x => x.Value);
+            distances = distances
+                .Where(x => x.Value <= DistanceThreshold)
+                .ToDictionary(x => x.Key, x => x.Value);
 
             List<Recipe> recipes = [];
 

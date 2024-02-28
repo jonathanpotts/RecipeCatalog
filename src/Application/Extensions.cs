@@ -23,7 +23,7 @@ public static class Extensions
         services.AddDomainServices();
 
         var epoch = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        var generatorId = configuration.GetValue("GeneratorId", 0);
+        var generatorId = configuration.GetValue<int?>("GeneratorId") ?? 0;
         services.AddIdGen(generatorId, () => new IdGeneratorOptions(timeSource: new DefaultTimeSource(epoch)));
 
         services.AddScoped<ICuisineService, CuisineService>();
