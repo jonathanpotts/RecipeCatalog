@@ -1,7 +1,8 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
-using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,11 @@ internal class Worker(
     IAITextGenerator textGenerator,
     IAIImageGenerator imageGenerator) : BackgroundService
 {
-    private static readonly JsonSerializerOptions s_jsonOptions = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions s_jsonOptions = new()
+    {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull
+    };
 
     private readonly IReadOnlyList<string> _cuisines = options.Value.Cuisines!.AsReadOnly();
     private readonly int _imageGenerationMaxConcurrency = options.Value.ImageGenerationMaxConcurrency ?? 1;
@@ -34,8 +39,8 @@ internal class Worker(
         openAIGrid.AddColumns(2);
         openAIGrid.AddRow("Chat Completions",
             "[bold]:sparkles:GPT-3.5 Turbo[/] [dim]gpt-3.5-turbo[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4-turbo-preview[/]");
-        //openAIGrid.AddRow("Embeddings",
-        //    "[bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
+        openAIGrid.AddRow("Embeddings",
+            "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
         openAIGrid.AddRow("Image Generation",
             "[bold]:sparkles:DALL-E 2[/] [dim]dall-e-2[/] / [bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
 
@@ -50,8 +55,8 @@ internal class Worker(
         azureOpenAIGrid.AddColumns(2);
         azureOpenAIGrid.AddRow("Chat Completions",
             "[bold]:sparkles:GPT-3.5 Turbo[/] [dim]gpt-35-turbo (0125)[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4 (0125-preview)[/]");
-        //azureOpenAIGrid.AddRow("Embeddings",
-        //    "[bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
+        azureOpenAIGrid.AddRow("Embeddings",
+            "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
         azureOpenAIGrid.AddRow("Image Generation",
             "[bold]:sparkles:DALL-E 2[/] [dim]dall-e-2[/] / [bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
 
@@ -69,11 +74,12 @@ internal class Worker(
         Directory.CreateDirectory(outputDirectory);
 
         await GenerateImagesAsync(recipeList, outputDirectory, stoppingToken);
+        await GenerateEmbeddingsAsync(recipeList, stoppingToken);
 
-        var cuisines = recipeList.Cuisines?.Select(x => new CuisineWithRecipesDto
+        var cuisines = recipeList.Cuisines?.Select(x => new Cuisine
         {
             Name = x.Name,
-            Recipes = x.Recipes?.Select(y => new RecipeDto
+            Recipes = x.Recipes?.Select(y => new Recipe
             {
                 Name = y.Name,
                 CoverImage = new ImageData
@@ -86,7 +92,8 @@ internal class Worker(
                 Instructions = new MarkdownData
                 {
                     Markdown = y.InstructionsMarkdown
-                }
+                },
+                Embeddings = y.Embeddings
             }).ToList()
         }).ToList();
 
@@ -171,7 +178,7 @@ internal class Worker(
                                     new GeneratedRecipe
                                     {
                                         CoverImagePrompt =
-                                            "DALL-E prompt for generating a photorealistic image of plated finished recipe",
+                                            "description of a photorealistic image of the plated recipe",
                                         Description = "string",
                                         Ingredients = ["string"],
                                         InstructionsMarkdown = "string"
@@ -224,6 +231,9 @@ internal class Worker(
             throw new ArgumentException("No recipes were provided", nameof(recipeList));
         }
 
+        var imagesDirectory = Path.Combine(directory, "Images");
+        Directory.CreateDirectory(imagesDirectory);
+
         using HttpClient client = new();
 
         var startTime = DateTime.UtcNow;
@@ -263,7 +273,7 @@ internal class Worker(
                             using var data = bitmap.Encode(SKEncodedImageFormat.Webp, _imageQuality);
 
                             await File.WriteAllBytesAsync(
-                                Path.Combine(directory, $"{canonicalName}.webp"),
+                                Path.Combine(imagesDirectory, $"{canonicalName}.webp"),
                                 data.AsSpan().ToArray(),
                                 cancellationToken);
 
@@ -283,6 +293,58 @@ internal class Worker(
         AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
         AnsiConsole.MarkupLine(
             $":camera: Images generated: {Directory.GetFiles(directory).Where(x => x.EndsWith(".webp")).Count()}");
+        AnsiConsole.WriteLine();
+    }
+
+    private async Task GenerateEmbeddingsAsync(GeneratedRecipeList recipeList, CancellationToken cancellationToken)
+    {
+        var recipes = recipeList.Cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<GeneratedRecipe>());
+
+        if (!(recipes?.Any() ?? false))
+        {
+            throw new ArgumentException("No recipes were provided", nameof(recipeList));
+        }
+
+        var startTime = DateTime.UtcNow;
+
+        await AnsiConsole.Status()
+            .StartAsync("Generating embeddings", async ctx =>
+            {
+                await Parallel.ForEachAsync(recipes,
+                    new ParallelOptions
+                    {
+                        CancellationToken = cancellationToken,
+                        MaxDegreeOfParallelism = _recipeGenerationMaxConcurrency
+                    },
+                    async (recipe, cancellationToken) =>
+                    {
+                        AnsiConsole.WriteLine($"Generating embeddings for {recipe.Name}...");
+
+                        var combined = $"Title: {recipe.Name?.Trim()}; Content: {recipe.Description?.Trim()}"
+                            .ReplaceLineEndings()
+                            .Replace(Environment.NewLine, " ");
+
+                        try
+                        {
+                            var embeddings =
+                                await textGenerator.GenerateEmbeddingsAsync(combined, cancellationToken);
+
+                            recipe.Embeddings = embeddings.ToArray();
+                        }
+                        catch
+                        {
+                            logger.LogWarning("Unable to generate embeddings for {Recipe}", recipe.Name);
+                        }
+                    });
+            });
+
+        var elapsed = DateTime.UtcNow - startTime;
+
+        AnsiConsole.WriteLine();
+
+        AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
+        AnsiConsole.MarkupLine(
+            $":input_numbers: Embeddings generated: {recipes.Count(x => x.Embeddings != null)}");
         AnsiConsole.WriteLine();
     }
 }

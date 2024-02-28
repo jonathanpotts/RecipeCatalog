@@ -28,5 +28,5 @@ public class Recipe
 
     public MarkdownData? Instructions { get; set; }
 
-    public float[]? Embedding { get; set; }
+    public float[]? Embeddings { get; set; }
 }

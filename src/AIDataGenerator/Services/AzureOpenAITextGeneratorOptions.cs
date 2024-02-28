@@ -5,10 +5,10 @@ namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Services;
 public class AzureOpenAITextGeneratorOptions
 {
     [Required]
-    public string? ChatCompletionsEndpoint { get; set; }
+    public string? Endpoint { get; set; }
 
     [Required]
-    public string? ChatCompletionsApiKey { get; set; }
+    public string? ApiKey { get; set; }
 
     [Required]
     public string? ChatCompletionsDeploymentName { get; set; }

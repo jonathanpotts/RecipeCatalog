@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using IdGen;
-using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using Markdig;
@@ -58,21 +57,9 @@ public class DbMigrator(
             identityResult = userManager.AddToRoleAsync(adminUser, adminRole.Name).Result;
 
             var json = File.ReadAllText(s_jsonFile);
-            var cuisines = JsonSerializer.Deserialize<CuisineWithRecipesDto[]>(json)?.Select(c => new Cuisine
-            {
-                Name = c.Name,
-                Recipes = c.Recipes?.Select(r => new Recipe
-                {
-                    Name = r.Name,
-                    CoverImage = r.CoverImage,
-                    Description = r.Description,
-                    Ingredients = r.Ingredients,
-                    Instructions = r.Instructions
-                }).ToList()
-            }).ToArray();
+            var cuisines = JsonSerializer.Deserialize<Cuisine[]>(json);
 
-            foreach (var recipe in cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<Recipe>()) ??
-                                   Enumerable.Empty<Recipe>())
+            foreach (var recipe in cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<Recipe>()) ?? [])
             {
                 recipe.Id = idGenerator.CreateId();
                 recipe.OwnerId = adminUser.Id;
