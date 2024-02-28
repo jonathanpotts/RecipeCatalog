@@ -12,6 +12,8 @@ public class Recipe
 
     public string? Name { get; set; }
 
+    public float[]? NameEmbeddings { get; set; }
+
     public ImageData? CoverImage { get; set; }
 
     public int CuisineId { get; set; }
@@ -20,6 +22,8 @@ public class Recipe
 
     public string? Description { get; set; }
 
+    public float[]? DescriptionEmbeddings { get; set; }
+
     public DateTime Created { get; set; }
 
     public DateTime? Modified { get; set; }
@@ -27,6 +31,4 @@ public class Recipe
     public string[]? Ingredients { get; set; }
 
     public MarkdownData? Instructions { get; set; }
-
-    public float[]? Embeddings { get; set; }
 }

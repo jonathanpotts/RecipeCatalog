@@ -82,18 +82,19 @@ internal class Worker(
             Recipes = x.Recipes?.Select(y => new Recipe
             {
                 Name = y.Name,
+                NameEmbeddings = y.NameEmbeddings,
                 CoverImage = new ImageData
                 {
                     Url = y.CoverImage,
                     AltText = y.CoverImagePrompt
                 },
                 Description = y.Description,
+                DescriptionEmbeddings = y.DescriptionEmbeddings,
                 Ingredients = [.. y.Ingredients],
                 Instructions = new MarkdownData
                 {
                     Markdown = y.InstructionsMarkdown
-                },
-                Embeddings = y.Embeddings
+                }
             }).ToList()
         }).ToList();
 
@@ -320,16 +321,27 @@ internal class Worker(
                     {
                         AnsiConsole.WriteLine($"Generating embeddings for {recipe.Name}...");
 
-                        var combined = $"Title: {recipe.Name?.Trim()}; Content: {recipe.Description?.Trim()}"
-                            .ReplaceLineEndings()
-                            .Replace(Environment.NewLine, " ");
+                        var name = recipe.Name?.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower();
+
+                        var description = recipe.Description?.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower();
 
                         try
                         {
-                            var embeddings =
-                                await textGenerator.GenerateEmbeddingsAsync(combined, cancellationToken);
+                            if (!string.IsNullOrEmpty(name))
+                            {
+                                var nameEmbeddings =
+                                await textGenerator.GenerateEmbeddingsAsync(name, cancellationToken);
 
-                            recipe.Embeddings = embeddings.ToArray();
+                                recipe.NameEmbeddings = nameEmbeddings.ToArray();
+                            }
+
+                            if (!string.IsNullOrEmpty(description))
+                            {
+                                var descriptionEmbeddings =
+                                await textGenerator.GenerateEmbeddingsAsync(description, cancellationToken);
+
+                                recipe.DescriptionEmbeddings = descriptionEmbeddings.ToArray();
+                            }
                         }
                         catch
                         {
@@ -344,7 +356,7 @@ internal class Worker(
 
         AnsiConsole.MarkupLine($":three_o_clock: Elapsed time: {elapsed}");
         AnsiConsole.MarkupLine(
-            $":input_numbers: Embeddings generated: {recipes.Count(x => x.Embeddings != null)}");
+            $":input_numbers: Embeddings generated: {recipes.Count(x => x.NameEmbeddings != null)}");
         AnsiConsole.WriteLine();
     }
 }

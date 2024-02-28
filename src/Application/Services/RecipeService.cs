@@ -29,7 +29,7 @@ public class RecipeService(
     : IRecipeService
 {
     private const int DefaultItemsPerPage = 20;
-    private const float DistanceThreshold = 0.67f;
+    private const float DistanceThreshold = 0.5f;
 
     private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
         .DisableHtml()
@@ -144,6 +144,24 @@ public class RecipeService(
             recipe.Instructions.Markdown!,
             s_pipeline);
 
+        var textGenerator = serviceProvider.GetService<IAITextGenerator>();
+
+        if (textGenerator != null)
+        {
+            var nameEmbeddings = await textGenerator.GenerateEmbeddingsAsync(
+                recipe.Name!.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower(),
+                cancellationToken);
+            recipe.NameEmbeddings = nameEmbeddings.ToArray();
+
+            if (!string.IsNullOrEmpty(recipe.Description))
+            {
+                var descriptionEmbeddings = await textGenerator.GenerateEmbeddingsAsync(
+                    recipe.Description.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower(),
+                    cancellationToken);
+                recipe.DescriptionEmbeddings = descriptionEmbeddings.ToArray();
+            }
+        }
+
         await context.Recipes.AddAsync(recipe, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -179,6 +197,24 @@ public class RecipeService(
         recipe.Instructions.Html = Markdown.ToHtml(dto.Instructions!, s_pipeline);
 
         recipe.Modified = DateTime.UtcNow;
+
+        var textGenerator = serviceProvider.GetService<IAITextGenerator>();
+
+        if (textGenerator != null)
+        {
+            var nameEmbeddings = await textGenerator.GenerateEmbeddingsAsync(
+                recipe.Name!.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower(),
+                cancellationToken);
+            recipe.NameEmbeddings = nameEmbeddings.ToArray();
+
+            if (!string.IsNullOrEmpty(recipe.Description))
+            {
+                var descriptionEmbeddings = await textGenerator.GenerateEmbeddingsAsync(
+                    recipe.Description.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower(),
+                    cancellationToken);
+                recipe.DescriptionEmbeddings = descriptionEmbeddings.ToArray();
+            }
+        }
 
         await context.SaveChangesAsync(cancellationToken);
 
@@ -237,17 +273,21 @@ public class RecipeService(
 
         if (textGenerator != null)
         {
-            var queryEmbeddings = await textGenerator.GenerateEmbeddingsAsync(query, cancellationToken);
+            var queryEmbeddings = await textGenerator.GenerateEmbeddingsAsync(query.ToLower(), cancellationToken);
 
             // ideally would use a vector database such as pgvector to perform this search
             // this is an inefficient implementation using basic EF Core functionality
             Dictionary<long, float> distances = [];
 
-            await foreach (var (id, embeddings) in context.Recipes.AsNoTracking()
-                .Select(x => Tuple.Create(x.Id, x.Embeddings))
+            await foreach (var (id, nameEmbeddings, descriptionEmbeddings) in context.Recipes.AsNoTracking()
+                .Select(x => Tuple.Create(x.Id, x.NameEmbeddings, x.DescriptionEmbeddings))
                 .AsAsyncEnumerable().WithCancellation(cancellationToken))
             {
-                var distance = 1 - TensorPrimitives.CosineSimilarity(queryEmbeddings.Span, embeddings);
+                var nameDistance = 1 - TensorPrimitives.CosineSimilarity(queryEmbeddings.Span, nameEmbeddings);
+                var descriptionDistance = descriptionEmbeddings == null
+                    ? 1.0f
+                    : 1 - TensorPrimitives.CosineSimilarity(queryEmbeddings.Span, descriptionEmbeddings);
+                var distance = Math.Min(nameDistance, descriptionDistance);
 
                 distances.Add(id, distance);
             }
