@@ -282,12 +282,14 @@ public class RecipeService(
         }
         else
         {
+            var like = $"%{query}%";
+
             var results = context.Recipes
                 .AsNoTracking()
                 .Include(x => x.Cuisine)
                 .Where(x =>
-                    (x.Name != null && x.Name.Contains(query))
-                    || (x.Description != null && x.Description.Contains(query)));
+                    EF.Functions.Like(x.Name, like)
+                    || EF.Functions.Like(x.Description, like));
 
             var count = await results.CountAsync(cancellationToken);
 

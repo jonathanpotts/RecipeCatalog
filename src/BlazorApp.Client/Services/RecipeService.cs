@@ -10,8 +10,8 @@ namespace JonathanPotts.RecipeCatalog.BlazorApp.Client.Services;
 public class RecipeService(HttpClient client) : IRecipeService
 {
     public async Task<PagedResult<RecipeWithCuisineDto>> GetListAsync(
-        int? skip = 0,
-        int? take = 20,
+        int? skip = null,
+        int? take = null,
         int[]? cuisineIds = null,
         bool? withDetails = null,
         CancellationToken cancellationToken = default)
@@ -93,8 +93,24 @@ public class RecipeService(HttpClient client) : IRecipeService
         response.EnsureSuccessStatusCode();
     }
 
-    public Task<PagedResult<RecipeWithCuisineDto>> SearchAsync(string query, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<RecipeWithCuisineDto>> SearchAsync(
+        string query,
+        int? skip = null,
+        int? take = null,
+        CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var uri = QueryHelpers.AddQueryString(
+            "/api/v1/recipes/search",
+            new Dictionary<string, StringValues>
+            {
+                { "query", query },
+                { "skip", skip?.ToString() },
+                { "take", take?.ToString() },
+            });
+
+        return await client.GetFromJsonAsync<PagedResult<RecipeWithCuisineDto>>(
+            uri,
+            cancellationToken)
+            ?? throw new Exception();
     }
 }

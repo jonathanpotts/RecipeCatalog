@@ -23,6 +23,7 @@ public static class RecipesApi
         group.MapPost("/", PostAsync);
         group.MapPut("/{id:long}", PutAsync);
         group.MapDelete("/{id:long}", DeleteAsync);
+        group.MapGet("/search", SearchAsync);
 
         return builder;
     }
@@ -162,6 +163,23 @@ public static class RecipesApi
         catch (SecurityException)
         {
             return TypedResults.Forbid();
+        }
+    }
+
+    public static async Task<Results<Ok<PagedResult<RecipeWithCuisineDto>>, ValidationProblem>> SearchAsync(
+        IRecipeService recipeService,
+        string query,
+        [Range(0, int.MaxValue)] int? skip,
+        [Range(1, IRecipeService.MaxItemsPerPage)] int? take,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            return TypedResults.Ok(await recipeService.SearchAsync(query, skip, take, cancellationToken));
+        }
+        catch (FluentValidation.ValidationException ex)
+        {
+            return TypedResults.ValidationProblem(ex.ToDictionary());
         }
     }
 }
