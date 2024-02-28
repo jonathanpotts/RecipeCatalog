@@ -8,8 +8,8 @@ public interface IRecipeService
     public const int MaxItemsPerPage = 50;
 
     public Task<PagedResult<RecipeWithCuisineDto>> GetListAsync(
-        int? skip = 0,
-        int? take = 20,
+        int? skip = null,
+        int? take = null,
         int[]? cuisineIds = null,
         bool? withDetails = null,
         CancellationToken cancellationToken = default);
@@ -36,5 +36,11 @@ public interface IRecipeService
     public Task DeleteAsync(
         long id,
         ClaimsPrincipal user,
+        CancellationToken cancellationToken = default);
+
+    public Task<PagedResult<RecipeWithCuisineDto>> SearchAsync(
+        string query,
+        int? skip = null,
+        int? take = null,
         CancellationToken cancellationToken = default);
 }

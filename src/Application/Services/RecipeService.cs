@@ -1,5 +1,7 @@
-﻿using System.Security;
+﻿using System.Numerics.Tensors;
+using System.Security;
 using System.Security.Claims;
+using Azure.AI.OpenAI;
 using FluentValidation;
 using IdGen;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
@@ -14,6 +16,8 @@ using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JonathanPotts.RecipeCatalog.Application.Services;
 
@@ -21,10 +25,13 @@ public class RecipeService(
     RecipeCatalogDbContext context,
     IdGenerator idGenerator,
     UserManager<User> userManager,
-    IAuthorizationService authorizationService)
+    IAuthorizationService authorizationService,
+    IServiceProvider serviceProvider,
+    IConfiguration configuration)
     : IRecipeService
 {
     private const int DefaultItemsPerPage = 20;
+    private const float DistanceThreshold = 0.25f;
 
     private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
         .DisableHtml()
@@ -201,5 +208,98 @@ public class RecipeService(
 
         context.Recipes.Remove(recipe);
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<PagedResult<RecipeWithCuisineDto>> SearchAsync(
+        string query,
+        int? skip = null,
+        int? take = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (skip != null)
+        {
+            InlineValidator<int> validator = [];
+            validator.RuleFor(x => x).GreaterThanOrEqualTo(0);
+            validator.ValidateAndThrow(skip.Value);
+        }
+
+        if (take != null)
+        {
+            InlineValidator<int> validator = [];
+            validator.RuleFor(x => x)
+                .GreaterThan(0)
+                .LessThanOrEqualTo(IRecipeService.MaxItemsPerPage);
+            validator.ValidateAndThrow(take.Value);
+        }
+
+        skip ??= 0;
+        take ??= DefaultItemsPerPage;
+
+        var openAIClient = serviceProvider.GetService<OpenAIClient>();
+        var deploymentName = configuration.GetValue<string>("OpenAI:DeploymentName");
+
+        if (openAIClient != null && !string.IsNullOrEmpty(deploymentName))
+        {
+            var response = await openAIClient.GetEmbeddingsAsync(
+                new(deploymentName, [query]),
+                cancellationToken);
+
+            var queryEmbeddings = response.Value.Data[0].Embedding;
+
+            // ideally would use a vector database such as pgvector to perform this search
+            // this is an inefficient implementation using basic EF Core functionality
+            Dictionary<long, float> distances = [];
+
+            await foreach (var (id, embeddings) in context.Recipes.AsNoTracking()
+                .Select(x => Tuple.Create(x.Id, x.Embeddings))
+                .AsAsyncEnumerable().WithCancellation(cancellationToken))
+            {
+
+                var distance = 1 - TensorPrimitives.CosineSimilarity(queryEmbeddings.Span, embeddings);
+
+                distances.Add(id, distance);
+            }
+
+            distances = distances.Where(x => x.Value >= DistanceThreshold).ToDictionary(x => x.Key, x => x.Value);
+
+            List<Recipe> recipes = [];
+
+            foreach (var (id, distance) in distances.OrderBy(x => x.Value).Skip(skip.Value).Take(take.Value))
+            {
+                var recipe = await context.Recipes.AsNoTracking()
+                    .Include(x => x.Cuisine)
+                    .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+                if (recipe != null)
+                {
+                    recipes.Add(recipe);
+                }
+            }
+
+            return new PagedResult<RecipeWithCuisineDto>(
+                distances.Count,
+                recipes.Select(x => x.ToRecipeWithCuisineDto(false)));
+        }
+        else
+        {
+            var results = context.Recipes
+                .AsNoTracking()
+                .Include(x => x.Cuisine)
+                .Where(x =>
+                    (x.Name != null && x.Name.Contains(query))
+                    || (x.Description != null && x.Description.Contains(query)));
+
+            var count = await results.CountAsync(cancellationToken);
+
+            var recipes = await results
+                .OrderByDescending(x => x.Id)
+                .Skip(skip.Value)
+                .Take(take.Value)
+                .ToArrayAsync(cancellationToken);
+
+            return new PagedResult<RecipeWithCuisineDto>(
+                count,
+                recipes.Select(x => x.ToRecipeWithCuisineDto(false)));
+        }
     }
 }

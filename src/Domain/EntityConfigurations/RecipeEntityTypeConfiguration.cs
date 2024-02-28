@@ -57,5 +57,9 @@ public class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Recipe>
 
         builder.Property(x => x.Ingredients)
             .IsRequired();
+
+        builder.HasIndex(x => x.Name);
+
+        builder.HasIndex(x => x.Description);
     }
 }

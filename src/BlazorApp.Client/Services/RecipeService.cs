@@ -92,4 +92,9 @@ public class RecipeService(HttpClient client) : IRecipeService
 
         response.EnsureSuccessStatusCode();
     }
+
+    public Task<PagedResult<RecipeWithCuisineDto>> SearchAsync(string query, int? skip = null, int? take = null, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }

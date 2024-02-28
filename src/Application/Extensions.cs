@@ -8,6 +8,7 @@ using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace JonathanPotts.RecipeCatalog.Application;
