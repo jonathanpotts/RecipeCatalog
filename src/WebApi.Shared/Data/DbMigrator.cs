@@ -5,8 +5,9 @@ using JonathanPotts.RecipeCatalog.Domain.Entities;
 using Markdig;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Data;
+namespace JonathanPotts.RecipeCatalog.WebApi.Shared.Data;
 
 public class DbMigrator(
     IConfiguration configuration,

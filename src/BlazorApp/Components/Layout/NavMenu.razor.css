@@ -56,11 +56,15 @@
         padding: .5rem 1rem;
     }
 
-    .nav-item ::deep .nav-link > span {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-    }
+        .nav-item ::deep .nav-link > div {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+            .nav-item ::deep .nav-link > div > span {
+                vertical-align: top;
+            }
 
 .nav-item ::deep a.active {
     background-color: rgba(255,255,255,0.37);

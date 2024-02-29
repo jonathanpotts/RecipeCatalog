@@ -1,5 +1,5 @@
 using JonathanPotts.RecipeCatalog.Application;
-using JonathanPotts.RecipeCatalog.WebApi;
+using JonathanPotts.RecipeCatalog.WebApi.Shared;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;

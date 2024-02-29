@@ -5,10 +5,13 @@ using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.Application.Validation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Routing;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Apis;
+namespace JonathanPotts.RecipeCatalog.WebApi.Shared.Apis;
 
 public static class RecipesApi
 {

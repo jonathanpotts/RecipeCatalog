@@ -6,7 +6,7 @@ using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Services;
 using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
-using JonathanPotts.RecipeCatalog.WebApi.Apis;
+using JonathanPotts.RecipeCatalog.WebApi.Shared.Apis;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;

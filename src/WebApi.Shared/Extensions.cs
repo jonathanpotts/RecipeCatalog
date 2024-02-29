@@ -1,9 +1,14 @@
 ﻿using JonathanPotts.RecipeCatalog.Application;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
-using JonathanPotts.RecipeCatalog.WebApi.Apis;
-using JonathanPotts.RecipeCatalog.WebApi.Data;
+using JonathanPotts.RecipeCatalog.WebApi.Shared.Apis;
+using JonathanPotts.RecipeCatalog.WebApi.Shared.Data;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace JonathanPotts.RecipeCatalog.WebApi;
+namespace JonathanPotts.RecipeCatalog.WebApi.Shared;
 
 public static class Extensions
 {
