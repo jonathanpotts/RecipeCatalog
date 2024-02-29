@@ -70,12 +70,19 @@ Recipe Catalog is a multilayered [.NET](https://dotnet.microsoft.com/) 8 project
 
 ### WebApi
 
-[WebApi](src/WebApi/) is a REST Web API that provides CRUD operations for managing recipes. Technologies used:
+[WebApi](src/WebApi/) is a REST Web API that uses the [WebApi.Shared class library](src/WebApi.Shared/) to provide CRUD operations for managing recipes. Technologies used:
 
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
     - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
     - [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
 - [Swagger / OpenAPI](https://swagger.io/) ([Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore))
+
+### WebApi.Shared
+
+[WebApi.Shared](src/WebApi.Shared/) contains the minimal APIs that provide CRUD operations for managing recipes. Technologies used:
+
+- [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
+    - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
 
 ### Tests
 
