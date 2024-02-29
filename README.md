@@ -1,6 +1,6 @@
 # Recipe Catalog
 
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeCatalog/dotnet.yml)](https://github.com/jonathanpotts/RecipeCatalog/actions/workflows/dotnet.yml)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeCatalog/dotnet.yml?logo=github)](https://github.com/jonathanpotts/RecipeCatalog/actions/workflows/dotnet.yml) [![Codecov Code Coverage](https://img.shields.io/codecov/c/gh/jonathanpotts/RecipeCatalog?logo=codecov)](https://codecov.io/gh/jonathanpotts/RecipeCatalog)
 
 Recipe Catalog is a multilayered [.NET](https://dotnet.microsoft.com/) 8 project showcasing a Web catalog for recipes with generative AI capabilities.
 
