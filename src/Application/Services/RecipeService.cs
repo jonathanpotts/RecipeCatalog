@@ -29,7 +29,7 @@ public class RecipeService(
     : IRecipeService
 {
     private const int DefaultItemsPerPage = 20;
-    private const float DistanceThreshold = 0.5f;
+    private const float DistanceThreshold = 0.6f;
 
     private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
         .DisableHtml()

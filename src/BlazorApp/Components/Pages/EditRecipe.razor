@@ -3,7 +3,7 @@
 @inject IRecipeService RecipeService
 @attribute [Authorize]
 
-@if (_recipe == null || _updateRecipeDto == null)
+@if (_recipe == null)
 {
     <PageTitle>Edit Recipe</PageTitle>
 
@@ -19,16 +19,16 @@ else
 
     <AuthorizeView Policy="@Policies.Update" Resource="_recipe">
         <Authorized>
-            <EditForm Model="_updateRecipeDto" Context="editContext" FormName="editRecipe" Enhance>
+            <EditForm Model="Model" OnSubmit="Submit" FormName="EditRecipeForm" Context="formContext" Enhance>
                 <div class="mb-3">
                     <label for="name">Name</label>
-                    <InputText @bind-Value="_updateRecipeDto.Name" id="name" class="form-control" />
+                    <InputText @bind-Value="Model!.Name" id="name" class="form-control" />
                 </div>
                 @if (_cuisines != null)
                 {
                     <div class="mb-3">
                         <label for="cuisine">Cuisine</label>
-                        <InputSelect @bind-Value="_updateRecipeDto.CuisineId" id="cuisine" class="form-select">
+                        <InputSelect @bind-Value="Model.CuisineId" id="cuisine" class="form-select">
                             <option value="">Select cuisine</option>
                             @foreach (var cuisine in _cuisines)
                             {
@@ -39,11 +39,11 @@ else
                 }
                 <div class="mb-3">
                     <label for="description">Description</label>
-                    <InputText @bind-Value="_updateRecipeDto.Description" id="description" class="form-control" />
+                    <InputText @bind-Value="Model.Description" id="description" class="form-control" />
                 </div>
                 <div class="mb-3">
                     <label for="instructions">Instructions</label>
-                    <InputTextArea @bind-Value="_updateRecipeDto.Instructions" id="instructions" class="form-control" rows="5" />
+                    <InputTextArea @bind-Value="Model.Instructions" id="instructions" class="form-control" rows="5" />
                     <div class="form-text">Markdown is supported.</div>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -59,22 +59,24 @@ else
     [Parameter]
     public long Id { get; set; }
 
+    [SupplyParameterFromForm]
+    public CreateUpdateRecipeDto? Model { get; set; }
+
     private IEnumerable<CuisineDto>? _cuisines;
     private RecipeWithCuisineDto? _recipe;
-    private CreateUpdateRecipeDto? _updateRecipeDto;
 
     protected override async Task OnInitializedAsync()
     {
-        _cuisines = await CuisineService.GetListAsync();
+        _cuisines ??= await CuisineService.GetListAsync();
 
-        _recipe = await RecipeService.GetAsync(Id);
+        _recipe ??= await RecipeService.GetAsync(Id);
 
         if (_recipe == null)
         {
             return;
         }
 
-        _updateRecipeDto = new CreateUpdateRecipeDto
+        Model ??= new CreateUpdateRecipeDto
             {
                 Name = _recipe.Name,
                 CuisineId = _recipe.Cuisine?.Id ?? default,
@@ -82,5 +84,10 @@ else
                 Ingredients = _recipe.Ingredients,
                 Instructions = _recipe.Instructions?.Markdown,
             };
+    }
+
+    private void Submit()
+    {
+        
     }
 }

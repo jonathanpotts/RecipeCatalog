@@ -1,4 +1,5 @@
 ﻿@page "/search"
+@inject IRecipeService RecipeService
 
 <PageTitle>Search</PageTitle>
 
@@ -6,11 +7,44 @@
 
 <form data-enhance>
     <div class="input-group mb-3">
-        <input type="text" class="form-control" id="query" placeholder="Query" aria-label="Query" />
+        <input type="text" class="form-control" name="query" placeholder="Query" aria-label="Query" value="@Query" />
         <button type="submit" class="btn btn-primary"><i class="bi bi-search" aria-label="Search"></i></button>
     </div>
 </form>
 
-@code {
+@if (_results != null)
+{
+    <h2>Results</h2>
 
+    @if (_results.Total < 1)
+    {
+        <p>No results found.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var result in _results.Items)
+            {
+                <li><a href="@($"recipes/{result.Id}")">@result.Name</a></li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? Query { get; set; }
+
+    private PagedResult<RecipeWithCuisineDto>? _results;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrWhiteSpace(Query))
+        {
+            _results = null;
+            return;
+        }
+
+        _results = await RecipeService.SearchAsync(Query);
+    }
 }
