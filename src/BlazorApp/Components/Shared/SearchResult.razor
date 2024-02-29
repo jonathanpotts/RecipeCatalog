@@ -1,0 +1,18 @@
+﻿@if (Recipe != null)
+{
+    <div>
+        <div class="fw-bold">
+            <a href="@($"recipes/{Recipe.Id}")">
+                @Recipe.Name
+            </a>
+            <span class="badge text-bg-secondary">@Recipe.Cuisine!.Name</span>
+        </div>
+        <p class="line-clamp-3">@Recipe.Description</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public RecipeWithCuisineDto? Recipe { get; set; }
+}

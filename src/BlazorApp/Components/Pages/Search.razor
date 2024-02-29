@@ -1,5 +1,6 @@
 ﻿@page "/search"
 @inject IRecipeService RecipeService
+@attribute [StreamRendering]
 
 <PageTitle>Search</PageTitle>
 
@@ -12,22 +13,24 @@
     </div>
 </form>
 
-@if (_results != null)
+@if (!string.IsNullOrEmpty(Query))
 {
     <h2>Results</h2>
 
-    @if (_results.Total < 1)
+    @if (_results == null)
+    {
+        <p>Searching...</p>
+    }
+    else if (_results.Total < 1)
     {
         <p>No results found.</p>
     }
     else
     {
-        <ul>
-            @foreach (var result in _results.Items)
-            {
-                <li><a href="@($"recipes/{result.Id}")">@result.Name</a></li>
-            }
-        </ul>
+        @foreach (var result in _results.Items)
+        {
+            <SearchResult Recipe="result" />
+        }
     }
 }
 

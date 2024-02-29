@@ -14,7 +14,11 @@
 
         <div class="card-body d-flex flex-column">
             <h5 class="card-title">@Recipe.Name</h5>
-            <p class="card-text line-clamp-3">@Recipe.Description</p>
+            <p class="card-text"><span class="badge text-bg-secondary">@Recipe.Cuisine!.Name</span></p>
+            <p class="card-text line-clamp-3">
+                
+                @Recipe.Description
+            </p>
             <div class="mt-auto">
                 <NavLink
                     href=@($"recipes/{Recipe.Id}")
