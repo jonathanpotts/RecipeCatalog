@@ -23,11 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Contracts", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A1E0BEA1-7E0A-456B-BF8F-E8EDA328CC05}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Tests", "tests\WebApi.Tests\WebApi.Tests.csproj", "{07012470-72CB-4DC1-8C4A-B4BD3A8D33C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Shared.Tests", "tests\WebApi.Shared.Tests\WebApi.Shared.Tests.csproj", "{07012470-72CB-4DC1-8C4A-B4BD3A8D33C4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AI", "src\AI\AI.csproj", "{196179F5-7352-4DAC-8758-BC20F7DEA44C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.Shared", "src\WebApi.Shared\WebApi.Shared.csproj", "{55A62D44-9863-4A0F-B293-1DABF1D20C81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Shared", "src\WebApi.Shared\WebApi.Shared.csproj", "{55A62D44-9863-4A0F-B293-1DABF1D20C81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

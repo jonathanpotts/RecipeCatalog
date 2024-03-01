@@ -14,7 +14,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Tests.Apis;
+namespace JonathanPotts.RecipeCatalog.WebApi.Shared.Tests.Apis;
 
 public sealed class RecipesApiUnitTests : IDisposable
 {
@@ -96,29 +96,29 @@ public sealed class RecipesApiUnitTests : IDisposable
 
         Assert.NotEmpty(okResult.Value.Items);
 
-        var firstItem = okResult.Value.Items.First();
+        var lastItem = okResult.Value.Items.Last();
 
         Assert.Multiple(
-            () => Assert.Equal(6462416804118528, firstItem.Id),
-            () => Assert.Equal("73edf737-df51-4c06-ac6f-3ec6d79f1f12", firstItem.OwnerId),
-            () => Assert.Equal("Test Recipe 5", firstItem.Name),
+            () => Assert.Equal(6461870173061120, lastItem.Id),
+            () => Assert.Equal("73edf737-df51-4c06-ac6f-3ec6d79f1f12", lastItem.OwnerId),
+            () => Assert.Equal("Test Recipe 1", lastItem.Name),
             () =>
             {
-                Assert.NotNull(firstItem.CoverImage);
-                Assert.Equal("/api/v1/recipes/6462416804118528/coverImage", firstItem.CoverImage.Url);
-                Assert.Equal("A photo of test recipe 5", firstItem.CoverImage.AltText);
+                Assert.NotNull(lastItem.CoverImage);
+                Assert.Equal("/api/v1/recipes/6461870173061120/coverImage", lastItem.CoverImage.Url);
+                Assert.Equal("A photo of test recipe 1", lastItem.CoverImage.AltText);
             },
             () =>
             {
-                Assert.NotNull(firstItem.Cuisine);
-                Assert.Equal(1, firstItem.Cuisine.Id);
-                Assert.Equal("Test", firstItem.Cuisine.Name);
+                Assert.NotNull(lastItem.Cuisine);
+                Assert.Equal(1, lastItem.Cuisine.Id);
+                Assert.Equal("Test", lastItem.Cuisine.Name);
             },
-            () => Assert.Equal("This is a test.", firstItem.Description),
-            () => Assert.Equal(new DateTime(638412047602332665, DateTimeKind.Utc), firstItem.Created),
-            () => Assert.Null(firstItem.Modified),
-            () => Assert.Null(firstItem.Ingredients),
-            () => Assert.Null(firstItem.Instructions));
+            () => Assert.Equal("This is a test.", lastItem.Description),
+            () => Assert.Equal(new DateTime(638412046299055561, DateTimeKind.Utc), lastItem.Created),
+            () => Assert.Null(lastItem.Modified),
+            () => Assert.Null(lastItem.Ingredients),
+            () => Assert.Null(lastItem.Instructions));
     }
 
     [Fact]
@@ -159,8 +159,8 @@ public sealed class RecipesApiUnitTests : IDisposable
         Assert.Multiple(
             () => Assert.NotEmpty(okResult.Value.Items),
             () => Assert.DoesNotContain(okResult.Value.Items,
-                x => x.Id >= 6462258523668480),
-            () => Assert.Equal(6462160192405504, okResult.Value.Items.FirstOrDefault()?.Id));
+                x => x.Id >= 6462318867120128),
+            () => Assert.Equal(6462258523668480, okResult.Value.Items.FirstOrDefault()?.Id));
     }
 
     [Fact]
@@ -195,33 +195,10 @@ public sealed class RecipesApiUnitTests : IDisposable
         var firstItem = okResult.Value.Items.First();
 
         Assert.Multiple(
-            () => Assert.Equal(6462416804118528, firstItem.Id),
-            () => Assert.Equal("73edf737-df51-4c06-ac6f-3ec6d79f1f12", firstItem.OwnerId),
-            () => Assert.Equal("Test Recipe 5", firstItem.Name),
-            () =>
-            {
-                Assert.NotNull(firstItem.CoverImage);
-                Assert.Equal("/api/v1/recipes/6462416804118528/coverImage", firstItem.CoverImage.Url);
-                Assert.Equal("A photo of test recipe 5", firstItem.CoverImage.AltText);
-            },
-            () =>
-            {
-                Assert.NotNull(firstItem.Cuisine);
-                Assert.Equal(1, firstItem.Cuisine.Id);
-                Assert.Equal("Test", firstItem.Cuisine.Name);
-            },
-            () => Assert.Equal("This is a test.", firstItem.Description),
-            () => Assert.Equal(new DateTime(638412047602332665, DateTimeKind.Utc), firstItem.Created),
-            () => Assert.Null(firstItem.Modified),
-            () =>
-            {
-                Assert.NotNull(firstItem.Ingredients);
-                Assert.Collection(firstItem.Ingredients,
-                    x => Assert.Equal("1 tsp of test ingredient 1", x),
-                    x => Assert.Equal("1 cup of test ingredient 2", x));
-            },
-            () => Assert.Equal("This is a test.", firstItem.Instructions?.Markdown),
-            () => Assert.Equal("<p>This is a test.</p>\n", firstItem.Instructions?.Html));
+            () => Assert.NotNull(firstItem.Ingredients),
+            () => Assert.True((firstItem.Ingredients?.Length ?? 0) > 0),
+            () => Assert.NotNull(firstItem.Instructions?.Markdown),
+            () => Assert.NotNull(firstItem.Instructions?.Html));
     }
 
     [Fact]

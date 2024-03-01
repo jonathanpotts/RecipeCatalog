@@ -2,7 +2,7 @@
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
-namespace JonathanPotts.RecipeCatalog.WebApi.Tests.Apis;
+namespace JonathanPotts.RecipeCatalog.WebApi.Shared.Tests.Apis;
 
 public static class TestData
 {
