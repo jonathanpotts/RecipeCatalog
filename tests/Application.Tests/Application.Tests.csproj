@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,8 +7,8 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <RootNamespace>JonathanPotts.RecipeCatalog.WebApi.Shared.Tests</RootNamespace>
-    <AssemblyName>RecipeCatalog.WebApi.Shared.Tests</AssemblyName>
+    <RootNamespace>JonathanPotts.RecipeCatalog.Application.Tests</RootNamespace>
+    <AssemblyName>RecipeCatalog.Application.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\WebApi.Shared\WebApi.Shared.csproj" />
+    <ProjectReference Include="..\..\src\Application\Application.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
