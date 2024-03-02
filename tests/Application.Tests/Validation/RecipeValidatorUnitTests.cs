@@ -34,23 +34,24 @@ public sealed class RecipeValidatorUnitTests
     }
 
     [Theory]
-    [InlineData(default(long), "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, null, "Test", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "", "Test", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", null, 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", default(int), (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, null, "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])[], "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])[""], "This is a test.", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], null, "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "", "<p>This is a test.</p>\n")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "This is a test.", null)]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "This is a test.", "")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], null, null)]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], null, "")]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "", null)]
-    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "", "")]
+    [InlineData(default(long), "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, null, "Test", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "", "Test", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", null, 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", default(int), (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, null, "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])[], "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])[""], "This is a test.", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], null, "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "", "<p>This is a test.</p>\n", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "This is a test.", null, null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "This is a test.", "", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], null, null, null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], null, "", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "", null, null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "", "", null)]
+    [InlineData(6461870173061120, "d7df5331-1c53-491f-8b71-91989846874f", "Test", 1, (string[])["Ingredient 1"], "This is a test.", "<p>This is a test.</p>\n", "")]
     public void TestValidateThrowsWhenInvalid(
         long id,
         string? ownerId,
@@ -58,7 +59,8 @@ public sealed class RecipeValidatorUnitTests
         int cuisineId,
         string[]? ingredients,
         string? instructionsMarkdown,
-        string? instructionsHtml)
+        string? instructionsHtml,
+        string? coverImageUrl)
     {
         // Arrange
         Recipe recipe = new()
@@ -80,6 +82,12 @@ public sealed class RecipeValidatorUnitTests
         {
             recipe.Instructions ??= new();
             recipe.Instructions.Html = instructionsHtml;
+        }
+
+        if (coverImageUrl != null)
+        {
+            recipe.CoverImage ??= new();
+            recipe.CoverImage.Url = coverImageUrl;
         }
 
         // Act
