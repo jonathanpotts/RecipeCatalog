@@ -7,6 +7,7 @@ public class CuisineValidator : AbstractValidator<Cuisine>
 {
     public CuisineValidator()
     {
+        RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.Name).NotEmpty();
     }
 }

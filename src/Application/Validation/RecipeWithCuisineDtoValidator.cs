@@ -9,6 +9,7 @@ public class RecipeWithCuisineDtoValidator : AbstractValidator<RecipeWithCuisine
     {
         Include(new RecipeDtoValidator());
 
-        RuleFor(x => x.Cuisine).NotEmpty();
+        RuleFor(x => x.Cuisine!).NotNull()
+            .SetValidator(new CuisineDtoValidator());
     }
 }

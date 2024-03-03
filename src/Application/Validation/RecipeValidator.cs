@@ -11,6 +11,7 @@ public class RecipeValidator : AbstractValidator<Recipe>
         RuleFor(x => x.OwnerId).NotEmpty();
         RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => x.CuisineId).NotEmpty();
+        RuleFor(x => x.Created).NotEmpty();
         RuleFor(x => x.Ingredients).NotEmpty().ForEach(x => x.NotEmpty());
         RuleFor(x => x.Instructions!).NotNull()
             .SetValidator(new MarkdownDataValidator());

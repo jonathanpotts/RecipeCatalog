@@ -18,6 +18,7 @@ public sealed class RecipeValidatorUnitTests
             OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
             Name = "Test",
             CuisineId = 1,
+            Created = new DateTime(638412046299055561, DateTimeKind.Utc),
             Ingredients = ["Ingredient 1"],
             Instructions = new()
             {
