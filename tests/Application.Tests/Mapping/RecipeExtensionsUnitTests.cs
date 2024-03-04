@@ -1,15 +1,17 @@
 ﻿using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Mapping;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
+using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 
 namespace JonathanPotts.RecipeCatalog.Application.Tests.Mapping;
 
 public sealed class RecipeExtensionsUnitTests
 {
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void ToRecipeWithCuisineDtoReturnsPopulatedObject(bool withDetails)
+    [InlineData(true, true, false)]
+    [InlineData(true, false, true)]
+    [InlineData(false, true, true)]
+    public void ToRecipeWithCuisineDtoReturnsPopulatedObject(bool withCoverImage, bool withCuisine, bool withDetails)
     {
         // Arrange
         Recipe recipe = new()
@@ -17,8 +19,8 @@ public sealed class RecipeExtensionsUnitTests
             Id = 6461870173061120,
             OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
             Name = "Test",
-            CuisineId = 1,
-            Cuisine = new Cuisine { Id = 1, Name = "Test" },
+            CoverImage = withCoverImage ? new ImageData { AltText = "test" } : null,
+            Cuisine = withCuisine ? new Cuisine { Id = 1, Name = "Test" } : null,
             Created = new DateTime(638412046299055561, DateTimeKind.Utc),
             Modified = new DateTime(638451812957543811, DateTimeKind.Utc),
             Ingredients = ["Ingredient 1"],
@@ -41,9 +43,34 @@ public sealed class RecipeExtensionsUnitTests
         Assert.Equal(recipe.Created, dto.Created);
         Assert.Equal(recipe.Modified, dto.Modified);
 
+        if (withCoverImage)
+        {
+            Assert.NotNull(dto.CoverImage);
+            Assert.NotNull(dto.CoverImage?.Url);
+            Assert.Equal(recipe.CoverImage?.AltText, dto.CoverImage?.AltText);
+        }
+        else
+        {
+            Assert.Null(dto.CoverImage);
+        }
+
+        if (withCuisine)
+        {
+            Assert.NotNull(recipe.Cuisine);
+            Assert.Equal(recipe.Cuisine?.Id, dto.Cuisine?.Id);
+            Assert.Equal(recipe.Cuisine?.Name, dto.Cuisine?.Name);
+        }
+        else
+        {
+            Assert.Null(recipe.Cuisine);
+        }
+
         if (withDetails)
         {
+            Assert.NotNull(dto.Ingredients);
             Assert.Equal(recipe.Ingredients, dto.Ingredients);
+
+            Assert.NotNull(dto.Instructions);
             Assert.Equal(recipe.Instructions?.Markdown, dto.Instructions?.Markdown);
             Assert.Equal(recipe.Instructions?.Html, dto.Instructions?.Html);
         }
