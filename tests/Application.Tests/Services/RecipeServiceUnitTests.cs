@@ -1,16 +1,12 @@
 ﻿using System.Security;
 using System.Security.Claims;
 using FluentValidation;
-using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
-using JonathanPotts.RecipeCatalog.Application.Mapping;
 using JonathanPotts.RecipeCatalog.Application.Services;
 using JonathanPotts.RecipeCatalog.Domain;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace JonathanPotts.RecipeCatalog.Application.Tests.Services;
 
@@ -24,13 +20,14 @@ public sealed class RecipeServiceUnitTests : IDisposable
     private RecipeCatalogDbContext CreateContext() => new(_contextOptions);
 
     private RecipeService CreateRecipeService(
-        bool authorizationServiceSucceeds = true)
+        bool authorizationServiceSucceeds = true,
+        bool withAITextGenerator = false)
         => new(
             CreateContext(),
             Mocks.CreateIdGeneratorMock().Object,
             Mocks.CreateUserManagerMock().Object,
             Mocks.CreateAuthorizationServiceMock(authorizationServiceSucceeds).Object,
-            Mock.Of<IServiceProvider>());
+            Mocks.CreateServiceProviderMock(withAITextGenerator).Object);
 
     public RecipeServiceUnitTests()
     {
@@ -203,11 +200,13 @@ public sealed class RecipeServiceUnitTests : IDisposable
         await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.GetCoverImageAsync(recipeId));
     }
 
-    [Fact]
-    public async void CreateAsyncReturnsDto()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async void CreateAsyncReturnsDto(bool withAITextGenerator)
     {
         // Arrange
-        var recipeService = CreateRecipeService();
+        var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
 
         CreateUpdateRecipeDto createDto = new()
         {

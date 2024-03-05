@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using IdGen;
+using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -60,5 +61,30 @@ public static class Mocks
             .Returns(succeeds ? AuthorizationResult.Success() : AuthorizationResult.Failed());
 
         return authorizationServiceMock;
+    }
+
+    public static Mock<IServiceProvider> CreateServiceProviderMock(bool withAITextGenerator = false)
+    {
+        Mock<IServiceProvider> serviceProviderMock = new();
+
+        if (withAITextGenerator)
+        {
+            serviceProviderMock
+                .Setup(x => x.GetService(typeof(IAITextGenerator)))
+                .Returns(CreateAITextGeneratorMock().Object);
+        }
+
+        return serviceProviderMock;
+    }
+
+    public static Mock<IAITextGenerator> CreateAITextGeneratorMock()
+    {
+        Mock<IAITextGenerator> aiTextGeneratorMock = new();
+
+        aiTextGeneratorMock
+            .Setup(x => x.GenerateEmbeddingsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()).Result)
+            .Returns(new ReadOnlyMemory<float>(new float[1536]));
+
+        return aiTextGeneratorMock;
     }
 }
