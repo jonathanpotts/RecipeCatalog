@@ -83,7 +83,7 @@ public static class Mocks
 
         aiTextGeneratorMock
             .Setup(x => x.GenerateEmbeddingsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()).Result)
-            .Returns(new ReadOnlyMemory<float>(new float[1536]));
+            .Returns(new ReadOnlyMemory<float>(TestData.GetExampleNameEmbeddings()));
 
         return aiTextGeneratorMock;
     }

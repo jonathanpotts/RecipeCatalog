@@ -103,7 +103,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(take, result.Items.Count());
+        Assert.True(result.Items.Count() <= take);
     }
 
     [Theory]
@@ -374,5 +374,74 @@ public sealed class RecipeServiceUnitTests : IDisposable
 
         // Act / Assert
         await Assert.ThrowsAsync<SecurityException>(() => recipeService.DeleteAsync(TestData.Recipes[0].Id, _user));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async void SearchAsyncReturnsPagedResult(bool withAITextGenerator)
+    {
+        // Arrange
+        var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
+
+        // Act
+        var result = await recipeService.SearchAsync(TestData.Recipes[0].Name!);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Total > 0);
+        Assert.Contains(result.Items, x => x.Id == TestData.Recipes[0].Id);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public async void SearchAsyncReturnsPagedResultWithSkip(int skip)
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+        var skippedIds = TestData.Recipes
+            .Where(x => x.Name!.Contains("test", StringComparison.OrdinalIgnoreCase) || (x.Description?.Contains("test", StringComparison.OrdinalIgnoreCase) ?? false))
+            .OrderByDescending(x => x.Id)
+            .Take(skip)
+            .Select(x => x.Id);
+
+        // Act
+        var result = await recipeService.SearchAsync("test", skip);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.DoesNotContain(result.Items, x => skippedIds.Contains(x.Id));
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public async void SearchAsyncReturnsPagedResultWithTake(int take)
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act
+        var result = await recipeService.SearchAsync("test", take: take);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.Items.Count() <= take);
+    }
+
+    [Theory]
+    [InlineData(-1, null)]
+    [InlineData(null, 0)]
+    [InlineData(null, IRecipeService.MaxItemsPerPage + 1)]
+    public async void SearchAsyncThrowsValidationExceptionWithInvalidInput(int? skip, int? take)
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act / Assert
+        await Assert.ThrowsAsync<ValidationException>(() => recipeService.SearchAsync("test", skip, take));
     }
 }

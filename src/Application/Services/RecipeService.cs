@@ -192,9 +192,8 @@ public class RecipeService(
 
         context.Entry(recipe).CurrentValues.SetValues(dto);
 
-        recipe.Instructions ??= new MarkdownData();
-        recipe.Instructions.Markdown = dto.Instructions;
-        recipe.Instructions.Html = Markdown.ToHtml(dto.Instructions!, s_pipeline);
+        recipe.Instructions!.Markdown = dto.Instructions;
+        recipe.Instructions!.Html = Markdown.ToHtml(dto.Instructions!, s_pipeline);
 
         recipe.Modified = DateTime.UtcNow;
 
@@ -283,6 +282,7 @@ public class RecipeService(
                 .Select(x => Tuple.Create(x.Id, x.NameEmbeddings, x.DescriptionEmbeddings))
                 .AsAsyncEnumerable().WithCancellation(cancellationToken))
             {
+                var similarity = TensorPrimitives.CosineSimilarity(queryEmbeddings.Span, nameEmbeddings);
                 var nameDistance = 1 - TensorPrimitives.CosineSimilarity(queryEmbeddings.Span, nameEmbeddings);
                 var descriptionDistance = descriptionEmbeddings == null
                     ? 1.0f
