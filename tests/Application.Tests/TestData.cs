@@ -1,4 +1,5 @@
-﻿using JonathanPotts.RecipeCatalog.Domain.Entities;
+﻿using System.Security.Claims;
+using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
@@ -28,6 +29,17 @@ public static class TestData
             NormalizedEmail = "ADMIN@EXAMPLE.COM",
             UserName = "admin@example.com",
             NormalizedUserName = "ADMIN@EXAMPLE.COM",
+            EmailConfirmed = true
+        },
+        new User
+        {
+            Id = "0b4e67c9-5739-4273-99a6-543792cacec6",
+            SecurityStamp = "Y3MNSBM47IBLNFJHFHCMQ262XYRKSKJM",
+            ConcurrencyStamp = "8a2b3537-d3af-42fb-a1a2-7e93bb3000a4",
+            Email = "user2@example.com",
+            NormalizedEmail = "USER2@EXAMPLE.COM",
+            UserName = "user2@example.com",
+            NormalizedUserName = "USER2@EXAMPLE.COM",
             EmailConfirmed = true
         }
     ];
@@ -106,11 +118,6 @@ public static class TestData
             Id = 6462160192405504,
             OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
             Name = "Test Recipe 2",
-            CoverImage = new ImageData
-            {
-                Url = "6462160192405504.webp",
-                AltText = "A photo of test recipe 2"
-            },
             CuisineId = 1,
             Description = "This is a test.",
             Created = new DateTime(638412046990521543, DateTimeKind.Utc),
@@ -198,4 +205,48 @@ public static class TestData
             }
         }
     ];
+
+    public static bool IsAdministrator(string id)
+    {
+        var adminRoleId = Roles.First(x => x.NormalizedName == "ADMINISTRATOR").Id;
+
+        return UserRoles.Any(x => x.UserId == id && x.RoleId == adminRoleId);
+    }
+
+    public static bool IsAdministratorRole(string role)
+    {
+        return role.Equals("ADMINISTRATOR", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static ClaimsPrincipal CreateClaimsPrincipal(string? id)
+    {
+        return string.IsNullOrEmpty(id)
+            ? new ClaimsPrincipal()
+            : new(new ClaimsIdentity([new(ClaimTypes.NameIdentifier, id)], "Test"));
+    }
+
+    public static ClaimsPrincipal GetAdministrator()
+    {
+        var adminRoleId = Roles.First(x => x.NormalizedName == "ADMINISTRATOR").Id;
+        var adminId = UserRoles.First(x => x.RoleId == adminRoleId).UserId;
+
+        return CreateClaimsPrincipal(adminId);
+    }
+
+    public static ClaimsPrincipal GetOwner(long id)
+    {
+        var recipe = Recipes.First(x => x.Id == id);
+
+        return CreateClaimsPrincipal(recipe.OwnerId);
+    }
+
+    public static ClaimsPrincipal GetUser()
+    {
+        return CreateClaimsPrincipal(Users.Last().Id);
+    }
+
+    public static ClaimsPrincipal GetAnonymousUser()
+    {
+        return CreateClaimsPrincipal(null);
+    }
 }

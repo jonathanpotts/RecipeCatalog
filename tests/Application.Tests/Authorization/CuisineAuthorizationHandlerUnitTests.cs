@@ -7,24 +7,10 @@ namespace JonathanPotts.RecipeCatalog.Application.Tests.Authorization;
 
 public class CuisineAuthorizationHandlerUnitTests
 {
-
     private readonly CuisineAuthorizationHandler _handler = new(Mocks.CreateUserManagerMock().Object);
-
-    private readonly Cuisine _cuisine = new()
-    {
-        Id = 1,
-        Name = "Test"
-    };
-
-    private readonly ClaimsPrincipal _admin = new(new ClaimsIdentity(
-        [
-            new (ClaimTypes.NameIdentifier, "73edf737-df51-4c06-ac6f-3ec6d79f1f12")
-        ], "Test"));
-
-    private readonly ClaimsPrincipal _user = new(new ClaimsIdentity(
-    [
-        new (ClaimTypes.NameIdentifier, "4f4990ff-1f93-4ba8-a36d-c2833d476c7d")
-    ], "Test"));
+    private readonly Cuisine _cuisine = TestData.Cuisines[0];
+    private readonly ClaimsPrincipal _admin = TestData.GetAdministrator();
+    private readonly ClaimsPrincipal _user = TestData.GetUser();
 
     [Fact]
     public async void HandleAsyncSucceededForReadOperationWithAnonymousUser()

@@ -1,5 +1,10 @@
-﻿using FluentValidation;
+﻿using System.Security;
+using System.Security.Claims;
+using FluentValidation;
+using JonathanPotts.RecipeCatalog.Application.Authorization;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
+using JonathanPotts.RecipeCatalog.Application.Mapping;
 using JonathanPotts.RecipeCatalog.Application.Services;
 using JonathanPotts.RecipeCatalog.Domain;
 using Microsoft.AspNetCore.Authorization;
@@ -13,15 +18,19 @@ public sealed class RecipeServiceUnitTests : IDisposable
 {
     private readonly SqliteConnection _connection;
     private readonly DbContextOptions<RecipeCatalogDbContext> _contextOptions;
+    private readonly ClaimsPrincipal _admin = TestData.GetAdministrator();
+    private readonly ClaimsPrincipal _user = TestData.GetUser();
 
     private RecipeCatalogDbContext CreateContext() => new(_contextOptions);
 
-    private RecipeService CreateRecipeService() => new(
-        CreateContext(),
-        Mocks.CreateIdGeneratorMock().Object,
-        Mocks.CreateUserManagerMock().Object,
-        Mock.Of<IAuthorizationService>(),
-        Mock.Of<IServiceProvider>());
+    private RecipeService CreateRecipeService(
+        bool authorizationServiceSucceeds = true)
+        => new(
+            CreateContext(),
+            Mocks.CreateIdGeneratorMock().Object,
+            Mocks.CreateUserManagerMock().Object,
+            Mocks.CreateAuthorizationServiceMock(authorizationServiceSucceeds).Object,
+            Mock.Of<IServiceProvider>());
 
     public RecipeServiceUnitTests()
     {
@@ -143,5 +152,109 @@ public sealed class RecipeServiceUnitTests : IDisposable
 
         // Act / Assert
         await Assert.ThrowsAsync<ValidationException>(() => recipeService.GetListAsync(skip, take));
+    }
+
+    [Fact]
+    public async void GetAsyncReturnsDto()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act
+        var result = await recipeService.GetAsync(TestData.Recipes.First().Id);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(TestData.Recipes.First().Id, result.Id);
+    }
+
+    [Fact]
+    public async void GetCoverImageAsyncReturnsPath()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+        var recipeId = TestData.Recipes.First(x => !string.IsNullOrEmpty(x.CoverImage?.Url)).Id;
+
+        // Act
+        var result = await recipeService.GetCoverImageAsync(recipeId);
+
+        // Assert
+        Assert.False(string.IsNullOrEmpty(result));
+    }
+
+    [Fact]
+    public async void GetCoverImageAsyncThrowsExceptionWithInvalidId()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act / Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.GetCoverImageAsync(-1));
+    }
+
+    [Fact]
+    public async void GetCoverImageAsyncThrowsExceptionWhenNoCoverImage()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+        var recipeId = TestData.Recipes.First(x => x.CoverImage == null).Id;
+
+        // Act / Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.GetCoverImageAsync(recipeId));
+    }
+
+    [Fact]
+    public async void CreateAsyncReturnsDto()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        CreateUpdateRecipeDto createDto = new()
+        {
+            Name = "Test",
+            CuisineId = 1,
+            Ingredients = ["Test ingredient 1"],
+            Instructions = "This is a test."
+        };
+
+        // Act
+        var result = await recipeService.CreateAsync(createDto, _admin);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.NotNull(CreateContext().Recipes.Find(result.Id));
+    }
+
+    [Fact]
+    public async void CreateAsyncThrowsSecurityExceptionWhenUnauthorized()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService(false);
+
+        CreateUpdateRecipeDto createDto = new()
+        {
+            Name = "Test",
+            CuisineId = 1,
+            Ingredients = ["Test ingredient 1"],
+            Instructions = "This is a test."
+        };
+
+        // Act / Assert
+        await Assert.ThrowsAsync<SecurityException>(() => recipeService.CreateAsync(createDto, _admin));
+    }
+
+    [Fact]
+    public async void CreateAsyncThrowsValidationExceptionWithInvalidInput()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        CreateUpdateRecipeDto createDto = new()
+        {
+            Name = "Test"
+        };
+
+        // Act / Assert
+        await Assert.ThrowsAsync<ValidationException>(() => recipeService.CreateAsync(createDto, _admin));
     }
 }

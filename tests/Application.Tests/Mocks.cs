@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using IdGen;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,10 +26,6 @@ public static class Mocks
             Mock.Of<IServiceProvider>(),
             Mock.Of<ILogger<UserManager<User>>>());
 
-        var adminRoleId = TestData.Roles.First(x => x.NormalizedName == "ADMINISTRATOR").Id;
-        var isAdmin = (string userId) => TestData.UserRoles.Any(x => x.UserId == userId && x.RoleId == adminRoleId);
-        var isAdminRole = (string role) => role.Equals("ADMINISTRATOR", StringComparison.OrdinalIgnoreCase);
-
         userManagerMock
             .Setup(x => x.GetUserId(It.IsAny<ClaimsPrincipal>()))
             .CallBase();
@@ -36,11 +33,11 @@ public static class Mocks
             .Setup(x => x.GetUserAsync(It.IsAny<ClaimsPrincipal>()).Result)
             .Returns((ClaimsPrincipal x) => new User { Id = x.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty });
         userManagerMock
-            .Setup(x => x.IsInRoleAsync(It.Is<User>(x => isAdmin(x.Id)), It.Is<string>(x => isAdminRole(x))).Result)
-            .Returns(true);
-        userManagerMock
-            .Setup(x => x.IsInRoleAsync(It.Is<User>(x => !isAdmin(x.Id)), It.Is<string>(x => isAdminRole(x))).Result)
+            .Setup(x => x.IsInRoleAsync(It.IsAny<User>(), It.IsAny<string>()).Result)
             .Returns(false);
+        userManagerMock
+            .Setup(x => x.IsInRoleAsync(It.Is<User>(x => TestData.IsAdministrator(x.Id)), It.Is<string>(x => TestData.IsAdministratorRole(x))).Result)
+            .Returns(true);
 
         return userManagerMock;
     }
@@ -52,5 +49,16 @@ public static class Mocks
         idGeneratorMock.Setup(x => x.CreateId()).Returns(GeneratedId);
 
         return idGeneratorMock;
+    }
+
+    public static Mock<IAuthorizationService> CreateAuthorizationServiceMock(bool succeeds = true)
+    {
+        Mock<IAuthorizationService> authorizationServiceMock = new();
+
+        authorizationServiceMock
+            .Setup(x => x.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object?>(), It.IsAny<IEnumerable<IAuthorizationRequirement>>()).Result)
+            .Returns(succeeds ? AuthorizationResult.Success() : AuthorizationResult.Failed());
+
+        return authorizationServiceMock;
     }
 }

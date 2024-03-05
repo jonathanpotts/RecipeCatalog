@@ -1,30 +1,17 @@
 ﻿using System.Security.Claims;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+using JonathanPotts.RecipeCatalog.Application.Mapping;
 using Microsoft.AspNetCore.Authorization;
 
 namespace JonathanPotts.RecipeCatalog.Application.Tests.Authorization;
 
 public class CuisineDtoAuthorizationHandlerUnitTests
 {
-
     private readonly CuisineDtoAuthorizationHandler _handler = new(Mocks.CreateUserManagerMock().Object);
-
-    private readonly CuisineDto _cuisine = new()
-    {
-        Id = 1,
-        Name = "Test"
-    };
-
-    private readonly ClaimsPrincipal _admin = new(new ClaimsIdentity(
-        [
-            new (ClaimTypes.NameIdentifier, "73edf737-df51-4c06-ac6f-3ec6d79f1f12")
-        ], "Test"));
-
-    private readonly ClaimsPrincipal _user = new(new ClaimsIdentity(
-    [
-        new (ClaimTypes.NameIdentifier, "4f4990ff-1f93-4ba8-a36d-c2833d476c7d")
-    ], "Test"));
+    private readonly CuisineDto _cuisine = TestData.Cuisines[0].ToCuisineDto();
+    private readonly ClaimsPrincipal _admin = TestData.GetAdministrator();
+    private readonly ClaimsPrincipal _user = TestData.GetUser();
 
     [Fact]
     public async void HandleAsyncSucceededForReadOperationWithAnonymousUser()
