@@ -29,26 +29,17 @@ public class CuisineAuthorizationHandler(UserManager<User> userManager)
             return;
         }
 
-        if (requirement.Name != Operations.Update.Name && requirement.Name != Operations.Delete.Name)
-        {
-            context.Fail();
-            return;
-        }
-
         var user = await userManager.GetUserAsync(context.User);
 
-        if (user == null)
+        if (user != null)
         {
-            context.Fail();
-            return;
-        }
+            var isAdmin = await userManager.IsInRoleAsync(user, "Administrator");
 
-        var isAdmin = await userManager.IsInRoleAsync(user, "Administrator");
-
-        if (isAdmin)
-        {
-            context.Succeed(requirement);
-            return;
+            if (isAdmin)
+            {
+                context.Succeed(requirement);
+                return;
+            }
         }
 
         context.Fail();
