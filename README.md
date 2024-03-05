@@ -88,12 +88,18 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 
 ### Tests
 
+#### Application.Tests
+
+[Application.Tests](tests/Application.Tests/) is a project containing tests for the [Application](src/Application/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+- [Moq](https://github.com/devlooped/moq)
+
 #### WebApi.Shared.Tests
 
 [WebApi.Shared.Tests](tests/WebApi.Tests/) is a project containing tests for the [WebApi.Shared](src/WebApi.Shared/) project. Technologies used:
 
 - [xUnit](https://xunit.net/)
-
 
 ## Seed Data
 

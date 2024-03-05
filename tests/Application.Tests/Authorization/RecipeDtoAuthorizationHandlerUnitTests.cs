@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
+using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
@@ -10,12 +11,12 @@ using Moq;
 
 namespace JonathanPotts.RecipeCatalog.Application.Tests.Authorization;
 
-public class RecipeAuthorizationHandlerUnitTests
+public class RecipeDtoAuthorizationHandlerUnitTests
 {
 
-    private readonly RecipeAuthorizationHandler _handler;
+    private readonly RecipeDtoAuthorizationHandler _handler;
 
-    private readonly Recipe _recipe = new()
+    private readonly RecipeDto _recipe = new()
     {
         Id = 6461870173061120,
         OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
@@ -25,7 +26,6 @@ public class RecipeAuthorizationHandlerUnitTests
             Url = "6461870173061120.webp",
             AltText = "A photo of test recipe 1"
         },
-        CuisineId = 1,
         Description = "This is a test.",
         Created = new DateTime(638412046299055561, DateTimeKind.Utc),
         Ingredients =
@@ -55,7 +55,7 @@ public class RecipeAuthorizationHandlerUnitTests
         new (ClaimTypes.NameIdentifier, "4f4990ff-1f93-4ba8-a36d-c2833d476c7d")
     ], "Test"));
 
-    public RecipeAuthorizationHandlerUnitTests()
+    public RecipeDtoAuthorizationHandlerUnitTests()
     {
         Mock<UserManager<User>> userManagerMock = new(
             Mock.Of<IUserStore<User>>(),
