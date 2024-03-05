@@ -19,6 +19,7 @@ public class RecipeAuthorizationHandler(UserManager<User> userManager)
 
         if (!(context.User.Identity?.IsAuthenticated ?? false))
         {
+            context.Fail();
             return;
         }
 
@@ -30,6 +31,7 @@ public class RecipeAuthorizationHandler(UserManager<User> userManager)
 
         if (requirement.Name != Operations.Update.Name && requirement.Name != Operations.Delete.Name)
         {
+            context.Fail();
             return;
         }
 
@@ -45,6 +47,7 @@ public class RecipeAuthorizationHandler(UserManager<User> userManager)
 
         if (user == null)
         {
+            context.Fail();
             return;
         }
 
@@ -54,5 +57,7 @@ public class RecipeAuthorizationHandler(UserManager<User> userManager)
         {
             context.Succeed(requirement);
         }
+
+        context.Fail();
     }
 }

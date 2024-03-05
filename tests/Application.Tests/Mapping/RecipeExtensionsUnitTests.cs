@@ -8,9 +8,9 @@ namespace JonathanPotts.RecipeCatalog.Application.Tests.Mapping;
 public sealed class RecipeExtensionsUnitTests
 {
     [Theory]
-    [InlineData(true, true, false)]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
     public void ToRecipeWithCuisineDtoReturnsPopulatedObject(bool withCoverImage, bool withCuisine, bool withDetails)
     {
         // Arrange
