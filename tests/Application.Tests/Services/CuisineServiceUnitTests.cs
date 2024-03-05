@@ -78,6 +78,19 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
+    public async void GetAsyncReturnsNullWithInvalidId()
+    {
+        // Arrange
+        var cuisineService = CreateCuisineService();
+
+        // Act
+        var result = await cuisineService.GetAsync(-1);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
     public async void CreateAsyncReturnsDto()
     {
         // Arrange
@@ -136,5 +149,103 @@ public sealed class CuisineServiceUnitTests : IDisposable
 
         // Act / Assert
         await Assert.ThrowsAsync<ValidationException>(() => cuisineService.CreateAsync(createDto, _admin));
+    }
+
+    [Fact]
+    public async void UpdateAsyncReturnsDto()
+    {
+        // Arrange
+        var cuisineService = CreateCuisineService();
+
+        CreateUpdateCuisineDto updateDto = new()
+        {
+            Name = "Update Test"
+        };
+
+        // Act
+        var result = await cuisineService.UpdateAsync(TestData.Cuisines[0].Id, updateDto, _admin);
+
+        // Assert
+        Assert.NotNull(result);
+
+        var cuisine = CreateContext().Cuisines.Find(result.Id);
+
+        Assert.NotNull(cuisine);
+        Assert.Equal(updateDto.Name, cuisine.Name);
+    }
+
+    [Fact]
+    public async void UpdateAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    {
+        // Arrange
+        var cuisineService = CreateCuisineService();
+
+        CreateUpdateCuisineDto updateDto = new()
+        {
+            Name = "Update Test"
+        };
+
+        // Act / Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => cuisineService.UpdateAsync(-1, updateDto, _admin));
+    }
+
+    [Fact]
+    public async void UpdateAsyncThrowsSecurityExceptionWhenUnauthorized()
+    {
+        // Arrange
+        var cuisineService = CreateCuisineService(false);
+
+        CreateUpdateCuisineDto updateDto = new()
+        {
+            Name = "Update Test"
+        };
+
+        // Act / Assert
+        await Assert.ThrowsAsync<SecurityException>(() => cuisineService.UpdateAsync(TestData.Cuisines[0].Id, updateDto, _anon));
+    }
+
+    [Fact]
+    public async void UpdateAsyncThrowsValidationExceptionWithInvalidInput()
+    {
+        // Arrange
+        var cuisineService = CreateCuisineService();
+
+        CreateUpdateCuisineDto updateDto = new();
+
+        // Act / Assert
+        await Assert.ThrowsAsync<ValidationException>(() => cuisineService.UpdateAsync(TestData.Cuisines[0].Id, updateDto, _admin));
+    }
+
+    [Fact]
+    public async void DeleteAsyncCompletesSuccessfully()
+    {
+        // Arrange
+        var cuisineService = CreateCuisineService();
+
+        // Act
+        await cuisineService.DeleteAsync(TestData.Cuisines[0].Id, _admin);
+
+        // Assert
+        Assert.Null(CreateContext().Cuisines.Find(TestData.Cuisines[0].Id));
+    }
+
+    [Fact]
+    public async void DeleteAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    {
+        // Arrange
+        var cuisineService = CreateCuisineService();
+
+        // Act / Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => cuisineService.DeleteAsync(-1, _admin));
+    }
+
+    [Fact]
+    public async void DeleteAsyncThrowsSecurityExceptionWhenUnauthorized()
+    {
+        // Arrange
+        var cuisineService = CreateCuisineService(false);
+
+        // Act / Assert
+        await Assert.ThrowsAsync<SecurityException>(() => cuisineService.DeleteAsync(TestData.Cuisines[0].Id, _user));
     }
 }
