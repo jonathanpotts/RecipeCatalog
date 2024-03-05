@@ -174,8 +174,6 @@ public static class TestData
                 AltText = "A photo of test recipe 4"
             },
             CuisineId = 4,
-            Description = "This is a test.",
-            DescriptionEmbeddings = GetExampleDescriptionEmbeddings(),
             Created = new DateTime(638412047368832961, DateTimeKind.Utc),
             Ingredients =
             [
