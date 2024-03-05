@@ -22,7 +22,7 @@ namespace JonathanPotts.RecipeCatalog.Application.Services;
 
 public class RecipeService(
     RecipeCatalogDbContext context,
-    IdGenerator idGenerator,
+    IIdGenerator<long> idGenerator,
     UserManager<User> userManager,
     IAuthorizationService authorizationService,
     IServiceProvider serviceProvider)
