@@ -56,6 +56,7 @@ public class RecipeAuthorizationHandler(UserManager<User> userManager)
         if (isAdmin)
         {
             context.Succeed(requirement);
+            return;
         }
 
         context.Fail();
