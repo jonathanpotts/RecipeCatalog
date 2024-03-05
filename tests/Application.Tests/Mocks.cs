@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using IdGen;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -11,6 +10,8 @@ namespace JonathanPotts.RecipeCatalog.Application.Tests;
 
 public static class Mocks
 {
+    public const long GeneratedId = 23430727760609280;
+
     public static Mock<UserManager<User>> CreateUserManagerMock()
     {
         Mock<UserManager<User>> userManagerMock = new(
@@ -48,7 +49,7 @@ public static class Mocks
     {
         Mock<IIdGenerator<long>> idGeneratorMock = new();
 
-        idGeneratorMock.Setup(x => x.CreateId()).Returns(23430727760609280);
+        idGeneratorMock.Setup(x => x.CreateId()).Returns(GeneratedId);
 
         return idGeneratorMock;
     }
