@@ -92,7 +92,7 @@ public static class TestData
         new Recipe
         {
             Id = 6461870173061120,
-            OwnerId = "73edf737-df51-4c06-ac6f-3ec6d79f1f12",
+            OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
             Name = "Test Recipe 1",
             CoverImage = new ImageData
             {

@@ -201,9 +201,11 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async void CreateAsyncReturnsDto(bool withAITextGenerator)
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    public async void CreateAsyncReturnsDto(bool hasDescription, bool withAITextGenerator)
     {
         // Arrange
         var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
@@ -212,6 +214,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
         {
             Name = "Test",
             CuisineId = 1,
+            Description = hasDescription ? "This is a test." : null,
             Ingredients = ["Test ingredient 1"],
             Instructions = "This is a test."
         };
