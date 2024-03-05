@@ -16,6 +16,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     private readonly DbContextOptions<RecipeCatalogDbContext> _contextOptions;
     private readonly ClaimsPrincipal _admin = TestData.GetAdministrator();
     private readonly ClaimsPrincipal _user = TestData.GetUser();
+    private readonly ClaimsPrincipal _anon = TestData.GetAnonymousUser();
 
     private RecipeCatalogDbContext CreateContext() => new(_contextOptions);
 
@@ -180,7 +181,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetCoverImageAsyncThrowsExceptionWithInvalidId()
+    public async void GetCoverImageAsyncThrowsKeyNotFoundExceptionWithInvalidId()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -242,7 +243,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
         };
 
         // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => recipeService.CreateAsync(createDto, _admin));
+        await Assert.ThrowsAsync<SecurityException>(() => recipeService.CreateAsync(createDto, _anon));
     }
 
     [Fact]
@@ -258,5 +259,120 @@ public sealed class RecipeServiceUnitTests : IDisposable
 
         // Act / Assert
         await Assert.ThrowsAsync<ValidationException>(() => recipeService.CreateAsync(createDto, _admin));
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    public async void UpdateAsyncReturnsDto(bool hasDescription, bool withAITextGenerator)
+    {
+        // Arrange
+        var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
+
+        CreateUpdateRecipeDto updateDto = new()
+        {
+            Name = "Updated Test",
+            CuisineId = 1,
+            Description = hasDescription ? "This is a test." : null,
+            Ingredients = ["Test ingredient 1"],
+            Instructions = "This is a test."
+        };
+
+        // Act
+        var result = await recipeService.UpdateAsync(TestData.Recipes[0].Id, updateDto, _admin);
+
+        // Assert
+        Assert.NotNull(result);
+
+        var recipe = CreateContext().Recipes.Find(result.Id);
+
+        Assert.NotNull(recipe);
+        Assert.Equal(updateDto.Name, recipe.Name);
+    }
+
+    [Fact]
+    public async void UpdateAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        CreateUpdateRecipeDto updateDto = new()
+        {
+            Name = "Updated Test",
+            CuisineId = 1,
+            Ingredients = ["Test ingredient 1"],
+            Instructions = "This is a test."
+        };
+
+        // Act / Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.UpdateAsync(-1, updateDto, _admin));
+    }
+
+    [Fact]
+    public async void UpdateAsyncThrowsSecurityExceptionWhenUnauthorized()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService(false);
+
+        CreateUpdateRecipeDto updateDto = new()
+        {
+            Name = "Updated Test",
+            CuisineId = 1,
+            Ingredients = ["Test ingredient 1"],
+            Instructions = "This is a test."
+        };
+
+        // Act / Assert
+        await Assert.ThrowsAsync<SecurityException>(() => recipeService.UpdateAsync(TestData.Recipes[0].Id, updateDto, _user));
+    }
+
+    [Fact]
+    public async void UpdateAsyncThrowsValidationExceptionWithInvalidInput()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        CreateUpdateRecipeDto updateDto = new()
+        {
+            Name = "Updated Test"
+        };
+
+        // Act / Assert
+        await Assert.ThrowsAsync<ValidationException>(() => recipeService.UpdateAsync(TestData.Recipes[0].Id, updateDto, _admin));
+    }
+
+    [Fact]
+    public async void DeleteAsyncCompletesSuccessfully()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act
+        await recipeService.DeleteAsync(TestData.Recipes[0].Id, _admin);
+
+        // Assert
+        Assert.Null(CreateContext().Recipes.Find(TestData.Recipes[0].Id));
+    }
+
+    [Fact]
+    public async void DeleteAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act / Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.DeleteAsync(-1, _admin));
+    }
+
+    [Fact]
+    public async void DeleteAsyncThrowsSecurityExceptionWhenUnauthorized()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService(false);
+
+        // Act / Assert
+        await Assert.ThrowsAsync<SecurityException>(() => recipeService.DeleteAsync(TestData.Recipes[0].Id, _user));
     }
 }
