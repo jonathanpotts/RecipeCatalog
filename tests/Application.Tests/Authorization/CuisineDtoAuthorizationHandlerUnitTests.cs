@@ -2,7 +2,7 @@
 using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Mapping;
-using JonathanPotts.RecipeCatalog.Domain.Tests;
+using JonathanPotts.RecipeCatalog.Tests.Shared;
 using Microsoft.AspNetCore.Authorization;
 
 namespace JonathanPotts.RecipeCatalog.Application.Tests.Authorization;

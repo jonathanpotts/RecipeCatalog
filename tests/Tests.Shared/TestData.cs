@@ -1,10 +1,12 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
-namespace JonathanPotts.RecipeCatalog.Domain.Tests;
+namespace JonathanPotts.RecipeCatalog.Tests.Shared;
 
+[ExcludeFromCodeCoverage]
 public static class TestData
 {
     public static readonly User[] Users =
