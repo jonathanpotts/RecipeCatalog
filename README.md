@@ -106,6 +106,7 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 [WebApi.Shared.Tests](tests/WebApi.Tests/) is a project containing tests for the [WebApi.Shared](src/WebApi.Shared/) project. Technologies used:
 
 - [xUnit](https://xunit.net/)
+- [Moq](https://github.com/devlooped/moq)
 
 ## Seed Data
 
