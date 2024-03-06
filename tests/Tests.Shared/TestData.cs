@@ -4,9 +4,10 @@ using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
+[assembly: ExcludeFromCodeCoverage]
+
 namespace JonathanPotts.RecipeCatalog.Tests.Shared;
 
-[ExcludeFromCodeCoverage]
 public static class TestData
 {
     public static readonly User[] Users =

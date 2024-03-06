@@ -168,6 +168,19 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
+    public async void GetAsyncReturnsNullWithInvalidId()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act
+        var result = await recipeService.GetAsync(-1);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
     public async void GetCoverImageAsyncReturnsPath()
     {
         // Arrange
