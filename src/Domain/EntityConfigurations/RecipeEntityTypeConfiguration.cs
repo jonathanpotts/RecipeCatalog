@@ -35,7 +35,7 @@ public class RecipeEntityTypeConfiguration : IEntityTypeConfiguration<Recipe>
         builder.Navigation(x => x.Instructions)
             .IsRequired();
 
-        builder.HasOne(x => x.Owner).WithMany()
+        builder.HasOne(x => x.Owner).WithMany(x => x.Recipes)
             .HasForeignKey(x => x.OwnerId)
             .IsRequired();
 

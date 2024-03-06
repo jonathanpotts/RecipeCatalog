@@ -3,7 +3,7 @@ using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
-namespace JonathanPotts.RecipeCatalog.Application.Tests;
+namespace JonathanPotts.RecipeCatalog.Domain.Tests;
 
 public static class TestData
 {

@@ -2,6 +2,7 @@
 using IdGen;
 using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
+using JonathanPotts.RecipeCatalog.Domain.Tests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;

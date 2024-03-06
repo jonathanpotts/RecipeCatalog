@@ -95,6 +95,12 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 - [xUnit](https://xunit.net/)
 - [Moq](https://github.com/devlooped/moq)
 
+#### Domain.Tests
+
+[Domain.Tests](tests/Domain.Tests/) is a project containing tests for the [Domain](src/Domain/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+
 #### WebApi.Shared.Tests
 
 [WebApi.Shared.Tests](tests/WebApi.Tests/) is a project containing tests for the [WebApi.Shared](src/WebApi.Shared/) project. Technologies used:
