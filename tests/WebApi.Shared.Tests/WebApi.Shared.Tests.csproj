@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\WebApi.Shared\WebApi.Shared.csproj" />
+    <ProjectReference Include="..\Tests.Shared\Tests.Shared.csproj" />
   </ItemGroup>
   
   <ItemGroup>
