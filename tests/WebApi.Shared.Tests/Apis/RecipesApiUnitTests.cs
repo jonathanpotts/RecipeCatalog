@@ -285,4 +285,38 @@ public sealed class RecipesApiUnitTests
         Assert.NotNull(result);
         Assert.IsType<ForbidHttpResult>(result.Result);
     }
+
+    [Fact]
+    public async void SearchAsyncReturnsOk()
+    {
+        // Arrange
+        Mock<IRecipeService> recipeServiceMock = new();
+        recipeServiceMock
+            .Setup(x => x.SearchAsync(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()).Result)
+            .Returns(new PagedResult<RecipeWithCuisineDto>(0, []));
+
+        // Act
+        var result = await RecipesApi.SearchAsync(recipeServiceMock.Object, string.Empty, null, null, default);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<Ok<PagedResult<RecipeWithCuisineDto>>>(result.Result);
+    }
+
+    [Fact]
+    public async void SearchAsyncReturnsValidationProblemWhenValidationExceptionThrown()
+    {
+        // Arrange
+        Mock<IRecipeService> recipeServiceMock = new();
+        recipeServiceMock
+            .Setup(x => x.SearchAsync(It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()).Result)
+            .Throws(new FluentValidation.ValidationException([new ValidationFailure("test", "Test failure")]));
+
+        // Act
+        var result = await RecipesApi.SearchAsync(recipeServiceMock.Object, string.Empty, null, null, default);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.IsType<ValidationProblem>(result.Result);
+    }
 }
