@@ -47,3 +47,6 @@ app.UseDbMigrator();
 app.MapWebApi();
 
 app.Run();
+
+// Added for tests
+public partial class Program { }
