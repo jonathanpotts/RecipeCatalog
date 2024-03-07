@@ -32,12 +32,9 @@ public class DbMigrator(
 
         context.Database.Migrate();
 
-        if (!appliedMigrations.Any() && File.Exists(s_jsonFile))
+        if (!appliedMigrations.Any())
         {
-            if (!Directory.Exists(s_imagesDirectory))
-            {
-                Directory.CreateDirectory(s_imagesDirectory);
-            }
+            Directory.CreateDirectory(s_imagesDirectory);
 
             User adminUser = new()
             {
@@ -58,38 +55,23 @@ public class DbMigrator(
             identityResult = userManager.AddToRoleAsync(adminUser, adminRole.Name).Result;
 
             var json = File.ReadAllText(s_jsonFile);
-            var cuisines = JsonSerializer.Deserialize<Cuisine[]>(json);
+            var cuisines = JsonSerializer.Deserialize<Cuisine[]>(json)!;
 
-            foreach (var recipe in cuisines?.SelectMany(x => x.Recipes ?? Enumerable.Empty<Recipe>()) ?? [])
+            foreach (var recipe in cuisines.SelectMany(x => x.Recipes!))
             {
                 recipe.Id = idGenerator.CreateId();
                 recipe.OwnerId = adminUser.Id;
                 recipe.Created = DateTime.UtcNow;
+                recipe.Instructions!.Html = Markdown.ToHtml(recipe.Instructions.Markdown!, s_pipeline);
 
-                if (!string.IsNullOrEmpty(recipe.Instructions?.Markdown))
-                {
-                    recipe.Instructions.Html = Markdown.ToHtml(recipe.Instructions.Markdown, s_pipeline);
-                }
-
-                if (!string.IsNullOrEmpty(recipe.CoverImage?.Url) &&
-                    File.Exists(Path.Combine(s_dataImagesDirectory, recipe.CoverImage.Url)))
-                {
-                    File.Move(Path.Combine(s_dataImagesDirectory, recipe.CoverImage.Url),
+                File.Copy(Path.Combine(s_dataImagesDirectory, recipe.CoverImage!.Url!),
                         Path.Combine(s_imagesDirectory, $"{recipe.Id}.webp"), true);
-                    recipe.CoverImage.Url = $"{recipe.Id}.webp";
-                }
+
+                recipe.CoverImage.Url = $"{recipe.Id}.webp";
             }
 
-            if (cuisines != null)
-            {
-                context.Cuisines.AddRange(cuisines);
-                context.SaveChanges();
-            }
-        }
-
-        if (Directory.Exists(s_dataDirectory))
-        {
-            Directory.Delete(s_dataDirectory, true);
+            context.Cuisines.AddRange(cuisines);
+            context.SaveChanges();
         }
     }
 }
