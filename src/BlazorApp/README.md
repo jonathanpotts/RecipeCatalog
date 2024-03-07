@@ -5,6 +5,7 @@ BlazorApp is a Blazor web app for viewing and managing recipes. Technologies use
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
     - [Blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor)
     - [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
+    - [Library Manager (LibMan)](https://learn.microsoft.com/aspnet/core/client-side/libman)
 - [Bootstrap](https://getbootstrap.com/)
     - [Bootstrap Icons](https://icons.getbootstrap.com/)
     - [Dark Mode](https://getbootstrap.com/docs/5.3/customize/color-modes/)
