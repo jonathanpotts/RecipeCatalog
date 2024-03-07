@@ -2,7 +2,7 @@
 
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/jonathanpotts/RecipeCatalog/dotnet.yml?logo=github)](https://github.com/jonathanpotts/RecipeCatalog/actions/workflows/dotnet.yml) [![Codecov Code Coverage](https://img.shields.io/codecov/c/gh/jonathanpotts/RecipeCatalog?logo=codecov)](https://codecov.io/gh/jonathanpotts/RecipeCatalog)
 
-Recipe Catalog is a multilayered [.NET](https://dotnet.microsoft.com/) 8 project showcasing a Web catalog for recipes with generative AI capabilities.
+Recipe Catalog is a multilayered [.NET](https://dotnet.microsoft.com/) 8 project showcasing a Web catalog for recipes with AI capabilities.
 
 This project contains continuous integration (CI) and continuous deployment (CD) workflows using [GitHub Actions](https://docs.github.com/actions). Code coverage reports are uploaded to [Codecov](https://codecov.io/). The web app is deployed to [Azure Web Apps (Azure App Service)](https://azure.microsoft.com/products/app-service/web/).
 
