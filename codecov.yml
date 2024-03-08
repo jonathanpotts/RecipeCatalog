@@ -1,2 +1,6 @@
 ignore:
+  - "src/BlazorApp/Components/Account"
+  - "src/BlazorApp.Client/Components/RedirectToLogin.razor"
+  - "src/BlazorApp.Client/PersistentAuthenticationStateProvider.cs"
+  - "src/BlazorApp.Client/UserInfo.cs"
   - "src/Domain/Migrations"
