@@ -8,7 +8,7 @@ public sealed class ServiceCollectionExtensionsUnitTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void AddAITextGeneratorIConfigurationReturnsPopulatedServiceCollection(bool azure)
+    public void AddAITextGeneratorReturnsPopulatedServiceCollection(bool azure)
     {
         // Arrange
         Dictionary<string, string?> configurationValues = [];
@@ -37,7 +37,7 @@ public sealed class ServiceCollectionExtensionsUnitTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public void AddAIImageGeneratorIConfigurationReturnsPopulatedServiceCollection(bool azure)
+    public void AddAIImageGeneratorReturnsPopulatedServiceCollection(bool azure)
     {
         // Arrange
         Dictionary<string, string?> configurationValues = [];
