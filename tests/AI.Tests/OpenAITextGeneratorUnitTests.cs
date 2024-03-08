@@ -8,16 +8,13 @@ namespace JonathanPotts.RecipeCatalog.AI.Tests;
 
 public sealed class OpenAITextGeneratorUnitTests
 {
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async void GenerateDataFromChatCompletionsAsyncCompletesSuccessfully(bool hasDeploymentName)
+    [Fact]
+    public async void GenerateDataFromChatCompletionsAsyncReturnsData()
     {
         // Arrange
         var options = new OptionsWrapper<OpenAITextGeneratorOptions>(new()
         {
-            ApiKey = "test-api-key",
-            ChatCompletionsDeploymentName = hasDeploymentName ? "gpt-3.5-turbo" : null
+            ApiKey = "test-api-key"
         });
 
         var textGenerator = new OpenAITextGenerator(options);
@@ -44,13 +41,12 @@ public sealed class OpenAITextGeneratorUnitTests
     }
 
     [Fact]
-    public async void GenerateEmbeddingsAsyncCompletesSuccessfully()
+    public async void GenerateEmbeddingsAsyncReturnsFloatArray()
     {
         // Arrange
         var options = new OptionsWrapper<OpenAITextGeneratorOptions>(new()
         {
-            ApiKey = "test-api-key",
-            EmbeddingsDeploymentName = "text-embedding-3-small"
+            ApiKey = "test-api-key"
         });
 
         var textGenerator = new OpenAITextGenerator(options);
