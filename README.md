@@ -102,6 +102,13 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 - [xUnit](https://xunit.net/)
 - [Moq](https://github.com/devlooped/moq)
 
+#### BlazorApp.Tests
+
+[BlazorApp.Tests](tests/BlazorApp.Tests/) is a project containing tests for the [BlazorApp](src/BlazorApp/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+- [bUnit](https://bunit.dev/)
+
 #### Domain.Tests
 
 [Domain.Tests](tests/Domain.Tests/) is a project containing tests for the [Domain](src/Domain/) project. Technologies used:
