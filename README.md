@@ -88,6 +88,13 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 
 ### Tests
 
+#### AI.Tests
+
+[AI.Tests](tests/AI.Tests/) is a project containing tests for the [AI](src/AI/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+- [Moq](https://github.com/devlooped/moq)
+
 #### Application.Tests
 
 [Application.Tests](tests/Application.Tests/) is a project containing tests for the [Application](src/Application/) project. Technologies used:
@@ -117,4 +124,4 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 
 ## Seed Data
 
-Seed data was created using the [AIDataGenerator](../AIDataGenerator/) project with [GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) and [DALL-E 3](https://platform.openai.com/docs/models/dall-e).
+Seed data was created using the [AIDataGenerator](../AIDataGenerator/) project with [GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5), [Embedding V3 small](https://platform.openai.com/docs/models/embeddings), and [DALL-E 3](https://platform.openai.com/docs/models/dall-e).
