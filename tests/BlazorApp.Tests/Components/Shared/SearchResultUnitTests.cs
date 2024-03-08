@@ -1,7 +1,7 @@
 ﻿using Bunit;
-using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
+using JonathanPotts.RecipeCatalog.Application.Mapping;
 using JonathanPotts.RecipeCatalog.BlazorApp.Components.Shared;
-using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
+using JonathanPotts.RecipeCatalog.Tests.Shared;
 
 namespace JonathanPotts.RecipeCatalog.BlazorApp.Tests.Components.Shared;
 
@@ -11,41 +11,16 @@ public sealed class SearchResultUnitTests
     public void SearchResultRendersCorrectly()
     {
         // Arrange
-        RecipeWithCuisineDto recipe = new()
-        {
-            Id = 6461870173061120,
-            OwnerId = "d7df5331-1c53-491f-8b71-91989846874f",
-            Name = "Test Recipe 1",
-            CoverImage = new ImageData
-            {
-                Url = "6461870173061120.webp",
-                AltText = "A photo of test recipe 1"
-            },
-            Cuisine = new CuisineDto
-            {
-                Id = 1,
-                Name = "Test"
-            },
-            Description = "This is a test.",
-            Created = new DateTime(638412046299055561, DateTimeKind.Utc),
-            Ingredients =
-            [
-                "1 tsp of test ingredient 1",
-                "1 cup of test ingredient 2"
-            ],
-            Instructions = new MarkdownData
-            {
-                Markdown = "This is a test.",
-                Html = "<p>This is a test.</p>\n"
-            }
-        };
+        var recipe = TestData.Recipes[0];
+        recipe.Cuisine = TestData.Cuisines.FirstOrDefault(x => x.Id == recipe.CuisineId);
+        var recipeDto = recipe.ToRecipeWithCuisineDto();
 
         var ctx = new TestContext();
 
         // Act
         var cut = ctx.RenderComponent<SearchResult>(builder =>
         {
-            builder.Add(x => x.Recipe, recipe);
+            builder.Add(x => x.Recipe, recipeDto);
         });
 
         // Assert
