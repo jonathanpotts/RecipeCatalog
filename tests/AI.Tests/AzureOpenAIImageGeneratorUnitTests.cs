@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Drawing;
+using System.Reflection;
 using Azure;
 using Azure.AI.OpenAI;
 using Microsoft.Extensions.Options;
@@ -50,5 +51,34 @@ public sealed class AzureOpenAIImageGeneratorUnitTests
 
         // Assert
         Assert.Equal("https://test/image.png", result);
+    }
+
+    [Fact]
+    public async void GenerateImageAsyncThrowsExceptionWhenNoDataReceived()
+    {
+        // Arrange
+        var options = new OptionsWrapper<AzureOpenAIImageGeneratorOptions>(new()
+        {
+            Endpoint = "https://test-endpoint.openai.zure.com/",
+            ApiKey = "test-api-key",
+            DeploymentName = "dall-e-3"
+        });
+
+        var imageGenerator = new AzureOpenAIImageGenerator(options);
+
+        var imageGenerations = new ImageGenerations(DateTimeOffset.UtcNow, []);
+
+        Mock<OpenAIClient> openAIClientMock = new();
+        openAIClientMock
+            .Setup(x => x.GetImageGenerationsAsync(It.IsAny<ImageGenerationOptions>(), It.IsAny<CancellationToken>()).Result)
+            .Returns(Response.FromValue(imageGenerations, Mock.Of<Response>()));
+
+        typeof(AzureOpenAIImageGenerator)
+            .GetRuntimeFields()
+            .FirstOrDefault(x => x.Name == "<Client>k__BackingField")!
+            .SetValue(imageGenerator, openAIClientMock.Object);
+
+        // Act / Assert
+        await Assert.ThrowsAsync<Exception>(() => imageGenerator.GenerateImageAsync("test prompt"));
     }
 }

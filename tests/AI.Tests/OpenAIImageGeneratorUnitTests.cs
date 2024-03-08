@@ -49,4 +49,31 @@ public sealed class OpenAIImageGeneratorUnitTests
         // Assert
         Assert.Equal("https://test/image.png", result);
     }
+
+    [Fact]
+    public async void GenerateImageAsyncThrowsExceptionWhenNoDataReceived()
+    {
+        // Arrange
+        var options = new OptionsWrapper<OpenAIImageGeneratorOptions>(new()
+        {
+            ApiKey = "test-api-key"
+        });
+
+        var imageGenerator = new OpenAIImageGenerator(options);
+
+        var imageGenerations = new ImageGenerations(DateTimeOffset.UtcNow, []);
+
+        Mock<OpenAIClient> openAIClientMock = new();
+        openAIClientMock
+            .Setup(x => x.GetImageGenerationsAsync(It.IsAny<ImageGenerationOptions>(), It.IsAny<CancellationToken>()).Result)
+            .Returns(Response.FromValue(imageGenerations, Mock.Of<Response>()));
+
+        typeof(OpenAIImageGenerator)
+            .GetRuntimeFields()
+            .FirstOrDefault(x => x.Name == "<Client>k__BackingField")!
+            .SetValue(imageGenerator, openAIClientMock.Object);
+
+        // Act / Assert
+        await Assert.ThrowsAsync<Exception>(() => imageGenerator.GenerateImageAsync("test prompt"));
+    }
 }
