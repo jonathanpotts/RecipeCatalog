@@ -8,6 +8,7 @@ namespace JonathanPotts.RecipeCatalog.AI.Tests;
 
 public sealed class AzureOpenAIImageGeneratorUnitTests
 {
+    [Theory]
     [InlineData(null, null, null)]
     [InlineData("1024x1024", null, null)]
     [InlineData("1024x1792", null, null)]
