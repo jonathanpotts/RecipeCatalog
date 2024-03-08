@@ -8,13 +8,24 @@ namespace JonathanPotts.RecipeCatalog.AI.Tests;
 
 public sealed class OpenAIImageGeneratorUnitTests
 {
-    [Fact]
-    public async void GenerateImageAsyncReturnsString()
+    [Theory]
+    [InlineData(null, null, null)]
+    [InlineData("1024x1024", null, null)]
+    [InlineData("1024x1792", null, null)]
+    [InlineData("1792x1024", null, null)]
+    [InlineData(null, "standard", null)]
+    [InlineData(null, "hd", null)]
+    [InlineData(null, null, "vivid")]
+    [InlineData(null, null, "natural")]
+    public async void GenerateImageAsyncReturnsString(string? size, string? quality, string? style)
     {
         // Arrange
         var options = new OptionsWrapper<OpenAIImageGeneratorOptions>(new()
         {
-            ApiKey = "test-api-key"
+            ApiKey = "test-api-key",
+            Size = size,
+            Quality = quality,
+            Style = style
         });
 
         var imageGenerator = new OpenAIImageGenerator(options);
