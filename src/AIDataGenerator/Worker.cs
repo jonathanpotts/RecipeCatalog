@@ -42,7 +42,7 @@ internal class Worker(
         openAIGrid.AddRow("Embeddings",
             "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
         openAIGrid.AddRow("Image Generation",
-            "[bold]:sparkles:DALL-E 2[/] [dim]dall-e-2[/] / [bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
+            "[bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
 
         var openAIPanel = new Panel(openAIGrid)
         {
@@ -58,7 +58,7 @@ internal class Worker(
         azureOpenAIGrid.AddRow("Embeddings",
             "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
         azureOpenAIGrid.AddRow("Image Generation",
-            "[bold]:sparkles:DALL-E 2[/] [dim]dall-e-2[/] / [bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
+            "[bold]:sparkles:DALL-E 3[/] [dim]dall-e-3[/]");
 
         var azureOpenAIPanel = new Panel(azureOpenAIGrid)
         {

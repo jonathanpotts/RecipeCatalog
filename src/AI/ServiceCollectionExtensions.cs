@@ -25,14 +25,7 @@ public static class ServiceCollectionExtensions
     {
         if (!string.IsNullOrWhiteSpace(namedConfigurationSection.GetValue<string>("Endpoint")))
         {
-            if (!string.IsNullOrWhiteSpace(namedConfigurationSection.GetValue<string>("DeploymentName")))
-            {
-                services.AddAzureOpenAIImageGenerator(namedConfigurationSection);
-            }
-            else
-            {
-                services.AddAzureOpenAIDallE2ImageGenerator(namedConfigurationSection);
-            }
+            services.AddAzureOpenAIImageGenerator(namedConfigurationSection);
         }
         else
         {
@@ -116,32 +109,6 @@ public static class ServiceCollectionExtensions
             .ValidateOnStart();
 
         services.AddSingleton<IAIImageGenerator, OpenAIImageGenerator>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddAzureOpenAIDallE2ImageGenerator(this IServiceCollection services,
-        IConfiguration namedConfigurationSection)
-    {
-        services.AddOptions<AzureOpenAIDallE2ImageGeneratorOptions>()
-            .Bind(namedConfigurationSection)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
-
-        services.AddSingleton<IAIImageGenerator, AzureOpenAIDallE2ImageGenerator>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddAzureOpenAIDallE2ImageGenerator(this IServiceCollection services,
-        Action<AzureOpenAIDallE2ImageGeneratorOptions> configureOptions)
-    {
-        services.AddOptions<AzureOpenAIDallE2ImageGeneratorOptions>()
-            .Configure(configureOptions)
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
-
-        services.AddSingleton<IAIImageGenerator, AzureOpenAIDallE2ImageGenerator>();
 
         return services;
     }

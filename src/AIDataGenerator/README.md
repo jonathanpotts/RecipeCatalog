@@ -29,14 +29,10 @@ The following configuration options are available:
 - AIImageGenerator
     - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
     - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
-    - DeploymentName
-        - OpenAI - Image Generation model (defaults to dall-e-3); supports dall-e-2 or dall-e-3
-        - Azure OpenAI Service - **(Required for DALL-E 3)** Deployment name for Image Generation model; supports dall-e-3
-    - Size - Size of generated image (defaults to 1024x1024)
-        - DALL-E 2 - Supports 256x256, 512x512, or 1024x1024
-        - DALL-E 3 - Supports 1024x1024, 1024x1792, or 1792x1024
-    - Quality - Quality of image; only supported with DALL-E 3; supports standard or hd
-    - Style - Style of image; only supported with DALL-E 3; supports vivid or natural
+    - DeploymentName - **(Required for Azure OpenAI Service)** Deployment name for Image Generation model; supports dall-e-3
+    - Size - Size of generated image; supports 1024x1024, 1024x1792, or 1792x1024 (defaults to 1024x1024)
+    - Quality - Quality of image; supports standard or hd (defaults to standard)
+    - Style - Style of image; supports vivid or natural (defaults to vivid)
 - Worker
     - Cuisines - **(Required)** List of cuisines to generate recipes for (default values in appsettings.json)
     - RecipesPerCuisine - Number of recipes to generate for each cuisine
