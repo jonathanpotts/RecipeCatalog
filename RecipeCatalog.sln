@@ -39,7 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Tests", "tests\WebAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AI.Tests", "tests\AI.Tests\AI.Tests.csproj", "{A333E05E-44A3-4FE1-A04A-2701BFCBD24D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp.Tests", "tests\BlazorApp.Tests\BlazorApp.Tests.csproj", "{34132DEE-A8F6-4DE9-8353-F938D8432C5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Tests", "tests\BlazorApp.Tests\BlazorApp.Tests.csproj", "{34132DEE-A8F6-4DE9-8353-F938D8432C5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp.Client.Tests", "tests\BlazorApp.Client.Tests\BlazorApp.Client.Tests.csproj", "{46894D7C-1077-467C-8A04-4DABAED04CD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +117,10 @@ Global
 		{34132DEE-A8F6-4DE9-8353-F938D8432C5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34132DEE-A8F6-4DE9-8353-F938D8432C5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34132DEE-A8F6-4DE9-8353-F938D8432C5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46894D7C-1077-467C-8A04-4DABAED04CD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46894D7C-1077-467C-8A04-4DABAED04CD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46894D7C-1077-467C-8A04-4DABAED04CD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46894D7C-1077-467C-8A04-4DABAED04CD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,6 +143,7 @@ Global
 		{CB2616C6-56DF-41A4-98DF-5E98D21D0941} = {A1E0BEA1-7E0A-456B-BF8F-E8EDA328CC05}
 		{A333E05E-44A3-4FE1-A04A-2701BFCBD24D} = {A1E0BEA1-7E0A-456B-BF8F-E8EDA328CC05}
 		{34132DEE-A8F6-4DE9-8353-F938D8432C5F} = {A1E0BEA1-7E0A-456B-BF8F-E8EDA328CC05}
+		{46894D7C-1077-467C-8A04-4DABAED04CD7} = {A1E0BEA1-7E0A-456B-BF8F-E8EDA328CC05}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {46B332C2-5555-4792-A7C3-10FD31AA2581}

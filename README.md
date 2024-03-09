@@ -109,6 +109,13 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 - [xUnit](https://xunit.net/)
 - [bUnit](https://bunit.dev/)
 
+#### BlazorApp.Client.Tests
+
+[BlazorApp.Client.Tests](tests/BlazorApp.Client.Tests/) is a project containing tests for the [BlazorApp.Client](src/BlazorApp.Client/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+- [bUnit](https://bunit.dev/)
+
 #### Domain.Tests
 
 [Domain.Tests](tests/Domain.Tests/) is a project containing tests for the [Domain](src/Domain/) project. Technologies used:
