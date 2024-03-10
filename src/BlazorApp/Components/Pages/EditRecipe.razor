@@ -54,7 +54,9 @@ else
 
                         <div class="input-group mb-2">
                             <InputText @bind-Value="Model!.Ingredients[index]" class="form-control" />
-                            <button class="btn btn-danger" type="button"><i class="bi bi-x-lg" aria-label="Remove"></i></button>
+                            <button class="btn btn-danger" type="button" @onclick="() => RemoveIngredient(index)">
+                                <i class="bi bi-x-lg" aria-label="Remove"></i>
+                            </button>
                         </div>
                     }
                     <button class="btn btn-secondary" type="button" @onclick="AddIngredient">Add Ingredient</button>
@@ -105,8 +107,23 @@ else
 
     private void AddIngredient()
     {
-        Model!.Ingredients ??= [];
+        if (Model == null)
+        {
+            return;
+        }
+
+        Model.Ingredients ??= [];
         Model.Ingredients = Model.Ingredients.Append(string.Empty).ToArray();
+    }
+
+    private void RemoveIngredient(int index)
+    {
+        if (Model == null)
+        {
+            return;
+        }
+
+        Model.Ingredients = Model.Ingredients?.Where((_, i) => i != index).ToArray();
     }
 
     private async Task SubmitAsync()
