@@ -52,14 +52,17 @@ else
                     {
                         var index = i;
 
-                        <div class="input-group mb-2">
+                        <div class="d-flex mb-2">
                             <InputText @bind-Value="Model!.Ingredients[index]" class="form-control" />
-                            <button class="btn btn-danger" type="button" @onclick="() => RemoveIngredient(index)">
-                                <i class="bi bi-x-lg" aria-label="Remove"></i>
+                            <button class="btn btn-link link-secondary pe-0" type="button" @onclick="() => RemoveIngredient(index)">
+                                <i class="bi bi-x-circle-fill" aria-label="Remove"></i>
                             </button>
                         </div>
                     }
-                    <button class="btn btn-secondary" type="button" @onclick="AddIngredient">Add Ingredient</button>
+                    <button class="btn btn-secondary" type="button" @onclick="AddIngredient">
+                        <i class="bi bi-plus-circle"></i>
+                        Add Ingredient
+                    </button>
                 </div>
                 <div class="mb-3">
                     <label for="instructions">Instructions</label>
