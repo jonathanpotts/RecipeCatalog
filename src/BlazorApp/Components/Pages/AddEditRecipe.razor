@@ -27,7 +27,18 @@ else
 {
     <PageTitle>Edit @_recipe.Name</PageTitle>
 
-    <h1 class="mb-3">Edit @_recipe.Name</h1>
+    <div class="d-flex flex-wrap justify-content-between column-gap-3">
+        <h1>Edit @_recipe.Name</h1>
+        <div>
+            <AuthorizeView Policy="@Policies.Delete" Resource="_recipe">
+                <div class="mb-2">
+                    <button type="button" class="btn btn-danger" disabled>
+                        <i class="bi bi-trash3" aria-hidden="true"></i> Delete
+                    </button>
+                </div>
+            </AuthorizeView>
+        </div>
+    </div>
 }
 
 @if (Id == null || _recipe != null)
