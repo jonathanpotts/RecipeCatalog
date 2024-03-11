@@ -17,6 +17,8 @@
     <PackageReference Include="IdGen" Version="3.0.5" />
     <PackageReference Include="IdGen.DependencyInjection" Version="3.0.5" />
     <PackageReference Include="Markdig" Version="0.35.0" />
+    <PackageReference Include="SkiaSharp" Version="2.88.7" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.7" />
     <PackageReference Include="System.Numerics.Tensors" Version="8.0.0" />
   </ItemGroup>
 
