@@ -1,4 +1,5 @@
-﻿@page "/recipes/{Id:long}/edit"
+﻿@page "/recipes/add"
+@page "/recipes/{Id:long}/edit"
 @inject ICuisineService CuisineService
 @inject IRecipeService RecipeService
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -6,7 +7,13 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 
-@if (_recipe == null)
+@if (Id == null)
+{
+    <PageTitle>Add Recipe</PageTitle>
+
+    <h1>Add Recipe</h1>
+}
+else if (_recipe == null)
 {
     <PageTitle>Edit Recipe</PageTitle>
 
@@ -21,8 +28,11 @@ else
     <PageTitle>Edit @_recipe.Name</PageTitle>
 
     <h1 class="mb-3">Edit @_recipe.Name</h1>
+}
 
-    <AuthorizeView Policy="@Policies.Update" Resource="_recipe">
+@if (Id == null || _recipe != null)
+{
+    <AuthorizeView Policy="@(Id == null ? Policies.Create : Policies.Update)" Resource="_recipe">
         <Authorized>
             <EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync" Context="FormContext">
                 <FluentValidationValidator />
@@ -37,7 +47,7 @@ else
                     <div class="mb-3">
                         <label for="cuisine">Cuisine</label>
                         <InputSelect @bind-Value="Model!.CuisineId" id="cuisine" class="form-select">
-                            <option value="">Select cuisine</option>
+                            <option value="@(default(int))">Select cuisine</option>
                             @foreach (var cuisine in _cuisines)
                             {
                                 <option value="@cuisine.Id">@cuisine.Name</option>
@@ -52,25 +62,30 @@ else
                     <ValidationMessage For="@(() => Model!.Description)" />
                 </div>
                 <div class="mb-3">
-                    <label>Ingredients</label>
-                    @for (var i = 0; i < Model!.Ingredients?.Count; i++)
-                    {
-                        var index = i;
+                    <label class="w-100">
+                        Ingredients
+                        @for (var i = 0; i < Model!.Ingredients?.Count; i++)
+                        {
+                            var index = i;
 
-                        <div class="mb-2">
-                            <div class="d-flex">
-                                <InputText @bind-Value="Model!.Ingredients[index].Value" class="form-control" />
-                                <button class="btn btn-link link-secondary pe-0" type="button" @onclick="() => RemoveIngredient(index)">
-                                    <i class="bi bi-x-circle-fill" aria-label="Remove"></i>
-                                </button>
+                            <div class="mb-2">
+                                <div class="d-flex">
+                                    <InputText @bind-Value="Model!.Ingredients[index].Value" class="form-control" />
+                                    <button class="btn btn-link link-secondary pe-0" type="button" @onclick="() => RemoveIngredient(index)">
+                                        <i class="bi bi-x-circle-fill" aria-label="Remove"></i>
+                                    </button>
+                                </div>
+                                <ValidationMessage For="@(() => Model!.Ingredients[index].Value)" />
                             </div>
-                            <ValidationMessage For="@(() => Model!.Ingredients[index].Value)" />
-                        </div>
-                    }
-                    <button class="btn btn-secondary" type="button" @onclick="AddIngredient">
-                        <i class="bi bi-plus-circle"></i>
-                        Add Ingredient
-                    </button>
+                        }
+                    </label>
+                    <div>
+                        <button class="btn btn-secondary" type="button" @onclick="AddIngredient">
+                            <i class="bi bi-plus-circle"></i>
+                            Add Ingredient
+                        </button>
+                    </div>
+
                 </div>
                 <div class="mb-3">
                     <label for="instructions">Instructions</label>
@@ -82,14 +97,14 @@ else
             </EditForm>
         </Authorized>
         <NotAuthorized>
-            <p class="text-danger">You do not have permission to edit @_recipe.Name.</p>
+            <p class="text-danger">You are not authorized to perform this action.</p>
         </NotAuthorized>
     </AuthorizeView>
 }
 
 @code {
     [Parameter]
-    public long Id { get; set; }
+    public long? Id { get; set; }
 
     public EditFormModel? Model { get; set; }
 
@@ -100,7 +115,7 @@ else
     {
         _cuisines ??= await CuisineService.GetListAsync();
 
-        _recipe ??= await RecipeService.GetAsync(Id);
+        _recipe ??= Id == null ? new() : await RecipeService.GetAsync(Id.Value);
 
         if (_recipe == null)
         {
@@ -161,9 +176,18 @@ else
 
         var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        await RecipeService.UpdateAsync(Id, dto, authenticationState.User);
+        if (Id == null)
+        {
+            var recipe = await RecipeService.CreateAsync(dto, authenticationState.User);
 
-        NavigationManager.NavigateTo($"recipes/{Id}");
+            NavigationManager.NavigateTo($"recipes/{recipe.Id}");
+        }
+        else
+        {
+            await RecipeService.UpdateAsync(Id.Value, dto, authenticationState.User);
+
+            NavigationManager.NavigateTo($"recipes/{Id}");
+        }
     }
 
     public class StringValue

@@ -8,7 +8,18 @@
 
 <PageTitle>Recipes</PageTitle>
 
-<h1>Recipes</h1>
+<div class="d-flex flex-wrap justify-content-between column-gap-3">
+    <h1>Recipes</h1>
+    <div>
+        <AuthorizeView>
+            <div class="mb-2">
+                <a class="btn btn-primary" href="recipes/add">
+                    <i class="bi bi-plus-circle" aria-hidden="true"></i> Add
+                </a>
+            </div>
+        </AuthorizeView>
+    </div>
+</div>
 
 @if (_recipes == null)
 {

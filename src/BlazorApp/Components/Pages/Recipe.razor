@@ -20,6 +20,18 @@ else
         <div>
             <AuthorizeView Policy="@Policies.Update" Resource="_recipe">
                 <div class="mb-2">
+                    @if (_recipe.CoverImage == null)
+                    {
+                        <button type="button" class="btn btn-secondary me-1" disabled>
+                            <i class="bi bi-image" aria-hidden="true"></i> Add Image
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-secondary me-1" disabled>
+                            <i class="bi bi-image" aria-hidden="true"></i> Modify Image
+                        </button>
+                    }
                     <a class="btn btn-primary" href="recipes/@(Id)/edit">
                         <i class="bi bi-pencil" aria-hidden="true"></i> Edit
                     </a>
