@@ -33,6 +33,7 @@ public sealed class CreateUpdateRecipeDtoValidatorUnitTests
     [InlineData("Test", default(int), (string[])["Ingredient 1"], "This is a test.")]
     [InlineData("Test", 1, null, "This is a test.")]
     [InlineData("Test", 1, (string[])[], "This is a test.")]
+    [InlineData("Test", 1, (string[])[""], "This is a test.")]
     [InlineData("Test", 1, (string[])["Ingredient 1"], null)]
     [InlineData("Test", 1, (string[])["Ingredient 1"], "")]
     public void TestValidateThrowsWhenInvalid(

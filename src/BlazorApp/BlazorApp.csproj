@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\BlazorApp.Client\BlazorApp.Client.csproj" />
     <ProjectReference Include="..\WebApi.Shared\WebApi.Shared.csproj" />
+    <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />

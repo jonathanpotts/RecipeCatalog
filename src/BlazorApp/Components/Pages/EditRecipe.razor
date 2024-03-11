@@ -24,10 +24,13 @@ else
 
     <AuthorizeView Policy="@Policies.Update" Resource="_recipe">
         <Authorized>
-            <EditForm Model="Model" OnSubmit="SubmitAsync" Context="FormContext">
+            <EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync" Context="FormContext">
+                <FluentValidationValidator />
+                <ValidationSummary />
                 <div class="mb-3">
                     <label for="name">Name</label>
                     <InputText @bind-Value="Model!.Name" id="name" class="form-control" />
+                    <ValidationMessage For="@(() => Model!.Name)" />
                 </div>
                 @if (_cuisines != null)
                 {
@@ -40,23 +43,28 @@ else
                                 <option value="@cuisine.Id">@cuisine.Name</option>
                             }
                         </InputSelect>
+                        <ValidationMessage For="@(() => Model!.CuisineId)" />
                     </div>
                 }
                 <div class="mb-3">
                     <label for="description">Description</label>
                     <InputText @bind-Value="Model!.Description" id="description" class="form-control" />
+                    <ValidationMessage For="@(() => Model!.Description)" />
                 </div>
                 <div class="mb-3">
                     <label>Ingredients</label>
-                    @for (var i = 0; i < Model!.Ingredients?.Length; i++)
+                    @for (var i = 0; i < Model!.Ingredients?.Count; i++)
                     {
                         var index = i;
 
-                        <div class="d-flex mb-2">
-                            <InputText @bind-Value="Model!.Ingredients[index]" class="form-control" />
-                            <button class="btn btn-link link-secondary pe-0" type="button" @onclick="() => RemoveIngredient(index)">
-                                <i class="bi bi-x-circle-fill" aria-label="Remove"></i>
-                            </button>
+                        <div class="mb-2">
+                            <div class="d-flex">
+                                <InputText @bind-Value="Model!.Ingredients[index].Value" class="form-control" />
+                                <button class="btn btn-link link-secondary pe-0" type="button" @onclick="() => RemoveIngredient(index)">
+                                    <i class="bi bi-x-circle-fill" aria-label="Remove"></i>
+                                </button>
+                            </div>
+                            <ValidationMessage For="@(() => Model!.Ingredients[index].Value)" />
                         </div>
                     }
                     <button class="btn btn-secondary" type="button" @onclick="AddIngredient">
@@ -68,6 +76,7 @@ else
                     <label for="instructions">Instructions</label>
                     <InputTextArea @bind-Value="Model!.Instructions" id="instructions" class="form-control" rows="5" />
                     <div class="form-text">Markdown is supported.</div>
+                    <ValidationMessage For="@(() => Model!.Instructions)" />
                 </div>
                 <button type="submit" class="btn btn-primary mb-3">Submit</button>
             </EditForm>
@@ -82,7 +91,7 @@ else
     [Parameter]
     public long Id { get; set; }
 
-    public CreateUpdateRecipeDto? Model { get; set; }
+    public EditFormModel? Model { get; set; }
 
     private IEnumerable<CuisineDto>? _cuisines;
     private RecipeWithCuisineDto? _recipe;
@@ -98,12 +107,14 @@ else
             return;
         }
 
-        Model ??= new CreateUpdateRecipeDto
+        Model ??= new EditFormModel
         {
             Name = _recipe.Name,
             CuisineId = _recipe.Cuisine?.Id ?? default,
             Description = _recipe.Description,
-            Ingredients = _recipe.Ingredients,
+            Ingredients = _recipe.Ingredients?
+                .Select(x => new StringValue { Value = x })
+                .ToList(),
             Instructions = _recipe.Instructions?.Markdown,
         };
     }
@@ -116,7 +127,7 @@ else
         }
 
         Model.Ingredients ??= [];
-        Model.Ingredients = Model.Ingredients.Append(string.Empty).ToArray();
+        Model.Ingredients.Add(new StringValue());
     }
 
     private void RemoveIngredient(int index)
@@ -126,15 +137,70 @@ else
             return;
         }
 
-        Model.Ingredients = Model.Ingredients?.Where((_, i) => i != index).ToArray();
+        Model.Ingredients?.RemoveAt(index);
     }
 
-    private async Task SubmitAsync()
+    private async Task OnValidSubmitAsync()
     {
+        if (Model == null)
+        {
+            return;
+        }
+
+        CreateUpdateRecipeDto dto = new()
+        {
+            Name = Model.Name,
+            CuisineId = Model.CuisineId,
+            Description = Model.Description,
+            Ingredients = Model.Ingredients?
+                .Select(x => x.Value ?? string.Empty)
+                .Where(x => !string.IsNullOrEmpty(x))
+                .ToArray(),
+            Instructions = Model.Instructions
+        };
+
         var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        await RecipeService.UpdateAsync(Id, Model!, authenticationState.User);
+        await RecipeService.UpdateAsync(Id, dto, authenticationState.User);
 
         NavigationManager.NavigateTo($"recipes/{Id}");
+    }
+
+    public class StringValue
+    {
+        public string? Value { get; set; }
+    }
+
+    public class EditFormModel
+    {
+        public string? Name { get; set; }
+
+        public int CuisineId { get; set; }
+
+        public string? Description { get; set; }
+
+        public List<StringValue>? Ingredients { get; set; }
+
+        public string? Instructions { get; set; }
+    }
+
+    public class StringValueValidator : AbstractValidator<StringValue>
+    {
+        public StringValueValidator()
+        {
+            RuleFor(x => x.Value).NotEmpty().WithName("Ingredient");
+        }
+    }
+
+    public class EditFormModelValidator : AbstractValidator<EditFormModel>
+    {
+        public EditFormModelValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.CuisineId).NotEmpty();
+            RuleFor(x => x.Ingredients).NotEmpty();
+            RuleForEach(x => x.Ingredients).SetValidator(new StringValueValidator());
+            RuleFor(x => x.Instructions).NotEmpty();
+        }
     }
 }
