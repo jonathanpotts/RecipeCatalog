@@ -32,7 +32,7 @@ else
         <div>
             <AuthorizeView Policy="@Policies.Delete" Resource="_recipe">
                 <div class="mb-2">
-                    <button type="button" class="btn btn-danger" disabled>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                         <i class="bi bi-trash3" aria-hidden="true"></i> Delete
                     </button>
                 </div>
@@ -97,7 +97,6 @@ else
                             Add Ingredient
                         </button>
                     </div>
-
                 </div>
                 <div class="mb-3">
                     <label for="instructions">Instructions</label>
@@ -112,6 +111,29 @@ else
             <p class="text-danger">You are not authorized to perform this action.</p>
         </NotAuthorized>
     </AuthorizeView>
+
+    @if (Id != null && _recipe != null)
+    {
+        <AuthorizeView Policy="@Policies.Delete" Resource="_recipe">
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Confirmation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to delete @_recipe.Name?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger" @onclick="OnDeleteAsync">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </AuthorizeView>
+    }
 }
 
 @code {
@@ -200,6 +222,20 @@ else
 
             NavigationManager.NavigateTo($"recipes/{Id}");
         }
+    }
+
+    private async Task OnDeleteAsync()
+    {
+        if (Id == null)
+        {
+            return;
+        }
+
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        await RecipeService.DeleteAsync(Id.Value, authenticationState.User);
+
+        NavigationManager.NavigateTo("recipes");
     }
 
     public class StringValue
