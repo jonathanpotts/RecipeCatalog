@@ -1,4 +1,5 @@
-﻿@page "/recipes/{Id:long}"
+﻿@page "/Recipes/{Id:long}"
+@using System.ComponentModel.DataAnnotations
 @inject IRecipeService RecipeService
 
 @if (_recipe == null)
@@ -20,10 +21,10 @@ else
         <div>
             <AuthorizeView Policy="@Policies.Update" Resource="_recipe">
                 <div class="mb-2">
-                    <button type="button" class="btn btn-secondary me-1" data-bs-toggle="modal" data-bs-target="#imageModal">
-                        <i class="bi bi-image" aria-hidden="true"></i> @(_recipe.CoverImage == null ? "Add Image" : "Modify Image")
-                    </button>
-                    <a class="btn btn-primary" href="recipes/@(Id)/edit">
+                    <a class="btn btn-secondary" href="Recipes/@(Id)/Edit/CoverImage">
+                        <i class="bi bi-image" aria-hidden="true"></i> Edit Cover Image
+                    </a>
+                    <a class="btn btn-primary" href="Recipes/@(Id)/Edit">
                         <i class="bi bi-pencil" aria-hidden="true"></i> Edit
                     </a>
                 </div>
@@ -64,31 +65,6 @@ else
             </section>
         </div>
     </div>
-    <AuthorizeView Policy="@Policies.Update" Resource="_recipe">
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form method="post">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="imageModalLabel">@(_recipe.CoverImage == null ? "Add Image" : "Modify Image")</h1>
-                            <button type="reset" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="formFile" class="form-label">Image</label>
-                                <input class="form-control" type="file" id="formFile" accept="image/*">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" disabled>Delete</button>
-                            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" disabled>Save changes</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </AuthorizeView>
 }
 
 @code {

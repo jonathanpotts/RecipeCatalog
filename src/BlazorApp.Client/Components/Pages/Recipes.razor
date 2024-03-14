@@ -1,4 +1,4 @@
-﻿@page "/recipes"
+﻿@page "/Recipes"
 @implements IDisposable
 @inject ICuisineService CuisineService
 @inject IRecipeService RecipeService
@@ -13,7 +13,7 @@
     <div>
         <AuthorizeView>
             <div class="mb-2">
-                <a class="btn btn-primary" href="recipes/add">
+                <a class="btn btn-primary" href="Recipes/Add">
                     <i class="bi bi-plus-circle" aria-hidden="true"></i> Add
                 </a>
             </div>
@@ -169,8 +169,8 @@ else
     {
         return NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>()
         {
-            { "cuisineIds", _cuisineFilter?.ToArray() },
-            { "page", page }
+            { nameof(CuisineIds), _cuisineFilter?.ToArray() },
+            { nameof(Page), page }
         });
     }
 

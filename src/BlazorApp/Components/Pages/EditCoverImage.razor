@@ -1,0 +1,118 @@
+﻿@page "/Recipes/{Id:long}/Edit/CoverImage"
+@inject IRecipeService RecipeService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+@if (_recipe == null)
+{
+    <PageTitle>Edit Cover Image</PageTitle>
+
+    <h1>Edit Cover Image</h1>
+
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+}
+else
+{
+    <PageTitle>Edit Cover Image for @_recipe.Name</PageTitle>
+
+    <div class="d-flex flex-wrap justify-content-between column-gap-3">
+        <h1>Edit Cover Image for @_recipe.Name</h1>
+        <div>
+            <div class="mb-2">
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash3" aria-hidden="true"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <AuthorizeView Policy="@Policies.Update" Resource="_recipe">
+        <Authorized>
+            <EditForm Model="Model" FormName="ImageForm" Context="formContext" OnValidSubmit="OnSubmitAsync" Enhance enctype="multipart/form-data">
+                <FluentValidationValidator />
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Image</label>
+                    <InputFile name="Model.ImageFile" class="@(IsValid(formContext, "ImageFile") ? "form-control" : "form-control invalid")" id="formFile" accept="image/*" />
+                    <ValidationMessage For="@(() => Model!.ImageFile)" />
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </EditForm>
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="post" @formname="DeleteForm" @onsubmit="OnDeleteAsync" data-enhance>
+                            <AntiforgeryToken />
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="deleteModalLabel">Delete Confirmation</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">Are you sure you want to delete the image?</div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <p class="text-danger">You are not authorized to perform this operation.</p>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+@code {
+    [Parameter]
+    public long Id { get; set; }
+
+    private RecipeWithCuisineDto? _recipe = null;
+
+    [SupplyParameterFromForm(FormName = "ImageForm")]
+    public ImageModel? Model { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _recipe = await RecipeService.GetAsync(Id);
+        Model ??= new();
+    }
+
+    private Task OnSubmitAsync()
+    {
+        // NavigationManager.NavigateTo($"Recipes/{Id}");
+
+        return Task.CompletedTask;
+    }
+
+    private Task OnDeleteAsync()
+    {
+        // NavigationManager.NavigateTo($"Recipes/{Id}");
+
+        return Task.CompletedTask;
+    }
+
+    public class ImageModel
+    {
+        public IFormFile? ImageFile { get; set; }
+    }
+
+    public class ImageModelValidator : AbstractValidator<ImageModel>
+    {
+        public ImageModelValidator()
+        {
+            RuleFor(x => x.ImageFile).NotEmpty().WithName("Image");
+        }
+    }
+
+    public bool IsValid(EditContext context, string fieldName)
+    {
+        var field = context.Field(fieldName);
+        var isValid = context.IsValid(field);
+
+        return isValid;
+    }
+}

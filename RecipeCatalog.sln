@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AI.Tests", "tests\AI.Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Tests", "tests\BlazorApp.Tests\BlazorApp.Tests.csproj", "{34132DEE-A8F6-4DE9-8353-F938D8432C5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp.Client.Tests", "tests\BlazorApp.Client.Tests\BlazorApp.Client.Tests.csproj", "{46894D7C-1077-467C-8A04-4DABAED04CD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Client.Tests", "tests\BlazorApp.Client.Tests\BlazorApp.Client.Tests.csproj", "{46894D7C-1077-467C-8A04-4DABAED04CD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

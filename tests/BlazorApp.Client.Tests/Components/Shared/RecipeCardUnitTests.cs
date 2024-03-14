@@ -41,7 +41,7 @@ public sealed class RecipeCardUnitTests
                     </p>
                     <div class="mt-auto">
                         <a
-                            href="recipes/6461870173061120"
+                            href="Recipes/6461870173061120"
                             class="btn btn-primary stretched-link">
                             View more
                         </a>
