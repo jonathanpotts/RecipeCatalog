@@ -48,6 +48,15 @@ public class RecipeService(HttpClient client) : IRecipeService
         throw new NotImplementedException();
     }
 
+    public Task UpdateCoverImageAsync(
+        long id,
+        Stream imageData,
+        string? description,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<RecipeWithCuisineDto> CreateAsync(
         CreateUpdateRecipeDto dto,
         ClaimsPrincipal user,

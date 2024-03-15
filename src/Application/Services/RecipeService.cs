@@ -11,12 +11,12 @@ using JonathanPotts.RecipeCatalog.Application.Mapping;
 using JonathanPotts.RecipeCatalog.Application.Validation;
 using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
-using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Markdig;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SkiaSharp;
 
 namespace JonathanPotts.RecipeCatalog.Application.Services;
 
@@ -30,6 +30,9 @@ public class RecipeService(
 {
     private const int DefaultItemsPerPage = 20;
     private const float DistanceThreshold = 0.6f;
+    private const int MaxImageDimension = 1024;
+    private const int ImageQuality = 80;
+    private const SKFilterQuality ImageFilterQuality = SKFilterQuality.High;
 
     private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
         .DisableHtml()
@@ -115,6 +118,65 @@ public class RecipeService(
         }
 
         return Path.Combine(s_imagesDirectory, recipe.CoverImage.Url);
+    }
+
+    public async Task UpdateCoverImageAsync(
+        long id,
+        Stream imageData,
+        string? description,
+        CancellationToken cancellationToken = default)
+    {
+        var recipe = await context.Recipes
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
+            ?? throw new KeyNotFoundException();
+
+        await Task.Run(async () =>
+        {
+            var bitmap = SKBitmap.Decode(imageData)
+                ?? throw new ArgumentException("The image could not be decoded.", nameof(imageData));
+
+            if (bitmap.Width > MaxImageDimension || bitmap.Height > MaxImageDimension)
+            {
+                int width;
+                int height;
+
+                if (bitmap.Width > bitmap.Height)
+                {
+                    width = MaxImageDimension;
+                    height = (int)Math.Floor((double)MaxImageDimension / bitmap.Width * bitmap.Height);
+                }
+                else if (bitmap.Height > bitmap.Width)
+                {
+                    height = MaxImageDimension;
+                    width = (int)Math.Floor((double)MaxImageDimension / bitmap.Height * bitmap.Width);
+                }
+                else
+                {
+                    width = MaxImageDimension;
+                    height = MaxImageDimension;
+                }
+
+                var resizedBitmap = bitmap.Resize(new SKImageInfo(width, height), ImageFilterQuality);
+
+                bitmap.Dispose();
+                bitmap = resizedBitmap;
+            }
+
+            using var data = bitmap.Encode(SKEncodedImageFormat.Webp, ImageQuality);
+            bitmap.Dispose();
+
+            await File.WriteAllBytesAsync(
+                Path.Combine(s_imagesDirectory, $"{id}.webp"),
+                data.AsSpan().ToArray(),
+                cancellationToken);
+        },
+        cancellationToken);
+
+        recipe.CoverImage ??= new();
+        recipe.CoverImage.Url = $"{id}.webp";
+        recipe.CoverImage.AltText = description;
+
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<RecipeWithCuisineDto> CreateAsync(

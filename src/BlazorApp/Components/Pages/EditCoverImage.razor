@@ -37,6 +37,11 @@ else
                     <InputFile name="Model.ImageFile" class="@(IsValid(formContext, "ImageFile") ? "form-control" : "form-control invalid")" id="formFile" accept="image/*" />
                     <ValidationMessage For="@(() => Model!.ImageFile)" />
                 </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <InputText @bind-Value="Model!.Description" class="form-control" id="description" />
+                    <ValidationMessage For="@(() => Model!.Description)" />
+                </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </EditForm>
             <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -81,11 +86,18 @@ else
         Model ??= new();
     }
 
-    private Task OnSubmitAsync()
+    private async Task OnSubmitAsync()
     {
-        // NavigationManager.NavigateTo($"Recipes/{Id}");
+        if (Model?.ImageFile == null)
+        {
+            return;
+        }
 
-        return Task.CompletedTask;
+        using var stream = Model.ImageFile.OpenReadStream();
+
+        await RecipeService.UpdateCoverImageAsync(Id, stream, Model.Description);
+
+        NavigationManager.NavigateTo($"Recipes/{Id}");
     }
 
     private Task OnDeleteAsync()
@@ -98,6 +110,8 @@ else
     public class ImageModel
     {
         public IFormFile? ImageFile { get; set; }
+
+        public string? Description { get; set; }
     }
 
     public class ImageModelValidator : AbstractValidator<ImageModel>
