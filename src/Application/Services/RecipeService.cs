@@ -144,13 +144,11 @@ public class RecipeService(
 
         await Task.Run(async () =>
         {
-            SKBitmap? bitmap = null;
+            SKBitmap bitmap = SKBitmap.Decode(imageData)
+                ?? throw new ArgumentException("The image could not be decoded.", nameof(imageData));
 
             try
             {
-                bitmap = SKBitmap.Decode(imageData)
-                    ?? throw new ArgumentException("The image could not be decoded.", nameof(imageData));
-
                 if (bitmap.Width > MaxImageDimension || bitmap.Height > MaxImageDimension)
                 {
                     var scaleFactor = (double)MaxImageDimension / Math.Max(bitmap.Width, bitmap.Height);
@@ -172,7 +170,7 @@ public class RecipeService(
             }
             finally
             {
-                bitmap?.Dispose();
+                bitmap.Dispose();
             }
         },
         cancellationToken);
