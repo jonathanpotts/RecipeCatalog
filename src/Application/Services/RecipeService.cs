@@ -144,43 +144,36 @@ public class RecipeService(
 
         await Task.Run(async () =>
         {
-            var bitmap = SKBitmap.Decode(imageData)
-                ?? throw new ArgumentException("The image could not be decoded.", nameof(imageData));
+            SKBitmap? bitmap = null;
 
-            if (bitmap.Width > MaxImageDimension || bitmap.Height > MaxImageDimension)
+            try
             {
-                int width;
-                int height;
+                bitmap = SKBitmap.Decode(imageData)
+                    ?? throw new ArgumentException("The image could not be decoded.", nameof(imageData));
 
-                if (bitmap.Width > bitmap.Height)
+                if (bitmap.Width > MaxImageDimension || bitmap.Height > MaxImageDimension)
                 {
-                    width = MaxImageDimension;
-                    height = (int)Math.Floor((double)MaxImageDimension / bitmap.Width * bitmap.Height);
-                }
-                else if (bitmap.Height > bitmap.Width)
-                {
-                    height = MaxImageDimension;
-                    width = (int)Math.Floor((double)MaxImageDimension / bitmap.Height * bitmap.Width);
-                }
-                else
-                {
-                    width = MaxImageDimension;
-                    height = MaxImageDimension;
+                    var scaleFactor = (double)MaxImageDimension / Math.Max(bitmap.Width, bitmap.Height);
+                    var width = (int)Math.Floor(bitmap.Width * scaleFactor);
+                    var height = (int)Math.Floor(bitmap.Height * scaleFactor);
+
+                    var resizedBitmap = bitmap.Resize(new SKImageInfo(width, height), ImageFilterQuality);
+
+                    bitmap.Dispose();
+                    bitmap = resizedBitmap;
                 }
 
-                var resizedBitmap = bitmap.Resize(new SKImageInfo(width, height), ImageFilterQuality);
+                using var data = bitmap.Encode(SKEncodedImageFormat.Webp, ImageQuality);
 
-                bitmap.Dispose();
-                bitmap = resizedBitmap;
+                await File.WriteAllBytesAsync(
+                    Path.Combine(s_imagesDirectory, $"{id}.webp"),
+                    data.AsSpan().ToArray(),
+                    cancellationToken);
             }
-
-            using var data = bitmap.Encode(SKEncodedImageFormat.Webp, ImageQuality);
-            bitmap.Dispose();
-
-            await File.WriteAllBytesAsync(
-                Path.Combine(s_imagesDirectory, $"{id}.webp"),
-                data.AsSpan().ToArray(),
-                cancellationToken);
+            finally
+            {
+                bitmap?.Dispose();
+            }
         },
         cancellationToken);
 
