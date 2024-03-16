@@ -52,15 +52,21 @@ else
         </div>
     }
 
-
-    <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4 g-3 mb-4">
-        @foreach (var recipe in _recipes.Items)
-        {
-            <div class="col">
-                <RecipeCard Recipe="recipe" />
-            </div>
-        }
-    </div>
+    @if (_recipes.Total > 0)
+    {
+        <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3 row-cols-xxl-4 g-3 mb-4">
+            @foreach (var recipe in _recipes.Items)
+            {
+                <div class="col">
+                    <RecipeCard Recipe="recipe" />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>There are currently no recipes.</p>
+    }
 
     @if (_totalPages > 0)
     {
