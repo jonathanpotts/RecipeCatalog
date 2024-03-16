@@ -352,7 +352,12 @@ public class RecipeService(
 
         if (!string.IsNullOrEmpty(coverImage))
         {
-            File.Delete(Path.Combine(s_imagesDirectory, coverImage));
+            var imagePath = Path.Combine(s_imagesDirectory, coverImage);
+
+            if (File.Exists(imagePath))
+            {
+                File.Delete(imagePath);
+            }
         }
     }
 
