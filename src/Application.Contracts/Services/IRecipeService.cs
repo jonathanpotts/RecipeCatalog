@@ -26,6 +26,12 @@ public interface IRecipeService
         long id,
         Stream imageData,
         string? description,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken = default);
+
+    public Task DeleteCoverImageAsync(
+        long id,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken = default);
 
     public Task<RecipeWithCuisineDto> CreateAsync(

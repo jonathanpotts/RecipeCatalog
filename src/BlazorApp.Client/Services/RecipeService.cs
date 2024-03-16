@@ -52,6 +52,15 @@ public class RecipeService(HttpClient client) : IRecipeService
         long id,
         Stream imageData,
         string? description,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteCoverImageAsync(
+        long id,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();

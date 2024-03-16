@@ -124,11 +124,23 @@ public class RecipeService(
         long id,
         Stream imageData,
         string? description,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken = default)
     {
         var recipe = await context.Recipes
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
             ?? throw new KeyNotFoundException();
+
+        var authResult = await authorizationService.AuthorizeAsync(
+            user,
+            recipe,
+            Operations.Update);
+
+        if (!authResult.Succeeded)
+        {
+            throw new SecurityException(
+                $"User is unauthorized to perform {nameof(Operations.Update)} operation on resource.");
+        }
 
         await Task.Run(async () =>
         {
@@ -177,6 +189,38 @@ public class RecipeService(
         recipe.CoverImage.AltText = description;
 
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteCoverImageAsync(
+        long id,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken = default)
+    {
+        var recipe = await context.Recipes.FindAsync([id], cancellationToken)
+            ?? throw new KeyNotFoundException();
+
+        var authResult = await authorizationService.AuthorizeAsync(
+            user,
+            recipe,
+            Operations.Update);
+
+        if (!authResult.Succeeded)
+        {
+            throw new SecurityException(
+                $"User is unauthorized to perform {nameof(Operations.Update)} operation on resource.");
+        }
+
+        var coverImage = recipe.CoverImage?.Url
+            ?? throw new KeyNotFoundException();
+
+        recipe.CoverImage = null;
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        if (!string.IsNullOrEmpty(coverImage))
+        {
+            File.Delete(Path.Combine(s_imagesDirectory, coverImage));
+        }
     }
 
     public async Task<RecipeWithCuisineDto> CreateAsync(
@@ -301,8 +345,15 @@ public class RecipeService(
                 $"User is unauthorized to perform {nameof(Operations.Delete)} operation on resource.");
         }
 
+        var coverImage = recipe.CoverImage?.Url;
+
         context.Recipes.Remove(recipe);
         await context.SaveChangesAsync(cancellationToken);
+
+        if (!string.IsNullOrEmpty(coverImage))
+        {
+            File.Delete(Path.Combine(s_imagesDirectory, coverImage));
+        }
     }
 
     public async Task<PagedResult<RecipeWithCuisineDto>> SearchAsync(

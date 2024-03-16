@@ -1,7 +1,9 @@
 ﻿@page "/Recipes/{Id:long}/Edit/CoverImage"
 @inject IRecipeService RecipeService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
+@attribute [StreamRendering]
 
 @if (_recipe == null)
 {
@@ -21,7 +23,7 @@ else
         <h1>Edit Cover Image for @_recipe.Name</h1>
         <div>
             <div class="mb-2">
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" disabled="@_processing">
                     <i class="bi bi-trash3" aria-hidden="true"></i> Delete
                 </button>
             </div>
@@ -34,15 +36,25 @@ else
                 <FluentValidationValidator />
                 <div class="mb-3">
                     <label for="formFile" class="form-label">Image</label>
-                    <InputFile name="Model.ImageFile" class="@(IsValid(formContext, "ImageFile") ? "form-control" : "form-control invalid")" id="formFile" accept="image/*" />
+                    <InputFile name="Model.ImageFile" class="@(IsValid(formContext, "ImageFile") ? "form-control" : "form-control invalid")" id="formFile" accept="image/*" disabled="@_processing" />
                     <ValidationMessage For="@(() => Model!.ImageFile)" />
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <InputText @bind-Value="Model!.Description" class="form-control" id="description" />
+                    <InputText @bind-Value="Model!.Description" class="form-control" id="description" disabled="@_processing" />
                     <ValidationMessage For="@(() => Model!.Description)" />
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                @if (_processing)
+                {
+                    <button class="btn btn-primary" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                        <span role="status">Processing...</span>
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                }
             </EditForm>
             <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -75,10 +87,12 @@ else
     [Parameter]
     public long Id { get; set; }
 
-    private RecipeWithCuisineDto? _recipe = null;
-
     [SupplyParameterFromForm(FormName = "ImageForm")]
     public ImageModel? Model { get; set; }
+
+    private RecipeWithCuisineDto? _recipe = null;
+
+    private bool _processing = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,18 +107,24 @@ else
             return;
         }
 
+        _processing = true;
+
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
         using var stream = Model.ImageFile.OpenReadStream();
 
-        await RecipeService.UpdateCoverImageAsync(Id, stream, Model.Description);
+        await RecipeService.UpdateCoverImageAsync(Id, stream, Model.Description, authenticationState.User);
 
         NavigationManager.NavigateTo($"Recipes/{Id}");
     }
 
-    private Task OnDeleteAsync()
+    private async Task OnDeleteAsync()
     {
-        // NavigationManager.NavigateTo($"Recipes/{Id}");
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        return Task.CompletedTask;
+        await RecipeService.DeleteCoverImageAsync(Id, authenticationState.User);
+
+        NavigationManager.NavigateTo($"Recipes/{Id}");
     }
 
     public class ImageModel
