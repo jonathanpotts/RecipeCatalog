@@ -23,6 +23,8 @@ public static class RecipesApi
         group.MapGet("/", GetListAsync);
         group.MapGet("/{id:long}", GetAsync);
         group.MapGet("/{id:long}/coverImage", GetCoverImageAsync);
+        group.MapPut("/{id:long}/coverImage", PutCoverImageAsync);
+        group.MapDelete("/{id:long}/coverImage", DeleteCoverImageAsync);
         group.MapPost("/", PostAsync);
         group.MapPut("/{id:long}", PutAsync);
         group.MapDelete("/{id:long}", DeleteAsync);
@@ -87,6 +89,68 @@ public static class RecipesApi
         catch (KeyNotFoundException)
         {
             return TypedResults.NotFound();
+        }
+    }
+
+    [Authorize]
+    public static async Task<Results<NoContent, NotFound, BadRequest, ForbidHttpResult>> PutCoverImageAsync(
+        IRecipeService recipeService,
+        long id,
+        IFormFile imageFile,
+        string? description,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var imageData = imageFile.OpenReadStream();
+
+            await recipeService.UpdateCoverImageAsync(
+                id,
+                imageData,
+                description,
+                user,
+                cancellationToken);
+
+            return TypedResults.NoContent();
+        }
+        catch (ArgumentException)
+        {
+            return TypedResults.BadRequest();
+        }
+        catch (KeyNotFoundException)
+        {
+            return TypedResults.NotFound();
+        }
+        catch (SecurityException)
+        {
+            return TypedResults.Forbid();
+        }
+    }
+
+    [Authorize]
+    public static async Task<Results<NoContent, NotFound, ForbidHttpResult>> DeleteCoverImageAsync(
+    IRecipeService recipeService,
+    long id,
+    ClaimsPrincipal user,
+    CancellationToken cancellationToken)
+    {
+        try
+        {
+            await recipeService.DeleteCoverImageAsync(
+                id,
+                user,
+                cancellationToken);
+
+            return TypedResults.NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return TypedResults.NotFound();
+        }
+        catch (SecurityException)
+        {
+            return TypedResults.Forbid();
         }
     }
 
