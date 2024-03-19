@@ -22,11 +22,14 @@ else
     <div class="d-flex flex-wrap justify-content-between column-gap-3">
         <h1>Edit Cover Image for @_recipe.Name</h1>
         <div>
-            <div class="mb-2">
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" disabled="@_processing">
-                    <i class="bi bi-trash3" aria-hidden="true"></i> Delete
-                </button>
-            </div>
+            @if (!string.IsNullOrEmpty(_recipe.CoverImage?.Url))
+            {
+                <div class="mb-2">
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" disabled="@_processing">
+                        <i class="bi bi-trash3" aria-hidden="true"></i> Delete
+                    </button>
+                </div>
+            }
         </div>
     </div>
 
@@ -34,6 +37,13 @@ else
         <Authorized>
             <EditForm Model="Model" FormName="ImageForm" Context="formContext" OnValidSubmit="OnSubmitAsync" Enhance enctype="multipart/form-data">
                 <FluentValidationValidator />
+                <ValidationSummary />
+                @if (!string.IsNullOrEmpty(_imageFormError))
+                {
+                    <ul class="text-danger">
+                        <li>@_imageFormError</li>
+                    </ul>
+                }
                 <div class="mb-3">
                     <label for="formFile" class="form-label">Image</label>
                     <InputFile name="Model.ImageFile" class="@(IsValid(formContext, "ImageFile") ? "form-control" : "form-control invalid")" id="formFile" accept="image/*" disabled="@_processing" />
@@ -90,9 +100,9 @@ else
     [SupplyParameterFromForm(FormName = "ImageForm")]
     public ImageModel? Model { get; set; }
 
-    private RecipeWithCuisineDto? _recipe = null;
-
-    private bool _processing = false;
+    private RecipeWithCuisineDto? _recipe;
+    private bool _processing;
+    private string? _imageFormError;
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,15 +117,26 @@ else
             return;
         }
 
-        _processing = true;
+        _imageFormError = null;
 
-        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _processing = true;
 
         using var stream = Model.ImageFile.OpenReadStream();
 
-        await RecipeService.UpdateCoverImageAsync(Id, stream, Model.Description, authenticationState.User);
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        NavigationManager.NavigateTo($"Recipes/{Id}");
+        try
+        {
+            await RecipeService.UpdateCoverImageAsync(Id, stream, Model.Description, authenticationState.User);
+
+            NavigationManager.NavigateTo($"Recipes/{Id}");
+        }
+        catch (ArgumentException)
+        {
+            _processing = false;
+
+            _imageFormError = "'Image' could not be processed.";
+        }
     }
 
     private async Task OnDeleteAsync()
