@@ -45,7 +45,7 @@ else
 {
     <AuthorizeView Policy="@(Id == null ? Policies.Create : Policies.Update)" Resource="_recipe">
         <Authorized>
-            <EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync" Context="FormContext">
+            <EditForm Model="Model" OnValidSubmit="OnValidSubmitAsync" Context="formContext">
                 <FluentValidationValidator />
                 <ValidationSummary />
                 <div class="mb-3">
@@ -57,14 +57,22 @@ else
                 {
                     <div class="mb-3">
                         <label for="cuisine">Cuisine</label>
-                        <InputSelect @bind-Value="Model!.CuisineId" id="cuisine" class="form-select">
-                            <option value="@(default(int))">Select cuisine</option>
-                            @foreach (var cuisine in _cuisines)
-                            {
-                                <option value="@cuisine.Id">@cuisine.Name</option>
-                            }
-                        </InputSelect>
-                        <ValidationMessage For="@(() => Model!.CuisineId)" />
+                        <div class="mb-2">
+                            <InputSelect @bind-Value="Model!.CuisineId" id="cuisine" class="form-select">
+                                <option value="@(default(int))">Select cuisine</option>
+                                @foreach (var cuisine in _cuisines.OrderBy(x => x.Name))
+                                {
+                                    <option value="@cuisine.Id">@cuisine.Name</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => Model!.CuisineId)" />
+                        </div>
+                        <AuthorizeView Policy="@Policies.Create" Resource="new CuisineDto()" Context="addCuisineContext">
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addCuisineModal">
+                                <i class="bi bi-plus-circle" aria-hidden="true"></i>
+                                Add Cuisine
+                            </button>
+                        </AuthorizeView>
                     </div>
                 }
                 <div class="mb-3">
@@ -93,7 +101,7 @@ else
                     </label>
                     <div>
                         <button class="btn btn-secondary" type="button" @onclick="AddIngredient">
-                            <i class="bi bi-plus-circle"></i>
+                            <i class="bi bi-plus-circle" aria-hidden="true"></i>
                             Add Ingredient
                         </button>
                     </div>
@@ -134,6 +142,37 @@ else
             </div>
         </AuthorizeView>
     }
+
+    <AuthorizeView Policy="@Policies.Create" Resource="new CuisineDto()">
+        <div class="modal fade" id="addCuisineModal" tabindex="-1" aria-labelledby="addCuisineModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <EditForm Model="AddCuisineModel" OnValidSubmit="OnAddCuisineAsync" Context="addCuisineContext">
+                        <FluentValidationValidator />
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="addCuisineModalLabel">Add Cuisine</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            @if (!string.IsNullOrEmpty(_addCuisineError))
+                            {
+                                <p class="text-danger">@_addCuisineError</p>
+                            }
+                            <div class="mb-3">
+                                <label for="name">Name</label>
+                                <InputText @bind-Value="AddCuisineModel!.Name" id="name" class="form-control" />
+                                <ValidationMessage For="@(() => AddCuisineModel!.Name)" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </AuthorizeView>
 }
 
 @code {
@@ -144,6 +183,10 @@ else
 
     private IEnumerable<CuisineDto>? _cuisines;
     private RecipeWithCuisineDto? _recipe;
+
+    public CreateUpdateCuisineDto? AddCuisineModel { get; set; }
+
+    private string? _addCuisineError;
 
     protected override async Task OnInitializedAsync()
     {
@@ -166,6 +209,8 @@ else
                 .ToList(),
             Instructions = _recipe.Instructions?.Markdown,
         };
+
+        AddCuisineModel ??= new();
     }
 
     private void AddIngredient()
@@ -236,6 +281,29 @@ else
         await RecipeService.DeleteAsync(Id.Value, authenticationState.User);
 
         NavigationManager.NavigateTo("recipes");
+    }
+
+    private async Task OnAddCuisineAsync()
+    {
+        if (AddCuisineModel == null)
+        {
+            return;
+        }
+
+        _addCuisineError = null;
+
+        try
+        {
+            var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+            await CuisineService.CreateAsync(AddCuisineModel, authenticationState.User);
+
+            _cuisines = await CuisineService.GetListAsync();
+        }
+        catch (Exception)
+        {
+            _addCuisineError = "Cuisine could not be added.";
+        }
     }
 
     public class StringValue

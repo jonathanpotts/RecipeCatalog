@@ -58,7 +58,16 @@ public class CuisineService(
         }
 
         await context.Cuisines.AddAsync(cuisine, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            context.Cuisines.Remove(cuisine);
+            throw;
+        }
 
         return cuisine.ToCuisineDto();
     }
@@ -87,7 +96,15 @@ public class CuisineService(
 
         context.Entry(cuisine).CurrentValues.SetValues(dto);
 
-        await context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            await context.Entry(cuisine).ReloadAsync(cancellationToken);
+            throw;
+        }
 
         return cuisine.ToCuisineDto();
     }
@@ -112,6 +129,15 @@ public class CuisineService(
         }
 
         context.Cuisines.Remove(cuisine);
-        await context.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            await context.Entry(cuisine).ReloadAsync(cancellationToken);
+            throw;
+        }
     }
 }

@@ -179,7 +179,15 @@ public class RecipeService(
         recipe.CoverImage.Url = $"{id}.webp";
         recipe.CoverImage.AltText = description;
 
-        await context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            await context.Entry(recipe).ReloadAsync(cancellationToken);
+            throw;
+        }
     }
 
     public async Task DeleteCoverImageAsync(
@@ -206,7 +214,15 @@ public class RecipeService(
 
         recipe.CoverImage = null;
 
-        await context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            await context.Entry(recipe).ReloadAsync(cancellationToken);
+            throw;
+        }
 
         if (!string.IsNullOrEmpty(coverImage))
         {
@@ -260,7 +276,16 @@ public class RecipeService(
         }
 
         await context.Recipes.AddAsync(recipe, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            context.Recipes.Remove(recipe);
+            throw;
+        }
 
         return recipe.ToRecipeWithCuisineDto();
     }
@@ -312,7 +337,15 @@ public class RecipeService(
             }
         }
 
-        await context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            await context.Entry(recipe).ReloadAsync(cancellationToken);
+            throw;
+        }
 
         return recipe.ToRecipeWithCuisineDto();
     }
@@ -339,7 +372,16 @@ public class RecipeService(
         var coverImage = recipe.CoverImage?.Url;
 
         context.Recipes.Remove(recipe);
-        await context.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            await context.Entry(recipe).ReloadAsync(cancellationToken);
+            throw;
+        }
 
         if (!string.IsNullOrEmpty(coverImage))
         {
