@@ -4,6 +4,7 @@
 @inject IRecipeService RecipeService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 @attribute [Authorize]
 @rendermode InteractiveServer
 
@@ -68,7 +69,7 @@ else
                             <ValidationMessage For="@(() => Model!.CuisineId)" />
                         </div>
                         <AuthorizeView Policy="@Policies.Create" Resource="new CuisineDto()" Context="addCuisineContext">
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addCuisineModal">
+                            <button type="button" class="btn btn-secondary" @onclick="ShowAddCuisineModalAsync">
                                 <i class="bi bi-plus-circle" aria-hidden="true"></i>
                                 Add Cuisine
                             </button>
@@ -151,7 +152,7 @@ else
                         <FluentValidationValidator />
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="addCuisineModalLabel">Add Cuisine</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" aria-label="Close" @onclick="HideAddCuisineModalAsync"></button>
                         </div>
                         <div class="modal-body">
                             @if (!string.IsNullOrEmpty(_addCuisineError))
@@ -165,13 +166,14 @@ else
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-secondary" @onclick="HideAddCuisineModalAsync">Close</button>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </EditForm>
                 </div>
             </div>
         </div>
+        <script src="Components/Pages/AddEditRecipe.razor.js"></script>
     </AuthorizeView>
 }
 
@@ -283,6 +285,16 @@ else
         NavigationManager.NavigateTo("recipes");
     }
 
+    private async Task ShowAddCuisineModalAsync()
+    {
+        await JS.InvokeVoidAsync("showAddCuisineModal");
+    }
+
+    private async Task HideAddCuisineModalAsync()
+    {
+        await JS.InvokeVoidAsync("hideAddCuisineModal");
+    }
+
     private async Task OnAddCuisineAsync()
     {
         if (AddCuisineModel == null)
@@ -299,6 +311,10 @@ else
             await CuisineService.CreateAsync(AddCuisineModel, authenticationState.User);
 
             _cuisines = await CuisineService.GetListAsync();
+
+            await HideAddCuisineModalAsync();
+
+            AddCuisineModel = new();
         }
         catch (Exception)
         {
