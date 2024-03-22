@@ -34,7 +34,7 @@ public sealed class AzureOpenAIImageGeneratorUnitTests
         var imageGenerator = new AzureOpenAIImageGenerator(options);
 
         var imageGenerationData = AzureOpenAIModelFactory.ImageGenerationData(new Uri("https://test/image.png"));
-        var imageGenerations = new ImageGenerations(DateTimeOffset.UtcNow, [imageGenerationData]);
+        var imageGenerations = AzureOpenAIModelFactory.ImageGenerations(DateTimeOffset.UtcNow, [imageGenerationData]);
 
         Mock<OpenAIClient> openAIClientMock = new();
         openAIClientMock
@@ -66,7 +66,7 @@ public sealed class AzureOpenAIImageGeneratorUnitTests
 
         var imageGenerator = new AzureOpenAIImageGenerator(options);
 
-        var imageGenerations = new ImageGenerations(DateTimeOffset.UtcNow, []);
+        var imageGenerations = AzureOpenAIModelFactory.ImageGenerations(DateTimeOffset.UtcNow, []);
 
         Mock<OpenAIClient> openAIClientMock = new();
         openAIClientMock
