@@ -215,6 +215,72 @@ public sealed class RecipeServiceUnitTests : IDisposable
         await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.GetCoverImageAsync(recipeId));
     }
 
+    [Fact]
+    public async void UpdateCoverImageAsyncCompletesSuccessfully()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+        using var imageData = File.OpenRead(Path.Combine("Images", "new-image.webp"));
+
+        // Act / Assert
+        await recipeService.UpdateCoverImageAsync(TestData.Recipes[0].Id, imageData, null, _admin);
+    }
+
+    [Fact]
+    public async void UpdateCoverImageAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act / Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.UpdateCoverImageAsync(-1, Stream.Null, null, _admin));
+    }
+
+    [Fact]
+    public async void UpdateCoverImageAsyncThrowsSecurityExceptionWhenUnauthorized()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService(false);
+
+        // Act / Assert
+        await Assert.ThrowsAsync<SecurityException>(() => recipeService.UpdateCoverImageAsync(TestData.Recipes[0].Id, Stream.Null, null, _user));
+    }
+
+    [Fact]
+    public async void DeleteCoverImageAsyncCompletesSuccessfully()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act
+        await recipeService.DeleteCoverImageAsync(TestData.Recipes[0].Id, _admin);
+
+        // Assert
+        var recipe = CreateContext().Recipes.Find(TestData.Recipes[0].Id);
+        Assert.NotNull(recipe);
+        Assert.Null(recipe.CoverImage);
+    }
+
+    [Fact]
+    public async void DeleteCoverImageAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act / Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.DeleteCoverImageAsync(-1, _admin));
+    }
+
+    [Fact]
+    public async void DeleteCoverImageAsyncThrowsSecurityExceptionWhenUnauthorized()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService(false);
+
+        // Act / Assert
+        await Assert.ThrowsAsync<SecurityException>(() => recipeService.DeleteCoverImageAsync(TestData.Recipes[0].Id, _user));
+    }
+
     [Theory]
     [InlineData(true, false)]
     [InlineData(true, true)]
