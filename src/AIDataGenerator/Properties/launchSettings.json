@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Development": {
+    "AIDataGenerator": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
