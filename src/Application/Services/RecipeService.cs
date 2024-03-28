@@ -142,38 +142,34 @@ public class RecipeService(
                 $"User is unauthorized to perform {nameof(Operations.Update)} operation on resource.");
         }
 
-        await Task.Run(async () =>
+        SKBitmap bitmap = SKBitmap.Decode(imageData)
+            ?? throw new ArgumentException("The image could not be decoded.", nameof(imageData));
+
+        try
         {
-            SKBitmap bitmap = SKBitmap.Decode(imageData)
-                ?? throw new ArgumentException("The image could not be decoded.", nameof(imageData));
-
-            try
+            if (bitmap.Width > MaxImageDimension || bitmap.Height > MaxImageDimension)
             {
-                if (bitmap.Width > MaxImageDimension || bitmap.Height > MaxImageDimension)
-                {
-                    var scaleFactor = (double)MaxImageDimension / Math.Max(bitmap.Width, bitmap.Height);
-                    var width = (int)Math.Floor(bitmap.Width * scaleFactor);
-                    var height = (int)Math.Floor(bitmap.Height * scaleFactor);
+                var scaleFactor = (double)MaxImageDimension / Math.Max(bitmap.Width, bitmap.Height);
+                var width = (int)Math.Floor(bitmap.Width * scaleFactor);
+                var height = (int)Math.Floor(bitmap.Height * scaleFactor);
 
-                    var resizedBitmap = bitmap.Resize(new SKImageInfo(width, height), ImageFilterQuality);
+                var resizedBitmap = bitmap.Resize(new SKImageInfo(width, height), ImageFilterQuality);
 
-                    bitmap.Dispose();
-                    bitmap = resizedBitmap;
-                }
-
-                using var data = bitmap.Encode(SKEncodedImageFormat.Webp, ImageQuality);
-
-                await File.WriteAllBytesAsync(
-                    Path.Combine(s_imagesDirectory, $"{id}.webp"),
-                    data.AsSpan().ToArray(),
-                    cancellationToken);
-            }
-            finally
-            {
                 bitmap.Dispose();
+                bitmap = resizedBitmap;
             }
-        },
-        cancellationToken);
+
+            using var data = bitmap.Encode(SKEncodedImageFormat.Webp, ImageQuality);
+
+            await File.WriteAllBytesAsync(
+                Path.Combine(s_imagesDirectory, $"{id}.webp"),
+                data.AsSpan().ToArray(),
+                cancellationToken);
+        }
+        finally
+        {
+            bitmap.Dispose();
+        }
 
         recipe.CoverImage ??= new();
         recipe.CoverImage.Url = $"{id}.webp";
