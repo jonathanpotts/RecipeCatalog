@@ -1,5 +1,4 @@
-﻿using System.Security;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using FluentValidation.Results;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
@@ -12,7 +11,7 @@ namespace JonathanPotts.RecipeCatalog.WebApi.Shared.Tests.Apis;
 public sealed class CuisinesApiUnitTests
 {
     [Fact]
-    public async void GetListAsyncReturnsOk()
+    public async Task GetListAsyncReturnsOk()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
@@ -29,7 +28,7 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void GetAsyncReturnsOk()
+    public async Task GetAsyncReturnsOk()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
@@ -46,7 +45,7 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void GetAsyncReturnsNotFoundWhenNullReturned()
+    public async Task GetAsyncReturnsNotFoundWhenNullReturned()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
@@ -63,7 +62,7 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void PostAsyncReturnsCreated()
+    public async Task PostAsyncReturnsCreated()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
@@ -80,7 +79,7 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void PostAsyncReturnsValidationProblemWhenValidationExceptionThrown()
+    public async Task PostAsyncReturnsValidationProblemWhenValidationExceptionThrown()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
@@ -97,13 +96,13 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void PostAsyncReturnsForbidWhenSecurityExceptionThrown()
+    public async Task PostAsyncReturnsForbidWhenUnauthorizedAccessExceptionThrown()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
         cuisineServiceMock
             .Setup(x => x.CreateAsync(It.IsAny<CreateUpdateCuisineDto>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()).Result)
-            .Throws(new SecurityException());
+            .Throws(new UnauthorizedAccessException());
 
         // Act
         var result = await CuisinesApi.PostAsync(cuisineServiceMock.Object, new(), new(), default);
@@ -114,7 +113,7 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void PutAsyncReturnsOk()
+    public async Task PutAsyncReturnsOk()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
@@ -131,13 +130,13 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void PutAsyncReturnsNotFoundWhenKeyNotFoundExceptionThrown()
+    public async Task PutAsyncReturnsNotFoundWhenRecordNotFound()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
         cuisineServiceMock
             .Setup(x => x.UpdateAsync(It.IsAny<int>(), It.IsAny<CreateUpdateCuisineDto>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()).Result)
-            .Throws(new KeyNotFoundException());
+            .Returns((CuisineDto?)null);
 
         // Act
         var result = await CuisinesApi.PutAsync(cuisineServiceMock.Object, default, new(), new(), default);
@@ -148,7 +147,7 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void PutAsyncReturnsValidationProblemWhenValidationExceptionThrown()
+    public async Task PutAsyncReturnsValidationProblemWhenValidationExceptionThrown()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
@@ -165,13 +164,13 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void PutAsyncReturnsForbidWhenSecurityExceptionThrown()
+    public async Task PutAsyncReturnsForbidWhenUnauthorizedAccessExceptionThrown()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
         cuisineServiceMock
             .Setup(x => x.UpdateAsync(It.IsAny<int>(), It.IsAny<CreateUpdateCuisineDto>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()).Result)
-            .Throws(new SecurityException());
+            .Throws(new UnauthorizedAccessException());
 
         // Act
         var result = await CuisinesApi.PutAsync(cuisineServiceMock.Object, default, new(), new(), default);
@@ -182,13 +181,13 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void DeleteAsyncReturnsNoContent()
+    public async Task DeleteAsyncReturnsNoContent()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
         cuisineServiceMock
-            .Setup(x => x.DeleteAsync(It.IsAny<int>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
+            .Setup(x => x.DeleteAsync(It.IsAny<int>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()).Result)
+            .Returns(true);
 
         // Act
         var result = await CuisinesApi.DeleteAsync(cuisineServiceMock.Object, default, new(), default);
@@ -199,13 +198,13 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void DeleteAsyncReturnsNotFoundWhenKeyNotFoundExceptionThrown()
+    public async Task DeleteAsyncReturnsNotFoundWhenRecordNotFound()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
         cuisineServiceMock
-            .Setup(x => x.DeleteAsync(It.IsAny<int>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()))
-            .Throws(new KeyNotFoundException());
+            .Setup(x => x.DeleteAsync(It.IsAny<int>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()).Result)
+            .Returns(false);
 
         // Act
         var result = await CuisinesApi.DeleteAsync(cuisineServiceMock.Object, default, new(), default);
@@ -216,13 +215,13 @@ public sealed class CuisinesApiUnitTests
     }
 
     [Fact]
-    public async void DeleteAsyncReturnsForbidWhenSecurityExceptionThrown()
+    public async Task DeleteAsyncReturnsForbidWhenUnauthorizedAccessExceptionThrown()
     {
         // Arrange
         Mock<ICuisineService> cuisineServiceMock = new();
         cuisineServiceMock
-            .Setup(x => x.DeleteAsync(It.IsAny<int>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()))
-            .Throws(new SecurityException());
+            .Setup(x => x.DeleteAsync(It.IsAny<int>(), It.IsAny<ClaimsPrincipal>(), It.IsAny<CancellationToken>()).Result)
+            .Throws(new UnauthorizedAccessException());
 
         // Act
         var result = await CuisinesApi.DeleteAsync(cuisineServiceMock.Object, default, new(), default);

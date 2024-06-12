@@ -41,14 +41,14 @@ public class RecipeService(HttpClient client) : IRecipeService
             cancellationToken);
     }
 
-    public Task<string> GetCoverImageAsync(
+    public Task<string?> GetCoverImageAsync(
         long id,
         CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateCoverImageAsync(
+    public Task<bool> UpdateCoverImageAsync(
         long id,
         Stream imageData,
         string? description,
@@ -58,7 +58,7 @@ public class RecipeService(HttpClient client) : IRecipeService
         throw new NotImplementedException();
     }
 
-    public Task DeleteCoverImageAsync(
+    public Task<bool> DeleteCoverImageAsync(
         long id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default)
@@ -82,7 +82,7 @@ public class RecipeService(HttpClient client) : IRecipeService
             ?? throw new Exception();
     }
 
-    public async Task<RecipeWithCuisineDto> UpdateAsync
+    public async Task<RecipeWithCuisineDto?> UpdateAsync
         (long id,
         CreateUpdateRecipeDto dto,
         ClaimsPrincipal user,
@@ -93,13 +93,15 @@ public class RecipeService(HttpClient client) : IRecipeService
             dto,
             cancellationToken);
 
-        response.EnsureSuccessStatusCode();
+        if (response.IsSuccessStatusCode)
+        {
+            return null;
+        }
 
-        return await response.Content.ReadFromJsonAsync<RecipeWithCuisineDto>(cancellationToken)
-            ?? throw new Exception();
+        return await response.Content.ReadFromJsonAsync<RecipeWithCuisineDto>(cancellationToken);
     }
 
-    public async Task DeleteAsync(
+    public async Task<bool> DeleteAsync(
         long id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default)
@@ -108,7 +110,7 @@ public class RecipeService(HttpClient client) : IRecipeService
             $"/api/v1/recipes/{id}",
             cancellationToken);
 
-        response.EnsureSuccessStatusCode();
+        return response.IsSuccessStatusCode;
     }
 
     public async Task<PagedResult<RecipeWithCuisineDto>> SearchAsync(

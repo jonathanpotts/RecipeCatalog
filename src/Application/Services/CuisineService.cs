@@ -1,5 +1,4 @@
-﻿using System.Security;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using FluentValidation;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
@@ -53,7 +52,7 @@ public class CuisineService(
 
         if (!authResult.Succeeded)
         {
-            throw new SecurityException(
+            throw new UnauthorizedAccessException(
                 $"User is unauthorized to perform {nameof(Operations.Create)} operation on resource.");
         }
 
@@ -72,7 +71,7 @@ public class CuisineService(
         return cuisine.ToCuisineDto();
     }
 
-    public async Task<CuisineDto> UpdateAsync(
+    public async Task<CuisineDto?> UpdateAsync(
         int id,
         CreateUpdateCuisineDto dto,
         ClaimsPrincipal user,
@@ -80,8 +79,12 @@ public class CuisineService(
     {
         new CreateUpdateCuisineDtoValidator().ValidateAndThrow(dto);
 
-        var cuisine = await context.Cuisines.FindAsync([id], cancellationToken)
-            ?? throw new KeyNotFoundException();
+        var cuisine = await context.Cuisines.FindAsync([id], cancellationToken);
+
+        if (cuisine == null)
+        {
+            return null;
+        }
 
         var authResult = await authorizationService.AuthorizeAsync(
             user,
@@ -90,7 +93,7 @@ public class CuisineService(
 
         if (!authResult.Succeeded)
         {
-            throw new SecurityException(
+            throw new UnauthorizedAccessException(
                 $"User is unauthorized to perform {nameof(Operations.Update)} operation on resource.");
         }
 
@@ -109,13 +112,17 @@ public class CuisineService(
         return cuisine.ToCuisineDto();
     }
 
-    public async Task DeleteAsync(
+    public async Task<bool> DeleteAsync(
         int id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default)
     {
-        var cuisine = await context.Cuisines.FindAsync([id], cancellationToken)
-            ?? throw new KeyNotFoundException();
+        var cuisine = await context.Cuisines.FindAsync([id], cancellationToken);
+
+        if (cuisine == null)
+        {
+            return false;
+        }
 
         var authResult = await authorizationService.AuthorizeAsync(
             user,
@@ -124,7 +131,7 @@ public class CuisineService(
 
         if (!authResult.Succeeded)
         {
-            throw new SecurityException(
+            throw new UnauthorizedAccessException(
                 $"User is unauthorized to perform {nameof(Operations.Delete)} operation on resource.");
         }
 
@@ -139,5 +146,7 @@ public class CuisineService(
             await context.Entry(cuisine).ReloadAsync(cancellationToken);
             throw;
         }
+
+        return true;
     }
 }

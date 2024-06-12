@@ -41,7 +41,7 @@ public class CuisineService(HttpClient client) : ICuisineService
             ?? throw new Exception();
     }
 
-    public async Task<CuisineDto> UpdateAsync(
+    public async Task<CuisineDto?> UpdateAsync(
         int id,
         CreateUpdateCuisineDto dto,
         ClaimsPrincipal user,
@@ -52,13 +52,15 @@ public class CuisineService(HttpClient client) : ICuisineService
             dto,
             cancellationToken);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
 
-        return await response.Content.ReadFromJsonAsync<CuisineDto>(cancellationToken)
-            ?? throw new Exception();
+        return await response.Content.ReadFromJsonAsync<CuisineDto>(cancellationToken);
     }
 
-    public async Task DeleteAsync(
+    public async Task<bool> DeleteAsync(
         int id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default)
@@ -67,6 +69,6 @@ public class CuisineService(HttpClient client) : ICuisineService
             $"/api/v1/cuisines/{id}",
             cancellationToken);
 
-        response.EnsureSuccessStatusCode();
+        return response.IsSuccessStatusCode;
     }
 }

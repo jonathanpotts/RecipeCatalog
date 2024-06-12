@@ -8,7 +8,7 @@ public class IntegrationTests(TestWebApplicationFactory factory)
     [Theory]
     [InlineData("/api/v1/cuisines")]
     [InlineData("/api/v1/recipes")]
-    public async void GetEndpointsReturnSuccessStatusCode(string endpoint)
+    public async Task GetEndpointsReturnSuccessStatusCode(string endpoint)
     {
         // Arrange
         var client = factory.CreateClient();
@@ -23,7 +23,7 @@ public class IntegrationTests(TestWebApplicationFactory factory)
     [Theory]
     [InlineData("/api/v1/cuisines")]
     [InlineData("/api/v1/recipes")]
-    public async void PostEndpointsReturnsUnauthorizedStatusCodeWhenUnauthorized(string endpoint)
+    public async Task PostEndpointsReturnsUnauthorizedStatusCodeWhenUnauthorized(string endpoint)
     {
         // Arrange
         var client = factory.CreateClient();

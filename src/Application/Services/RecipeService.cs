@@ -1,5 +1,4 @@
 ﻿using System.Numerics.Tensors;
-using System.Security;
 using System.Security.Claims;
 using FluentValidation;
 using IdGen;
@@ -103,24 +102,23 @@ public class RecipeService(
         return recipe?.ToRecipeWithCuisineDto();
     }
 
-    public async Task<string> GetCoverImageAsync(
+    public async Task<string?> GetCoverImageAsync(
         long id,
         CancellationToken cancellationToken = default)
     {
         var recipe = await context.Recipes
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
-            ?? throw new KeyNotFoundException();
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        if (string.IsNullOrEmpty(recipe.CoverImage?.Url))
+        if (recipe == null || string.IsNullOrEmpty(recipe.CoverImage?.Url))
         {
-            throw new KeyNotFoundException();
+            return null;
         }
 
         return Path.Combine(s_imagesDirectory, recipe.CoverImage.Url);
     }
 
-    public async Task UpdateCoverImageAsync(
+    public async Task<bool> UpdateCoverImageAsync(
         long id,
         Stream imageData,
         string? description,
@@ -128,8 +126,12 @@ public class RecipeService(
         CancellationToken cancellationToken = default)
     {
         var recipe = await context.Recipes
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken)
-            ?? throw new KeyNotFoundException();
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (recipe == null)
+        {
+            return false;
+        }
 
         var authResult = await authorizationService.AuthorizeAsync(
             user,
@@ -138,7 +140,7 @@ public class RecipeService(
 
         if (!authResult.Succeeded)
         {
-            throw new SecurityException(
+            throw new UnauthorizedAccessException(
                 $"User is unauthorized to perform {nameof(Operations.Update)} operation on resource.");
         }
 
@@ -184,15 +186,21 @@ public class RecipeService(
             await context.Entry(recipe).ReloadAsync(cancellationToken);
             throw;
         }
+
+        return true;
     }
 
-    public async Task DeleteCoverImageAsync(
+    public async Task<bool> DeleteCoverImageAsync(
         long id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default)
     {
-        var recipe = await context.Recipes.FindAsync([id], cancellationToken)
-            ?? throw new KeyNotFoundException();
+        var recipe = await context.Recipes.FindAsync([id], cancellationToken);
+
+        if (recipe == null)
+        {
+            return false;
+        }
 
         var authResult = await authorizationService.AuthorizeAsync(
             user,
@@ -201,12 +209,16 @@ public class RecipeService(
 
         if (!authResult.Succeeded)
         {
-            throw new SecurityException(
+            throw new UnauthorizedAccessException(
                 $"User is unauthorized to perform {nameof(Operations.Update)} operation on resource.");
         }
 
-        var coverImage = recipe.CoverImage?.Url
-            ?? throw new KeyNotFoundException();
+        var coverImage = recipe.CoverImage?.Url;
+
+        if (coverImage == null)
+        {
+            return false;
+        }
 
         recipe.CoverImage = null;
 
@@ -224,6 +236,8 @@ public class RecipeService(
         {
             File.Delete(Path.Combine(s_imagesDirectory, coverImage));
         }
+
+        return true;
     }
 
     public async Task<RecipeWithCuisineDto> CreateAsync(
@@ -242,7 +256,7 @@ public class RecipeService(
 
         if (!authResult.Succeeded)
         {
-            throw new SecurityException(
+            throw new UnauthorizedAccessException(
                 $"User is unauthorized to perform {nameof(Operations.Create)} operation on resource.");
         }
 
@@ -286,7 +300,7 @@ public class RecipeService(
         return recipe.ToRecipeWithCuisineDto();
     }
 
-    public async Task<RecipeWithCuisineDto> UpdateAsync(
+    public async Task<RecipeWithCuisineDto?> UpdateAsync(
         long id,
         CreateUpdateRecipeDto dto,
         ClaimsPrincipal user,
@@ -294,8 +308,12 @@ public class RecipeService(
     {
         new CreateUpdateRecipeDtoValidator().ValidateAndThrow(dto);
 
-        var recipe = await context.Recipes.FindAsync([id], cancellationToken)
-            ?? throw new KeyNotFoundException();
+        var recipe = await context.Recipes.FindAsync([id], cancellationToken);
+
+        if (recipe == null)
+        {
+            return null;
+        }
 
         var authResult = await authorizationService.AuthorizeAsync(
             user,
@@ -304,7 +322,7 @@ public class RecipeService(
 
         if (!authResult.Succeeded)
         {
-            throw new SecurityException(
+            throw new UnauthorizedAccessException(
                 $"User is unauthorized to perform {nameof(Operations.Update)} operation on resource.");
         }
 
@@ -346,13 +364,17 @@ public class RecipeService(
         return recipe.ToRecipeWithCuisineDto();
     }
 
-    public async Task DeleteAsync(
+    public async Task<bool> DeleteAsync(
         long id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default)
     {
-        var recipe = await context.Recipes.FindAsync([id], cancellationToken)
-            ?? throw new KeyNotFoundException();
+        var recipe = await context.Recipes.FindAsync([id], cancellationToken);
+
+        if (recipe == null)
+        {
+            return false;
+        }
 
         var authResult = await authorizationService.AuthorizeAsync(
             user,
@@ -361,7 +383,7 @@ public class RecipeService(
 
         if (!authResult.Succeeded)
         {
-            throw new SecurityException(
+            throw new UnauthorizedAccessException(
                 $"User is unauthorized to perform {nameof(Operations.Delete)} operation on resource.");
         }
 
@@ -388,6 +410,8 @@ public class RecipeService(
                 File.Delete(imagePath);
             }
         }
+
+        return true;
     }
 
     public async Task<PagedResult<RecipeWithCuisineDto>> SearchAsync(

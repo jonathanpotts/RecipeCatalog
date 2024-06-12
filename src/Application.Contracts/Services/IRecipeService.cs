@@ -18,18 +18,18 @@ public interface IRecipeService
         long id,
         CancellationToken cancellationToken = default);
 
-    public Task<string> GetCoverImageAsync(
+    public Task<string?> GetCoverImageAsync(
         long id,
         CancellationToken cancellationToken = default);
 
-    public Task UpdateCoverImageAsync(
+    public Task<bool> UpdateCoverImageAsync(
         long id,
         Stream imageData,
         string? description,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default);
 
-    public Task DeleteCoverImageAsync(
+    public Task<bool> DeleteCoverImageAsync(
         long id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default);
@@ -39,13 +39,13 @@ public interface IRecipeService
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default);
 
-    public Task<RecipeWithCuisineDto> UpdateAsync(
+    public Task<RecipeWithCuisineDto?> UpdateAsync(
         long id,
         CreateUpdateRecipeDto dto,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default);
 
-    public Task DeleteAsync(
+    public Task<bool> DeleteAsync(
         long id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default);

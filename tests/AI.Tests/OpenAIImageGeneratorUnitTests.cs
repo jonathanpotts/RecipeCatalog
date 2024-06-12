@@ -17,7 +17,7 @@ public sealed class OpenAIImageGeneratorUnitTests
     [InlineData(null, "hd", null)]
     [InlineData(null, null, "vivid")]
     [InlineData(null, null, "natural")]
-    public async void GenerateImageAsyncReturnsString(string? size, string? quality, string? style)
+    public async Task GenerateImageAsyncReturnsString(string? size, string? quality, string? style)
     {
         // Arrange
         var options = new OptionsWrapper<OpenAIImageGeneratorOptions>(new()
@@ -51,7 +51,7 @@ public sealed class OpenAIImageGeneratorUnitTests
     }
 
     [Fact]
-    public async void GenerateImageAsyncThrowsExceptionWhenNoDataReceived()
+    public async Task GenerateImageAsyncThrowsExceptionWhenNoDataReceived()
     {
         // Arrange
         var options = new OptionsWrapper<OpenAIImageGeneratorOptions>(new()

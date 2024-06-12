@@ -9,7 +9,7 @@ namespace JonathanPotts.RecipeCatalog.AI.Tests;
 public sealed class OpenAITextGeneratorUnitTests
 {
     [Fact]
-    public async void GenerateDataFromChatCompletionsAsyncReturnsData()
+    public async Task GenerateDataFromChatCompletionsAsyncReturnsData()
     {
         // Arrange
         var options = new OptionsWrapper<OpenAITextGeneratorOptions>(new()
@@ -41,7 +41,7 @@ public sealed class OpenAITextGeneratorUnitTests
     }
 
     [Fact]
-    public async void GenerateEmbeddingsAsyncReturnsFloatArray()
+    public async Task GenerateEmbeddingsAsyncReturnsFloatArray()
     {
         // Arrange
         var options = new OptionsWrapper<OpenAITextGeneratorOptions>(new()

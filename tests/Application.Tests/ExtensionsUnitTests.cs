@@ -17,7 +17,7 @@ public sealed class ExtensionsUnitTests
     [InlineData(false, false)]
     [InlineData(true, false)]
     [InlineData(false, true)]
-    public async void AddApplicationServicesReturnsPopulatedServiceProvider(bool hasGeneratorId, bool hasOpenAIApiKey)
+    public async Task AddApplicationServicesReturnsPopulatedServiceProvider(bool hasGeneratorId, bool hasOpenAIApiKey)
     {
         // Arrange
         ServiceCollection services = new();

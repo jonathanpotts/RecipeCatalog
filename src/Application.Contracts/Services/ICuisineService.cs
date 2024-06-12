@@ -17,13 +17,13 @@ public interface ICuisineService
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default);
 
-    public Task<CuisineDto> UpdateAsync(
+    public Task<CuisineDto?> UpdateAsync(
         int id,
         CreateUpdateCuisineDto dto,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default);
 
-    public Task DeleteAsync(
+    public Task<bool> DeleteAsync(
         int id,
         ClaimsPrincipal user,
         CancellationToken cancellationToken = default);

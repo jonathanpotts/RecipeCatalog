@@ -52,7 +52,7 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetListAsyncReturnsItems()
+    public async Task GetListAsyncReturnsItems()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -65,7 +65,7 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetAsyncReturnsDto()
+    public async Task GetAsyncReturnsDto()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -79,7 +79,7 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetAsyncReturnsNullWithInvalidId()
+    public async Task GetAsyncReturnsNullWithInvalidId()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -92,7 +92,7 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void CreateAsyncReturnsDto()
+    public async Task CreateAsyncReturnsDto()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -111,7 +111,7 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void CreateAsyncThrowsDbUpdateExceptionWhenNameAlreadyExists()
+    public async Task CreateAsyncThrowsDbUpdateExceptionWhenNameAlreadyExists()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -126,7 +126,7 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void CreateAsyncThrowsSecurityExceptionWhenUnauthorized()
+    public async Task CreateAsyncThrowsUnauthorizedAccessExceptionWhenUnauthorized()
     {
         // Arrange
         var cuisineService = CreateCuisineService(false);
@@ -137,11 +137,11 @@ public sealed class CuisineServiceUnitTests : IDisposable
         };
 
         // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => cuisineService.CreateAsync(createDto, _anon));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => cuisineService.CreateAsync(createDto, _anon));
     }
 
     [Fact]
-    public async void CreateAsyncThrowsValidationExceptionWithInvalidInput()
+    public async Task CreateAsyncThrowsValidationExceptionWithInvalidInput()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -153,7 +153,7 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void UpdateAsyncReturnsDto()
+    public async Task UpdateAsyncReturnsDto()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -176,7 +176,7 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void UpdateAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    public async Task UpdateAsyncReturnsNullWithInvalidId()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -186,12 +186,15 @@ public sealed class CuisineServiceUnitTests : IDisposable
             Name = "Update Test"
         };
 
-        // Act / Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => cuisineService.UpdateAsync(-1, updateDto, _admin));
+        // Act
+        var result = await cuisineService.UpdateAsync(-1, updateDto, _admin);
+
+        // Assert
+        Assert.Null(result);
     }
 
     [Fact]
-    public async void UpdateAsyncThrowsSecurityExceptionWhenUnauthorized()
+    public async Task UpdateAsyncThrowsUnauthorizedAccessExceptionWhenUnauthorized()
     {
         // Arrange
         var cuisineService = CreateCuisineService(false);
@@ -202,11 +205,11 @@ public sealed class CuisineServiceUnitTests : IDisposable
         };
 
         // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => cuisineService.UpdateAsync(TestData.Cuisines[0].Id, updateDto, _anon));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => cuisineService.UpdateAsync(TestData.Cuisines[0].Id, updateDto, _anon));
     }
 
     [Fact]
-    public async void UpdateAsyncThrowsValidationExceptionWithInvalidInput()
+    public async Task UpdateAsyncThrowsValidationExceptionWithInvalidInput()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
@@ -218,35 +221,40 @@ public sealed class CuisineServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void DeleteAsyncCompletesSuccessfully()
+    public async Task DeleteAsyncCompletesSuccessfully()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
 
         // Act
-        await cuisineService.DeleteAsync(TestData.Cuisines[0].Id, _admin);
+        var result = await cuisineService.DeleteAsync(TestData.Cuisines[0].Id, _admin);
 
         // Assert
+        Assert.True(result);
+
         Assert.Null(CreateContext().Cuisines.Find(TestData.Cuisines[0].Id));
     }
 
     [Fact]
-    public async void DeleteAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    public async Task DeleteAsyncReturnsFalseWithInvalidId()
     {
         // Arrange
         var cuisineService = CreateCuisineService();
 
-        // Act / Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => cuisineService.DeleteAsync(-1, _admin));
+        // Act
+        var result = await cuisineService.DeleteAsync(-1, _admin);
+
+        // Assert
+        Assert.False(result);
     }
 
     [Fact]
-    public async void DeleteAsyncThrowsSecurityExceptionWhenUnauthorized()
+    public async Task DeleteAsyncThrowsUnauthorizedAccessExceptionWhenUnauthorized()
     {
         // Arrange
         var cuisineService = CreateCuisineService(false);
 
         // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => cuisineService.DeleteAsync(TestData.Cuisines[0].Id, _user));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => cuisineService.DeleteAsync(TestData.Cuisines[0].Id, _user));
     }
 }

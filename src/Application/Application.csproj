@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.9.1" />
-    <PackageReference Include="IdGen" Version="3.0.5" />
-    <PackageReference Include="IdGen.DependencyInjection" Version="3.0.5" />
+    <PackageReference Include="FluentValidation" Version="11.9.2" />
+    <PackageReference Include="IdGen" Version="3.0.7" />
+    <PackageReference Include="IdGen.DependencyInjection" Version="3.0.7" />
     <PackageReference Include="Markdig" Version="0.37.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.8" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />

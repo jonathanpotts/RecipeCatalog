@@ -1,5 +1,4 @@
-﻿using System.Security;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.Application.Validation;
@@ -69,7 +68,7 @@ public static class CuisinesApi
         {
             return TypedResults.ValidationProblem(ex.ToDictionary());
         }
-        catch (SecurityException)
+        catch (UnauthorizedAccessException)
         {
             return TypedResults.Forbid();
         }
@@ -85,21 +84,24 @@ public static class CuisinesApi
     {
         try
         {
-            return TypedResults.Ok(await cuisineService.UpdateAsync(
+            var cuisine = await cuisineService.UpdateAsync(
                 id,
                 dto,
                 user,
-                cancellationToken));
+                cancellationToken);
+
+            if (cuisine == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            return TypedResults.Ok(cuisine);
         }
         catch (FluentValidation.ValidationException ex)
         {
             return TypedResults.ValidationProblem(ex.ToDictionary());
         }
-        catch (KeyNotFoundException)
-        {
-            return TypedResults.NotFound();
-        }
-        catch (SecurityException)
+        catch (UnauthorizedAccessException)
         {
             return TypedResults.Forbid();
         }
@@ -114,15 +116,14 @@ public static class CuisinesApi
     {
         try
         {
-            await cuisineService.DeleteAsync(id, user, cancellationToken);
+            if (!await cuisineService.DeleteAsync(id, user, cancellationToken))
+            {
+                return TypedResults.NotFound();
+            }
 
             return TypedResults.NoContent();
         }
-        catch (KeyNotFoundException)
-        {
-            return TypedResults.NotFound();
-        }
-        catch (SecurityException)
+        catch (UnauthorizedAccessException)
         {
             return TypedResults.Forbid();
         }

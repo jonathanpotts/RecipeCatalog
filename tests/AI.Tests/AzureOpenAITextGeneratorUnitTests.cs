@@ -9,7 +9,7 @@ namespace JonathanPotts.RecipeCatalog.AI.Tests;
 public sealed class AzureOpenAITextGeneratorUnitTests
 {
     [Fact]
-    public async void GenerateDataFromChatCompletionsAsyncReturnsData()
+    public async Task GenerateDataFromChatCompletionsAsyncReturnsData()
     {
         // Arrange
         var options = new OptionsWrapper<AzureOpenAITextGeneratorOptions>(new()
@@ -43,7 +43,7 @@ public sealed class AzureOpenAITextGeneratorUnitTests
     }
 
     [Fact]
-    public async void GenerateDataFromChatCompletionsAsyncThrowsWhenDeploymentNameMissing()
+    public async Task GenerateDataFromChatCompletionsAsyncThrowsWhenDeploymentNameMissing()
     {
         // Arrange
         var options = new OptionsWrapper<AzureOpenAITextGeneratorOptions>(new()
@@ -59,7 +59,7 @@ public sealed class AzureOpenAITextGeneratorUnitTests
     }
 
     [Fact]
-    public async void GenerateEmbeddingsAsyncReturnsFloatArray()
+    public async Task GenerateEmbeddingsAsyncReturnsFloatArray()
     {
         // Arrange
         var options = new OptionsWrapper<AzureOpenAITextGeneratorOptions>(new()
@@ -92,7 +92,7 @@ public sealed class AzureOpenAITextGeneratorUnitTests
     }
 
     [Fact]
-    public async void GenerateEmbeddingsAsyncThrowsWhenDeploymentNameMissing()
+    public async Task GenerateEmbeddingsAsyncThrowsWhenDeploymentNameMissing()
     {
         // Arrange
         var options = new OptionsWrapper<AzureOpenAITextGeneratorOptions>(new()

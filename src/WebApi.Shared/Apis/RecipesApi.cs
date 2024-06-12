@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Security;
 using System.Security.Claims;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
@@ -79,17 +78,15 @@ public static class RecipesApi
         long id,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            var coverImage = await recipeService.GetCoverImageAsync(id, cancellationToken);
+        var coverImage = await recipeService.GetCoverImageAsync(id, cancellationToken);
 
-            var lastModified = File.GetLastWriteTimeUtc(coverImage);
-            return TypedResults.PhysicalFile(coverImage, "image/webp", lastModified: lastModified);
-        }
-        catch (KeyNotFoundException)
+        if (coverImage == null)
         {
             return TypedResults.NotFound();
         }
+
+        var lastModified = File.GetLastWriteTimeUtc(coverImage);
+        return TypedResults.PhysicalFile(coverImage, "image/webp", lastModified: lastModified);
     }
 
     [Authorize]
@@ -105,12 +102,15 @@ public static class RecipesApi
         {
             using var imageData = imageFile.OpenReadStream();
 
-            await recipeService.UpdateCoverImageAsync(
+            if (!await recipeService.UpdateCoverImageAsync(
                 id,
                 imageData,
                 description,
                 user,
-                cancellationToken);
+                cancellationToken))
+            {
+                return TypedResults.NotFound();
+            }
 
             return TypedResults.NoContent();
         }
@@ -118,11 +118,7 @@ public static class RecipesApi
         {
             return TypedResults.BadRequest();
         }
-        catch (KeyNotFoundException)
-        {
-            return TypedResults.NotFound();
-        }
-        catch (SecurityException)
+        catch (UnauthorizedAccessException)
         {
             return TypedResults.Forbid();
         }
@@ -137,18 +133,17 @@ public static class RecipesApi
     {
         try
         {
-            await recipeService.DeleteCoverImageAsync(
+            if (!await recipeService.DeleteCoverImageAsync(
                 id,
                 user,
-                cancellationToken);
+                cancellationToken))
+            {
+                return TypedResults.NotFound();
+            }
 
             return TypedResults.NoContent();
         }
-        catch (KeyNotFoundException)
-        {
-            return TypedResults.NotFound();
-        }
-        catch (SecurityException)
+        catch (UnauthorizedAccessException)
         {
             return TypedResults.Forbid();
         }
@@ -174,7 +169,7 @@ public static class RecipesApi
         {
             return TypedResults.ValidationProblem(ex.ToDictionary());
         }
-        catch (SecurityException)
+        catch (UnauthorizedAccessException)
         {
             return TypedResults.Forbid();
         }
@@ -190,21 +185,24 @@ public static class RecipesApi
     {
         try
         {
-            return TypedResults.Ok(await recipeService.UpdateAsync(
+            var recipe = await recipeService.UpdateAsync(
                 id,
                 dto,
                 user,
-                cancellationToken));
+                cancellationToken);
+
+            if (recipe == null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            return TypedResults.Ok(recipe);
         }
         catch (FluentValidation.ValidationException ex)
         {
             return TypedResults.ValidationProblem(ex.ToDictionary());
         }
-        catch (KeyNotFoundException)
-        {
-            return TypedResults.NotFound();
-        }
-        catch (SecurityException)
+        catch (UnauthorizedAccessException)
         {
             return TypedResults.Forbid();
         }
@@ -219,15 +217,14 @@ public static class RecipesApi
     {
         try
         {
-            await recipeService.DeleteAsync(id, user, cancellationToken);
+            if (!await recipeService.DeleteAsync(id, user, cancellationToken))
+            {
+                return TypedResults.NotFound();
+            }
 
             return TypedResults.NoContent();
         }
-        catch (KeyNotFoundException)
-        {
-            return TypedResults.NotFound();
-        }
-        catch (SecurityException)
+        catch (UnauthorizedAccessException)
         {
             return TypedResults.Forbid();
         }

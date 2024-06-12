@@ -18,7 +18,7 @@ public sealed class AzureOpenAIImageGeneratorUnitTests
     [InlineData(null, "hd", null)]
     [InlineData(null, null, "vivid")]
     [InlineData(null, null, "natural")]
-    public async void GenerateImageAsyncReturnsString(string? size, string? quality, string? style)
+    public async Task GenerateImageAsyncReturnsString(string? size, string? quality, string? style)
     {
         // Arrange
         var options = new OptionsWrapper<AzureOpenAIImageGeneratorOptions>(new()
@@ -54,7 +54,7 @@ public sealed class AzureOpenAIImageGeneratorUnitTests
     }
 
     [Fact]
-    public async void GenerateImageAsyncThrowsExceptionWhenNoDataReceived()
+    public async Task GenerateImageAsyncThrowsExceptionWhenNoDataReceived()
     {
         // Arrange
         var options = new OptionsWrapper<AzureOpenAIImageGeneratorOptions>(new()

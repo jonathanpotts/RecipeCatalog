@@ -1,5 +1,4 @@
-﻿using System.Security;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using FluentValidation;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
@@ -57,7 +56,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetListAsyncReturnsPagedResult()
+    public async Task GetListAsyncReturnsPagedResult()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -75,7 +74,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(0)]
     [InlineData(1)]
     [InlineData(2)]
-    public async void GetListAsyncReturnsPagedResultWithSkip(int skip)
+    public async Task GetListAsyncReturnsPagedResultWithSkip(int skip)
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -94,7 +93,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(1)]
     [InlineData(2)]
     [InlineData(3)]
-    public async void GetListAsyncReturnsPagedResultWithTake(int take)
+    public async Task GetListAsyncReturnsPagedResultWithTake(int take)
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -110,7 +109,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [Theory]
     [InlineData((int[])[1])]
     [InlineData((int[])[2])]
-    public async void GetListAsyncReturnsPagedResultWithCuisineIds(int[] cuisineIds)
+    public async Task GetListAsyncReturnsPagedResultWithCuisineIds(int[] cuisineIds)
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -124,7 +123,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetListAsyncReturnsPagedResultWithDetails()
+    public async Task GetListAsyncReturnsPagedResultWithDetails()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -142,7 +141,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(-1, null)]
     [InlineData(null, 0)]
     [InlineData(null, IRecipeService.MaxItemsPerPage + 1)]
-    public async void GetListAsyncThrowsValidationExceptionWithInvalidInputs(
+    public async Task GetListAsyncThrowsValidationExceptionWithInvalidInputs(
         int? skip,
         int? take)
     {
@@ -154,7 +153,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetAsyncReturnsDto()
+    public async Task GetAsyncReturnsDto()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -168,7 +167,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetAsyncReturnsNullWithInvalidId()
+    public async Task GetAsyncReturnsNullWithInvalidId()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -181,7 +180,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetCoverImageAsyncReturnsPath()
+    public async Task GetCoverImageAsyncReturnsPath()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -195,90 +194,107 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void GetCoverImageAsyncThrowsKeyNotFoundExceptionWithInvalidId()
-    {
-        // Arrange
-        var recipeService = CreateRecipeService();
-
-        // Act / Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.GetCoverImageAsync(-1));
-    }
-
-    [Fact]
-    public async void GetCoverImageAsyncThrowsExceptionWhenNoCoverImage()
-    {
-        // Arrange
-        var recipeService = CreateRecipeService();
-        var recipeId = TestData.Recipes.First(x => x.CoverImage == null).Id;
-
-        // Act / Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.GetCoverImageAsync(recipeId));
-    }
-
-    [Fact]
-    public async void UpdateCoverImageAsyncCompletesSuccessfully()
-    {
-        // Arrange
-        var recipeService = CreateRecipeService();
-        using var imageData = File.OpenRead(Path.Combine("Images", "new-image.webp"));
-
-        // Act / Assert
-        await recipeService.UpdateCoverImageAsync(TestData.Recipes[0].Id, imageData, null, _admin);
-    }
-
-    [Fact]
-    public async void UpdateCoverImageAsyncThrowsKeyNotFoundExceptionWithInvalidId()
-    {
-        // Arrange
-        var recipeService = CreateRecipeService();
-
-        // Act / Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.UpdateCoverImageAsync(-1, Stream.Null, null, _admin));
-    }
-
-    [Fact]
-    public async void UpdateCoverImageAsyncThrowsSecurityExceptionWhenUnauthorized()
-    {
-        // Arrange
-        var recipeService = CreateRecipeService(false);
-
-        // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => recipeService.UpdateCoverImageAsync(TestData.Recipes[0].Id, Stream.Null, null, _user));
-    }
-
-    [Fact]
-    public async void DeleteCoverImageAsyncCompletesSuccessfully()
+    public async Task GetCoverImageAsyncReturnsNullWithInvalidId()
     {
         // Arrange
         var recipeService = CreateRecipeService();
 
         // Act
-        await recipeService.DeleteCoverImageAsync(TestData.Recipes[0].Id, _admin);
+        var result = await recipeService.GetCoverImageAsync(-1);
 
         // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetCoverImageAsyncReturnsNullWhenNoCoverImage()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+        var recipeId = TestData.Recipes.First(x => x.CoverImage == null).Id;
+
+        // Act
+        var result = await recipeService.GetCoverImageAsync(recipeId);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task UpdateCoverImageAsyncCompletesSuccessfully()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+        using var imageData = File.OpenRead(Path.Combine("Images", "new-image.webp"));
+
+        // Act
+        var result = await recipeService.UpdateCoverImageAsync(TestData.Recipes[0].Id, imageData, null, _admin);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UpdateCoverImageAsyncReturnsFalseWithInvalidId()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act
+        var result = await recipeService.UpdateCoverImageAsync(-1, Stream.Null, null, _admin);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task UpdateCoverImageAsyncThrowsUnauthorizedAccessExceptionWhenUnauthorized()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService(false);
+
+        // Act / Assert
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => recipeService.UpdateCoverImageAsync(TestData.Recipes[0].Id, Stream.Null, null, _user));
+    }
+
+    [Fact]
+    public async Task DeleteCoverImageAsyncCompletesSuccessfully()
+    {
+        // Arrange
+        var recipeService = CreateRecipeService();
+
+        // Act
+        var result = await recipeService.DeleteCoverImageAsync(TestData.Recipes[0].Id, _admin);
+
+        // Assert
+        Assert.True(result);
+
         var recipe = CreateContext().Recipes.Find(TestData.Recipes[0].Id);
         Assert.NotNull(recipe);
         Assert.Null(recipe.CoverImage);
     }
 
     [Fact]
-    public async void DeleteCoverImageAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    public async Task DeleteCoverImageAsyncReturnsFalseWithInvalidId()
     {
         // Arrange
         var recipeService = CreateRecipeService();
 
-        // Act / Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.DeleteCoverImageAsync(-1, _admin));
+        // Act
+        var result = await recipeService.DeleteCoverImageAsync(-1, _admin);
+
+        // Assert
+        Assert.False(result);
     }
 
     [Fact]
-    public async void DeleteCoverImageAsyncThrowsSecurityExceptionWhenUnauthorized()
+    public async Task DeleteCoverImageAsyncThrowsUnauthorizedExceptionWhenUnauthorized()
     {
         // Arrange
         var recipeService = CreateRecipeService(false);
 
         // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => recipeService.DeleteCoverImageAsync(TestData.Recipes[0].Id, _user));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => recipeService.DeleteCoverImageAsync(TestData.Recipes[0].Id, _user));
     }
 
     [Theory]
@@ -286,7 +302,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(true, true)]
     [InlineData(false, false)]
     [InlineData(false, true)]
-    public async void CreateAsyncReturnsDto(bool hasDescription, bool withAITextGenerator)
+    public async Task CreateAsyncReturnsDto(bool hasDescription, bool withAITextGenerator)
     {
         // Arrange
         var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
@@ -309,7 +325,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void CreateAsyncThrowsSecurityExceptionWhenUnauthorized()
+    public async Task CreateAsyncThrowsUnauthorizedExceptionWhenUnauthorized()
     {
         // Arrange
         var recipeService = CreateRecipeService(false);
@@ -323,11 +339,11 @@ public sealed class RecipeServiceUnitTests : IDisposable
         };
 
         // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => recipeService.CreateAsync(createDto, _anon));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => recipeService.CreateAsync(createDto, _anon));
     }
 
     [Fact]
-    public async void CreateAsyncThrowsValidationExceptionWithInvalidInput()
+    public async Task CreateAsyncThrowsValidationExceptionWithInvalidInput()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -346,7 +362,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(true, true)]
     [InlineData(false, false)]
     [InlineData(false, true)]
-    public async void UpdateAsyncReturnsDto(bool hasDescription, bool withAITextGenerator)
+    public async Task UpdateAsyncReturnsDto(bool hasDescription, bool withAITextGenerator)
     {
         // Arrange
         var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
@@ -373,7 +389,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void UpdateAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    public async Task UpdateAsyncReturnsNullWithInvalidId()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -386,12 +402,15 @@ public sealed class RecipeServiceUnitTests : IDisposable
             Instructions = "This is a test."
         };
 
-        // Act / Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.UpdateAsync(-1, updateDto, _admin));
+        // Act
+        var result = await recipeService.UpdateAsync(-1, updateDto, _admin);
+
+        // Assert
+        Assert.Null(result);
     }
 
     [Fact]
-    public async void UpdateAsyncThrowsSecurityExceptionWhenUnauthorized()
+    public async Task UpdateAsyncThrowsUnauthorizedAccessExceptionWhenUnauthorized()
     {
         // Arrange
         var recipeService = CreateRecipeService(false);
@@ -405,11 +424,11 @@ public sealed class RecipeServiceUnitTests : IDisposable
         };
 
         // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => recipeService.UpdateAsync(TestData.Recipes[0].Id, updateDto, _user));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => recipeService.UpdateAsync(TestData.Recipes[0].Id, updateDto, _user));
     }
 
     [Fact]
-    public async void UpdateAsyncThrowsValidationExceptionWithInvalidInput()
+    public async Task UpdateAsyncThrowsValidationExceptionWithInvalidInput()
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -424,42 +443,47 @@ public sealed class RecipeServiceUnitTests : IDisposable
     }
 
     [Fact]
-    public async void DeleteAsyncCompletesSuccessfully()
+    public async Task DeleteAsyncCompletesSuccessfully()
     {
         // Arrange
         var recipeService = CreateRecipeService();
 
         // Act
-        await recipeService.DeleteAsync(TestData.Recipes[0].Id, _admin);
+        var result = await recipeService.DeleteAsync(TestData.Recipes[0].Id, _admin);
 
         // Assert
+        Assert.True(result);
+
         Assert.Null(CreateContext().Recipes.Find(TestData.Recipes[0].Id));
     }
 
     [Fact]
-    public async void DeleteAsyncThrowsKeyNotFoundExceptionWithInvalidId()
+    public async Task DeleteAsyncReturnsFalseWithInvalidId()
     {
         // Arrange
         var recipeService = CreateRecipeService();
 
-        // Act / Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => recipeService.DeleteAsync(-1, _admin));
+        // Act
+        var result = await recipeService.DeleteAsync(-1, _admin);
+
+        // Assert
+        Assert.False(result);
     }
 
     [Fact]
-    public async void DeleteAsyncThrowsSecurityExceptionWhenUnauthorized()
+    public async Task DeleteAsyncThrowsUnauthorizedAccessExceptionWhenUnauthorized()
     {
         // Arrange
         var recipeService = CreateRecipeService(false);
 
         // Act / Assert
-        await Assert.ThrowsAsync<SecurityException>(() => recipeService.DeleteAsync(TestData.Recipes[0].Id, _user));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => recipeService.DeleteAsync(TestData.Recipes[0].Id, _user));
     }
 
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async void SearchAsyncReturnsPagedResult(bool withAITextGenerator)
+    public async Task SearchAsyncReturnsPagedResult(bool withAITextGenerator)
     {
         // Arrange
         var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
@@ -477,7 +501,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(0)]
     [InlineData(1)]
     [InlineData(2)]
-    public async void SearchAsyncReturnsPagedResultWithSkip(int skip)
+    public async Task SearchAsyncReturnsPagedResultWithSkip(int skip)
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -499,7 +523,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(1)]
     [InlineData(2)]
     [InlineData(3)]
-    public async void SearchAsyncReturnsPagedResultWithTake(int take)
+    public async Task SearchAsyncReturnsPagedResultWithTake(int take)
     {
         // Arrange
         var recipeService = CreateRecipeService();
@@ -516,7 +540,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(-1, null)]
     [InlineData(null, 0)]
     [InlineData(null, IRecipeService.MaxItemsPerPage + 1)]
-    public async void SearchAsyncThrowsValidationExceptionWithInvalidInput(int? skip, int? take)
+    public async Task SearchAsyncThrowsValidationExceptionWithInvalidInput(int? skip, int? take)
     {
         // Arrange
         var recipeService = CreateRecipeService();
