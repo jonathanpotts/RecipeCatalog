@@ -2,10 +2,11 @@
 
 ![Screenshot](screenshot.png)
 
-AIDataGenerator is a console app that uses the [AI class library](../src/AI/) to generate example data for the catalog. Technologies used:
+AIDataGenerator is a console app that generates example data for the catalog. Technologies used:
 
 - [.NET](https://dotnet.microsoft.com/)
     - [Generic Host](https://learn.microsoft.com/dotnet/core/extensions/generic-host)
+- [Semantic Kernel](https://learn.microsoft.com/semantic-kernel/overview/?tabs=Csharp)
 - [SkiaSharp](https://github.com/mono/SkiaSharp)
 - [Spectre.Console](https://spectreconsole.net/)
 
@@ -15,24 +16,19 @@ Configuration can be provided in appsettings.json, user secrets, environment var
 
 The following configuration options are available:
 
-- AITextGenerator
-    - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
-    - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
-    - ChatCompletionsDeploymentName
-        - OpenAI - Chat Completions model (defaults to gpt-3.5-turbo); supports gpt-3.5-turbo or gpt-4-turbo-preview
-        - Azure OpenAI Service - **(Required)** Deployment name for Chat Completions model; supports gpt-35-turbo (0125) or gpt-4 (0125-preview)
-    - EmbeddingsEndpoint - **(Azure OpenAI Service)** Azure OpenAI Service Endpoint to use for embeddings; Defaults to Endpoint
-    - EmbeddingsApiKey - **(Azure OpenAI Service)** API key for Azure OpenAI Service Endpoint to use for embeddings; Defaults to ApiKey
-    - EmbeddingsDeploymentName
-        - OpenAI - Embeddings model (defaults to text-embedding-3-small); supports text-embedding-ada-002 or text-embedding-3-small
-        - Azure OpenAI Service - **(Required)** Deployment name for Embeddings model; supports text-embedding-ada-002 or text-embedding-3-small
-- AIImageGenerator
-    - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
-    - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
-    - DeploymentName - **(Required for Azure OpenAI Service)** Deployment name for Image Generation model; supports dall-e-3
-    - Size - Size of generated image; supports 1024x1024, 1024x1792, or 1792x1024 (defaults to 1024x1024)
-    - Quality - Quality of image; supports standard or hd (defaults to standard)
-    - Style - Style of image; supports vivid or natural (defaults to vivid)
+- OpenAI
+    - ChatCompletion
+        - Model - **(Required)** Chat completion model (e.g. gpt-3.5-turbo, gpt-4o); use deployment name for Azure OpenAI Service
+        - Key - **(Required)** API key for OpenAI or Azure OpenAI Service
+        - Endpoint - Azure OpenAI Service endpoint; only used when using Azure OpenAI Service
+    - TextEmbedding
+        - Model - **(Required)** Text embedding model (e.g. text-embedding-ada-002, text-embedding-3-small); use deployment name for Azure OpenAI Service
+        - Key - **(Required)** API key for OpenAI or Azure OpenAI Service
+        - Endpoint - Azure OpenAI Service endpoint; only used when using Azure OpenAI Service
+    - TextToImage
+        - Key - **(Required)** API key for OpenAI or Azure OpenAI Service
+        - Endpoint - Azure OpenAI Service endpoint; only used when using Azure OpenAI Service
+        - Deployment - Deployment for dall-e-3; only used when using Azure OpenAI Service
 - Worker
     - Cuisines - **(Required)** List of cuisines to generate recipes for (default values in appsettings.json)
     - RecipesPerCuisine - Number of recipes to generate for each cuisine

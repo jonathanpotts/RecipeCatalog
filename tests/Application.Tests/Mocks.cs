@@ -1,12 +1,13 @@
 ﻿using System.Security.Claims;
 using IdGen;
-using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Tests.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Embeddings;
 using Moq;
 
 namespace JonathanPotts.RecipeCatalog.Application.Tests;
@@ -64,28 +65,34 @@ public static class Mocks
         return authorizationServiceMock;
     }
 
-    public static Mock<IServiceProvider> CreateServiceProviderMock(bool withAITextGenerator = false)
+    public static Mock<IServiceProvider> CreateServiceProviderMock(bool withTextEmbeddingGenerationService = false)
     {
         Mock<IServiceProvider> serviceProviderMock = new();
 
-        if (withAITextGenerator)
+        if (withTextEmbeddingGenerationService)
         {
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
             serviceProviderMock
-                .Setup(x => x.GetService(typeof(IAITextGenerator)))
-                .Returns(CreateAITextGeneratorMock().Object);
+                .Setup(x => x.GetService(typeof(ITextEmbeddingGenerationService)))
+                .Returns(CreateTextEmbeddingGenerationServiceMock().Object);
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         }
 
         return serviceProviderMock;
     }
 
-    public static Mock<IAITextGenerator> CreateAITextGeneratorMock()
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+    public static Mock<ITextEmbeddingGenerationService> CreateTextEmbeddingGenerationServiceMock()
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
     {
-        Mock<IAITextGenerator> aiTextGeneratorMock = new();
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        Mock<ITextEmbeddingGenerationService> textEmbeddingGenerationServiceMock = new();
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
-        aiTextGeneratorMock
-            .Setup(x => x.GenerateEmbeddingsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()).Result)
-            .Returns(new ReadOnlyMemory<float>(TestData.GetExampleNameEmbeddings()));
+        textEmbeddingGenerationServiceMock
+            .Setup(x => x.GenerateEmbeddingsAsync(It.IsAny<IList<string>>(), It.IsAny<Kernel>(), It.IsAny<CancellationToken>()).Result)
+            .Returns([new ReadOnlyMemory<float>(TestData.GetExampleNameEmbeddings())]);
 
-        return aiTextGeneratorMock;
+        return textEmbeddingGenerationServiceMock;
     }
 }

@@ -22,13 +22,13 @@ public sealed class RecipeServiceUnitTests : IDisposable
 
     private RecipeService CreateRecipeService(
         bool authorizationServiceSucceeds = true,
-        bool withAITextGenerator = false)
+        bool withTextEmbeddingGenerationService = false)
         => new(
             CreateContext(),
             Mocks.CreateIdGeneratorMock().Object,
             Mocks.CreateUserManagerMock().Object,
             Mocks.CreateAuthorizationServiceMock(authorizationServiceSucceeds).Object,
-            Mocks.CreateServiceProviderMock(withAITextGenerator).Object);
+            Mocks.CreateServiceProviderMock(withTextEmbeddingGenerationService).Object);
 
     public RecipeServiceUnitTests()
     {
@@ -302,10 +302,10 @@ public sealed class RecipeServiceUnitTests : IDisposable
     [InlineData(true, true)]
     [InlineData(false, false)]
     [InlineData(false, true)]
-    public async Task CreateAsyncReturnsDto(bool hasDescription, bool withAITextGenerator)
+    public async Task CreateAsyncReturnsDto(bool hasDescription, bool withTextEmbeddingGenerationService)
     {
         // Arrange
-        var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
+        var recipeService = CreateRecipeService(withTextEmbeddingGenerationService: withTextEmbeddingGenerationService);
 
         CreateUpdateRecipeDto createDto = new()
         {
@@ -365,7 +365,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     public async Task UpdateAsyncReturnsDto(bool hasDescription, bool withAITextGenerator)
     {
         // Arrange
-        var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
+        var recipeService = CreateRecipeService(withTextEmbeddingGenerationService: withAITextGenerator);
 
         CreateUpdateRecipeDto updateDto = new()
         {
@@ -486,7 +486,7 @@ public sealed class RecipeServiceUnitTests : IDisposable
     public async Task SearchAsyncReturnsPagedResult(bool withAITextGenerator)
     {
         // Arrange
-        var recipeService = CreateRecipeService(withAITextGenerator: withAITextGenerator);
+        var recipeService = CreateRecipeService(withTextEmbeddingGenerationService: withAITextGenerator);
 
         // Act
         var result = await recipeService.SearchAsync(TestData.Recipes[0].Name!);

@@ -17,13 +17,13 @@
     <PackageReference Include="IdGen" Version="3.0.7" />
     <PackageReference Include="IdGen.DependencyInjection" Version="3.0.7" />
     <PackageReference Include="Markdig" Version="0.37.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.14.1" />
     <PackageReference Include="SkiaSharp" Version="2.88.8" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
     <PackageReference Include="System.Numerics.Tensors" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AI\AI.csproj" />
     <ProjectReference Include="..\Application.Contracts\Application.Contracts.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>

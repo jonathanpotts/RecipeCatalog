@@ -1,23 +1,28 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.AIDataGenerator.Models;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
 using JonathanPotts.RecipeCatalog.Domain.Shared.ValueObjects;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Embeddings;
+using Microsoft.SemanticKernel.TextToImage;
 using SkiaSharp;
 using Spectre.Console;
 
 namespace JonathanPotts.RecipeCatalog.AIDataGenerator;
 
 internal class Worker(
-    IOptions<WorkerOptions> options,
+    IOptions<Options.Worker> options,
     IHostApplicationLifetime applicationLifetime,
     ILogger<Worker> logger,
-    IAITextGenerator textGenerator,
-    IAIImageGenerator imageGenerator) : BackgroundService
+    IChatCompletionService chatCompletionService,
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+    ITextEmbeddingGenerationService textEmbeddingGenerationService,
+    ITextToImageService textToImageService) : BackgroundService
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 {
     private static readonly JsonSerializerOptions s_jsonOptions = new()
     {
@@ -30,6 +35,8 @@ internal class Worker(
     private readonly int _imageQuality = options.Value.ImageQuality ?? 60;
     private readonly int _recipeGenerationMaxConcurrency = options.Value.RecipeGenerationMaxConcurrency ?? 5;
     private readonly int _recipesPerCuisine = options.Value.RecipesPerCuisine ?? 1;
+    private const int _imageWidth = 1024;
+    private const int _imageHeight = 1024;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -38,7 +45,7 @@ internal class Worker(
         var openAIGrid = new Grid();
         openAIGrid.AddColumns(2);
         openAIGrid.AddRow("Chat Completions",
-            "[bold]:sparkles:GPT-3.5 Turbo[/] [dim]gpt-3.5-turbo[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4-turbo-preview[/]");
+            "[bold]:sparkles:GPT-3.5 Turbo[/] [dim]gpt-3.5-turbo[/] / [bold]:sparkles:GPT-4o[/] [dim]gpt-4o[/]");
         openAIGrid.AddRow("Embeddings",
             "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
         openAIGrid.AddRow("Image Generation",
@@ -54,7 +61,7 @@ internal class Worker(
         var azureOpenAIGrid = new Grid();
         azureOpenAIGrid.AddColumns(2);
         azureOpenAIGrid.AddRow("Chat Completions",
-            "[bold]:sparkles:GPT-3.5 Turbo[/] [dim]gpt-35-turbo (0125)[/] / [bold]:sparkles:GPT-4 Turbo[/] [dim]gpt-4 (0125-preview)[/]");
+            "[bold]:sparkles:GPT-3.5 Turbo[/] [dim]gpt-35-turbo (0125)[/] / [bold]:sparkles:GPT-4o[/] [dim]gpt-4o (2024-05-13)[/]");
         azureOpenAIGrid.AddRow("Embeddings",
             "[bold]:sparkles:Ada V2[/] [dim]text-embedding-ada-002[/] / [bold]:sparkles:Embedding V3 small[/] [dim]text-embedding-3-small[/]");
         azureOpenAIGrid.AddRow("Image Generation",
@@ -123,7 +130,7 @@ internal class Worker(
             {
                 var recipeListTask = ctx.AddTask("Recipe list");
 
-                recipeList = await textGenerator.GenerateDataFromChatCompletionsAsync(
+                recipeList = await chatCompletionService.GenerateDataFromChatCompletionsAsync(
                     new GeneratedRecipeList
                     {
                         Cuisines =
@@ -175,7 +182,7 @@ internal class Worker(
 
                             try
                             {
-                                var generatedRecipe = await textGenerator.GenerateDataFromChatCompletionsAsync(
+                                var generatedRecipe = await chatCompletionService.GenerateDataFromChatCompletionsAsync(
                                     new GeneratedRecipe
                                     {
                                         CoverImagePrompt =
@@ -265,8 +272,9 @@ internal class Worker(
 
                         try
                         {
-                            var generatedImage =
-                                await imageGenerator.GenerateImageAsync(recipe.CoverImagePrompt, cancellationToken);
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+                            var generatedImage = await textToImageService.GenerateImageAsync(recipe.CoverImagePrompt, _imageWidth, _imageHeight, cancellationToken: cancellationToken);
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
                             var bytes = await client.GetByteArrayAsync(generatedImage, cancellationToken);
 
@@ -330,7 +338,7 @@ internal class Worker(
                             if (!string.IsNullOrEmpty(name))
                             {
                                 var nameEmbeddings =
-                                await textGenerator.GenerateEmbeddingsAsync(name, cancellationToken);
+                                    (await textEmbeddingGenerationService.GenerateEmbeddingsAsync([name], cancellationToken: cancellationToken)).First();
 
                                 recipe.NameEmbeddings = nameEmbeddings.ToArray();
                             }
@@ -338,7 +346,7 @@ internal class Worker(
                             if (!string.IsNullOrEmpty(description))
                             {
                                 var descriptionEmbeddings =
-                                await textGenerator.GenerateEmbeddingsAsync(description, cancellationToken);
+                                    (await textEmbeddingGenerationService.GenerateEmbeddingsAsync([description], cancellationToken: cancellationToken)).First();
 
                                 recipe.DescriptionEmbeddings = descriptionEmbeddings.ToArray();
                             }

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace JonathanPotts.RecipeCatalog.AIDataGenerator;
+namespace JonathanPotts.RecipeCatalog.AIDataGenerator.Options;
 
-internal class WorkerOptions
+internal class Worker
 {
     [Required]
     public List<string>? Cuisines { get; set; }

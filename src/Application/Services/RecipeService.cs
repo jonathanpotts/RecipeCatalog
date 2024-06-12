@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using FluentValidation;
 using IdGen;
-using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Models;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
@@ -15,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel.Embeddings;
 using SkiaSharp;
 
 namespace JonathanPotts.RecipeCatalog.Application.Services;
@@ -267,20 +267,23 @@ public class RecipeService(
             recipe.Instructions.Markdown!,
             s_pipeline);
 
-        var textGenerator = serviceProvider.GetService<IAITextGenerator>();
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        var textEmbeddingGenerationService = serviceProvider.GetService<ITextEmbeddingGenerationService>();
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
-        if (textGenerator != null)
+        if (textEmbeddingGenerationService != null)
         {
-            var nameEmbeddings = await textGenerator.GenerateEmbeddingsAsync(
-                recipe.Name!.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower(),
-                cancellationToken);
+            var nameEmbeddings = 
+                (await textEmbeddingGenerationService.GenerateEmbeddingsAsync(
+                [recipe.Name!.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower()],
+                cancellationToken: cancellationToken)).First();
             recipe.NameEmbeddings = nameEmbeddings.ToArray();
 
             if (!string.IsNullOrEmpty(recipe.Description))
             {
-                var descriptionEmbeddings = await textGenerator.GenerateEmbeddingsAsync(
-                    recipe.Description.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower(),
-                    cancellationToken);
+                var descriptionEmbeddings = (await textEmbeddingGenerationService.GenerateEmbeddingsAsync(
+                    [recipe.Description.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower()],
+                    cancellationToken: cancellationToken)).First();
                 recipe.DescriptionEmbeddings = descriptionEmbeddings.ToArray();
             }
         }
@@ -333,20 +336,22 @@ public class RecipeService(
 
         recipe.Modified = DateTime.UtcNow;
 
-        var textGenerator = serviceProvider.GetService<IAITextGenerator>();
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        var textEmbeddingGenerationService = serviceProvider.GetService<ITextEmbeddingGenerationService>();
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
-        if (textGenerator != null)
+        if (textEmbeddingGenerationService != null)
         {
-            var nameEmbeddings = await textGenerator.GenerateEmbeddingsAsync(
-                recipe.Name!.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower(),
-                cancellationToken);
+            var nameEmbeddings = (await textEmbeddingGenerationService.GenerateEmbeddingsAsync(
+                [recipe.Name!.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower()],
+                cancellationToken: cancellationToken)).First();
             recipe.NameEmbeddings = nameEmbeddings.ToArray();
 
             if (!string.IsNullOrEmpty(recipe.Description))
             {
-                var descriptionEmbeddings = await textGenerator.GenerateEmbeddingsAsync(
-                    recipe.Description.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower(),
-                    cancellationToken);
+                var descriptionEmbeddings = (await textEmbeddingGenerationService.GenerateEmbeddingsAsync(
+                    [recipe.Description.Trim().ReplaceLineEndings().Replace(Environment.NewLine, " ").ToLower()],
+                    cancellationToken: cancellationToken)).First();
                 recipe.DescriptionEmbeddings = descriptionEmbeddings.ToArray();
             }
         }
@@ -439,11 +444,13 @@ public class RecipeService(
         skip ??= 0;
         take ??= DefaultItemsPerPage;
 
-        var textGenerator = serviceProvider.GetService<IAITextGenerator>();
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+        var textEmbeddingGenerationService = serviceProvider.GetService<ITextEmbeddingGenerationService>();
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
-        if (textGenerator != null)
+        if (textEmbeddingGenerationService != null)
         {
-            var queryEmbeddings = await textGenerator.GenerateEmbeddingsAsync(query.ToLower(), cancellationToken);
+            var queryEmbeddings = (await textEmbeddingGenerationService.GenerateEmbeddingsAsync([query.ToLower()], cancellationToken: cancellationToken)).First();
 
             // ideally would use a vector database such as pgvector to perform this search
             // this is an inefficient implementation using basic EF Core functionality

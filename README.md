@@ -8,24 +8,13 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 
 ## Projects
 
-### AI
-
-[AI](src/AI/) is a class library that uses generative AI for text and image generation. Technologies used:
-
-- [.NET](https://dotnet.microsoft.com/)
-    - [Dependency Injection](https://learn.microsoft.com/dotnet/core/extensions/dependency-injection)
-    - [Options Pattern](https://learn.microsoft.com/dotnet/core/extensions/options)
-- [OpenAI](https://openai.com/) / [Azure OpenAI Service](https://azure.microsoft.com/products/ai-services/openai-service/) ([Azure SDK for .NET](https://github.com/Azure/azure-sdk-for-net))
-    - [Chat Completions](https://platform.openai.com/docs/guides/text-generation/chat-completions-api) in [JSON Mode](https://platform.openai.com/docs/guides/text-generation/json-mode): [GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5) / [GPT-4 Turbo](https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo)
-    - [Embeddings](https://platform.openai.com/docs/guides/embeddings): [Ada V2 / Embedding V3 Small](https://platform.openai.com/docs/models/embeddings)
-    - [Image Generation](https://platform.openai.com/docs/guides/images): [DALL-E 3](https://platform.openai.com/docs/models/dall-e)
-
 ### AIDataGenerator
 
-[AIDataGenerator](src/AIDataGenerator/) is a console app that uses the [AI class library](src/AI/) to generate example data for the catalog. Technologies used:
+[AIDataGenerator](src/AIDataGenerator/) is a console app that generates example data for the catalog. Technologies used:
 
 - [.NET](https://dotnet.microsoft.com/)
     - [Generic Host](https://learn.microsoft.com/dotnet/core/extensions/generic-host)
+- [Semantic Kernel](https://learn.microsoft.com/semantic-kernel/overview/?tabs=Csharp)
 - [SkiaSharp](https://github.com/mono/SkiaSharp)
 - [Spectre.Console](https://spectreconsole.net/)
 
@@ -87,13 +76,6 @@ This project contains continuous integration (CI) and continuous deployment (CD)
     - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
 
 ### Tests
-
-#### AI.Tests
-
-[AI.Tests](tests/AI.Tests/) is a project containing tests for the [AI](src/AI/) project. Technologies used:
-
-- [xUnit](https://xunit.net/)
-- [Moq](https://github.com/devlooped/moq)
 
 #### Application.Tests
 

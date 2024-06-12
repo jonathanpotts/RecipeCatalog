@@ -1,9 +1,9 @@
 ﻿using IdGen;
 using IdGen.DependencyInjection;
-using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.Application.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
+using JonathanPotts.RecipeCatalog.Application.Options;
 using JonathanPotts.RecipeCatalog.Application.Services;
 using JonathanPotts.RecipeCatalog.Domain;
 using JonathanPotts.RecipeCatalog.Domain.Entities;
@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Embeddings;
 
 namespace JonathanPotts.RecipeCatalog.Application;
 
@@ -44,11 +47,34 @@ public static class Extensions
         services.AddScoped<IAuthorizationHandler, RecipeAuthorizationHandler>();
         services.AddScoped<IAuthorizationHandler, RecipeDtoAuthorizationHandler>();
 
-        var openAIConfiguration = configuration.GetSection("OpenAI");
+        var textEmbeddingConfiguration = configuration.GetSection("OpenAI:TextEmbedding");
 
-        if (!string.IsNullOrEmpty(openAIConfiguration.GetValue<string>("ApiKey")))
+        if (!string.IsNullOrEmpty(textEmbeddingConfiguration.GetValue<string>("Key")))
         {
-            services.AddAITextGenerator(openAIConfiguration);
+            services.AddOptions<TextEmbedding>()
+                .Bind(textEmbeddingConfiguration)
+                .ValidateDataAnnotations()
+                .ValidateOnStart();
+
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            services.AddSingleton<ITextEmbeddingGenerationService>(services =>
+            {
+                var options = services.GetRequiredService<IOptions<TextEmbedding>>().Value;
+
+                if (string.IsNullOrEmpty(options.Endpoint))
+                {
+#pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+                    return new OpenAITextEmbeddingGenerationService(options.Model, options.Key);
+#pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+                }
+                else
+                {
+#pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+                    return new AzureOpenAITextEmbeddingGenerationService(options.Model, options.Endpoint, options.Key);
+#pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+                }
+            });
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         }
 
         return services;

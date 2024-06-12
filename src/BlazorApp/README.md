@@ -18,8 +18,7 @@ The following configuration options are available:
 
 - GeneratorId - ID number for running instance (each concurrently running instance should have a unique value)
 - OpenAI - **(Required for AI Search)**
-    - Endpoint - **(Required for Azure OpenAI Service)** Azure OpenAI Service Endpoint
-    - ApiKey - **(Required)** API key for OpenAI or Azure OpenAI Service
-    - EmbeddingsDeploymentName
-        - OpenAI - Embeddings model (defaults to text-embedding-3-small); supports text-embedding-ada-002 or text-embedding-3-small
-        - Azure OpenAI Service - **(Required)** Deployment name for Embeddings model; supports text-embedding-ada-002 or text-embedding-3-small
+    - TextEmbedding
+        - Model - **(Required)** Text embedding model (e.g. text-embedding-ada-002, text-embedding-3-small); use deployment name for Azure OpenAI Service
+        - Key - **(Required)** API key for OpenAI or Azure OpenAI Service
+        - Endpoint - Azure OpenAI Service endpoint; only used when using Azure OpenAI Service

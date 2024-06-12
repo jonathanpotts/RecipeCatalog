@@ -8,7 +8,7 @@ internal static class ServiceCollectionExtensions
     public static IServiceCollection AddWorker(this IServiceCollection services,
         IConfiguration namedConfigurationSection)
     {
-        services.AddOptions<WorkerOptions>()
+        services.AddOptions<Options.Worker>()
             .Bind(namedConfigurationSection)
             .ValidateDataAnnotations()
             .ValidateOnStart();
@@ -19,9 +19,9 @@ internal static class ServiceCollectionExtensions
     }
 
     public static IServiceCollection AddWorker(this IServiceCollection services,
-        Action<WorkerOptions> configureOptions)
+        Action<Options.Worker> configureOptions)
     {
-        services.AddOptions<WorkerOptions>()
+        services.AddOptions<Options.Worker>()
             .Configure(configureOptions)
             .ValidateDataAnnotations()
             .ValidateOnStart();

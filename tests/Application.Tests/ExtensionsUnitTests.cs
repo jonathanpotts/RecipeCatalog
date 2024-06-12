@@ -1,5 +1,4 @@
 ﻿using IdGen;
-using JonathanPotts.RecipeCatalog.AI;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Authorization;
 using JonathanPotts.RecipeCatalog.Application.Contracts.Services;
 using JonathanPotts.RecipeCatalog.Domain;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel.Embeddings;
 
 namespace JonathanPotts.RecipeCatalog.Application.Tests;
 
@@ -17,7 +17,7 @@ public sealed class ExtensionsUnitTests
     [InlineData(false, false)]
     [InlineData(true, false)]
     [InlineData(false, true)]
-    public async Task AddApplicationServicesReturnsPopulatedServiceProvider(bool hasGeneratorId, bool hasOpenAIApiKey)
+    public async Task AddApplicationServicesReturnsPopulatedServiceProvider(bool hasGeneratorId, bool hasTextEmbeddingGenerationService)
     {
         // Arrange
         ServiceCollection services = new();
@@ -29,9 +29,10 @@ public sealed class ExtensionsUnitTests
             configurationValues.Add("GeneratorId", "0");
         }
 
-        if (hasOpenAIApiKey)
+        if (hasTextEmbeddingGenerationService)
         {
-            configurationValues.Add("OpenAI:ApiKey", "test-key");
+            configurationValues.Add("OpenAI:TextEmbedding:Model", "text-embedding-3-small");
+            configurationValues.Add("OpenAI:TextEmbedding:Key", "test-key");
         }
 
         IConfiguration configuration = new ConfigurationBuilder()
@@ -58,9 +59,11 @@ public sealed class ExtensionsUnitTests
         Assert.NotNull(serviceProvider.GetService<UserManager<User>>());
         Assert.NotNull(serviceProvider.GetService<SignInManager<User>>());
 
-        if (hasOpenAIApiKey)
+        if (hasTextEmbeddingGenerationService)
         {
-            Assert.NotNull(serviceProvider.GetService<IAITextGenerator>());
+#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+            Assert.NotNull(serviceProvider.GetService<ITextEmbeddingGenerationService>());
+#pragma warning restore SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
         }
     }
 }
