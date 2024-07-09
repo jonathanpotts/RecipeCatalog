@@ -8,9 +8,9 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 
 ## Projects
 
-### AIDataGenerator
+### RecipeCatalog.AIDataGenerator
 
-[AIDataGenerator](src/AIDataGenerator/) is a console app that generates example data for the catalog. Technologies used:
+[RecipeCatalog.AIDataGenerator](src/RecipeCatalog.AIDataGenerator/) is a console app that generates example data for the catalog. Technologies used:
 
 - [.NET](https://dotnet.microsoft.com/)
     - [Generic Host](https://learn.microsoft.com/dotnet/core/extensions/generic-host)
@@ -18,22 +18,22 @@ This project contains continuous integration (CI) and continuous deployment (CD)
 - [SkiaSharp](https://github.com/mono/SkiaSharp)
 - [Spectre.Console](https://spectreconsole.net/)
 
-### Application
+### RecipeCatalog.Application
 
-[Application](src/Application/) is the application layer for the project. Technologies used:
+[RecipeCatalog.Application](src/RecipeCatalog.Application/) is the application layer for the project. Technologies used:
 
 - [Resource-based Authorization](https://learn.microsoft.com/aspnet/core/security/authorization/resourcebased)
 - [FluentValidation](https://github.com/FluentValidation/FluentValidation)
 - Markdown ([Markdig](https://github.com/xoofx/markdig))
 - Snowflake IDs ([IdGen](https://github.com/RobThree/IdGen))
 
-### Application.Contracts
+### RecipeCatalog.Application.Contracts
 
-[Application.Contracts](src/Application.Contracts/) contains the service interfaces and DTO models for the application layer.
+[RecipeCatalog.Application.Contracts](src/RecipeCatalog.Application.Contracts/) contains the service interfaces and DTO models for the application layer.
 
-### BlazorApp
+### RecipeCatalog.BlazorApp
 
-[BlazorApp](src/BlazorApp/) is a Blazor web app for viewing and managing recipes. Technologies used:
+[RecipeCatalog.BlazorApp](src/RecipeCatalog.BlazorApp/) is a Blazor web app for viewing and managing recipes. Technologies used:
 
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
     - [Blazor](https://learn.microsoft.com/en-us/aspnet/core/blazor)
@@ -43,81 +43,81 @@ This project contains continuous integration (CI) and continuous deployment (CD)
     - [Bootstrap Icons](https://icons.getbootstrap.com/)
     - [Dark Mode](https://getbootstrap.com/docs/5.3/customize/color-modes/)
 
-### BlazorApp.Client
+### RecipeCatalog.BlazorApp.Client
 
-[BlazorApp.Client](src/BlazorApp.Client/) contains the Blazor WebAssembly components for the BlazorApp project.
+[RecipeCatalog.BlazorApp.Client](src/RecipeCatalog.BlazorApp.Client/) contains the Blazor WebAssembly components for the RecipeCatalog.BlazorApp project.
 
-### Domain
+### RecipeCatalog.Domain
 
-[Domain](src/Domain/) is the domain layer for the project. Technologies used:
+[RecipeCatalog.Domain](src/RecipeCatalog.Domain/) is the domain layer for the project. Technologies used:
 
 - [Entity Framework Core](https://learn.microsoft.com/ef/core/)
     - [Migrations](https://learn.microsoft.com/ef/core/managing-schemas/migrations/)
     - [SQLite](https://www.sqlite.org/)
 
-### Domain.Shared
+### RecipeCatalog.Domain.Shared
 
-[Domain.Shared](src/Domain.Shared/) contains the value objects for the domain layer.
+[RecipeCatalog.Domain.Shared](src/RecipeCatalog.Domain.Shared/) contains the value objects for the domain layer.
 
-### WebApi
+### RecipeCatalog.WebApi
 
-[WebApi](src/WebApi/) is a REST Web API that uses the [WebApi.Shared class library](src/WebApi.Shared/) to provide CRUD operations for managing recipes. Technologies used:
+[RecipeCatalog.WebApi](src/RecipeCatalog.WebApi/) is a REST Web API that uses the [RecipeCatalog.WebApi.Shared class library](src/RecipeCatalog.WebApi.Shared/) to provide CRUD operations for managing recipes. Technologies used:
 
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
     - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
     - [ASP.NET Core Identity](https://learn.microsoft.com/aspnet/core/security/authentication/identity)
 - [Swagger / OpenAPI](https://swagger.io/) ([Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore))
 
-### WebApi.Shared
+### RecipeCatalog.WebApi.Shared
 
-[WebApi.Shared](src/WebApi.Shared/) contains the minimal APIs that provide CRUD operations for managing recipes. Technologies used:
+[RecipeCatalog.WebApi.Shared](src/RecipeCatalog.WebApi.Shared/) contains the minimal APIs that provide CRUD operations for managing recipes. Technologies used:
 
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
     - [Minimal APIs](https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/overview)
 
 ### Tests
 
-#### Application.Tests
+#### RecipeCatalog.Application.Tests
 
-[Application.Tests](tests/Application.Tests/) is a project containing tests for the [Application](src/Application/) project. Technologies used:
-
-- [xUnit](https://xunit.net/)
-- [Moq](https://github.com/devlooped/moq)
-
-#### BlazorApp.Tests
-
-[BlazorApp.Tests](tests/BlazorApp.Tests/) is a project containing tests for the [BlazorApp](src/BlazorApp/) project. Technologies used:
-
-- [xUnit](https://xunit.net/)
-- [bUnit](https://bunit.dev/)
-
-#### BlazorApp.Client.Tests
-
-[BlazorApp.Client.Tests](tests/BlazorApp.Client.Tests/) is a project containing tests for the [BlazorApp.Client](src/BlazorApp.Client/) project. Technologies used:
-
-- [xUnit](https://xunit.net/)
-- [bUnit](https://bunit.dev/)
-
-#### Domain.Tests
-
-[Domain.Tests](tests/Domain.Tests/) is a project containing tests for the [Domain](src/Domain/) project. Technologies used:
-
-- [xUnit](https://xunit.net/)
-
-#### WebApi.Shared.Tests
-
-[WebApi.Shared.Tests](tests/WebApi.Shared.Tests/) is a project containing tests for the [WebApi.Shared](src/WebApi.Shared/) project. Technologies used:
+[RecipeCatalog.Application.Tests](tests/RecipeCatalog.Application.Tests/) is a project containing tests for the [RecipeCatalog.Application](src/RecipeCatalog.Application/) project. Technologies used:
 
 - [xUnit](https://xunit.net/)
 - [Moq](https://github.com/devlooped/moq)
 
-#### WebApi.Tests
+#### RecipeCatalog.BlazorApp.Tests
 
-[WebApi.Tests](tests/WebApi.Tests/) is a project containing tests for the [WebApi](src/WebApi/) project. Technologies used:
+[RecipeCatalog.BlazorApp.Tests](tests/RecipeCatalog.BlazorApp.Tests/) is a project containing tests for the [RecipeCatalog.BlazorApp](src/RecipeCatalog.BlazorApp/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+- [bUnit](https://bunit.dev/)
+
+#### RecipeCatalog.BlazorApp.Client.Tests
+
+[RecipeCatalog.BlazorApp.Client.Tests](tests/RecipeCatalog.BlazorApp.Client.Tests/) is a project containing tests for the [RecipeCatalog.BlazorApp.Client](src/RecipeCatalog.BlazorApp.Client/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+- [bUnit](https://bunit.dev/)
+
+#### RecipeCatalog.Domain.Tests
+
+[RecipeCatalog.Domain.Tests](tests/RecipeCatalog.Domain.Tests/) is a project containing tests for the [RecipeCatalog.Domain](src/RecipeCatalog.Domain/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+
+#### RecipeCatalog.WebApi.Shared.Tests
+
+[RecipeCatalog.WebApi.Shared.Tests](tests/RecipeCatalog.WebApi.Shared.Tests/) is a project containing tests for the [RecipeCatalog.WebApi.Shared](src/RecipeCatalog.WebApi.Shared/) project. Technologies used:
+
+- [xUnit](https://xunit.net/)
+- [Moq](https://github.com/devlooped/moq)
+
+#### RecipeCatalog.WebApi.Tests
+
+[RecipeCatalog.WebApi.Tests](tests/RecipeCatalog.WebApi.Tests/) is a project containing tests for the [RecipeCatalog.WebApi](src/RecipeCatalog.WebApi/) project. Technologies used:
 
 - [xUnit](https://xunit.net/)
 - [ASP.NET Core Integration Tests](https://learn.microsoft.com/aspnet/core/test/integration-tests) ([Microsoft.AspNetCore.Mvc.Testing](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Testing))
 
 ## Seed Data
 
-Seed data was created using the [AIDataGenerator](../AIDataGenerator/) project with [GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5), [Embedding V3 small](https://platform.openai.com/docs/models/embeddings), and [DALL-E 3](https://platform.openai.com/docs/models/dall-e).
+Seed data was created using the [RecipeCatalog.AIDataGenerator](src/RecipeCatalog.AIDataGenerator/) project with [GPT-3.5 Turbo](https://platform.openai.com/docs/models/gpt-3-5), [Embedding V3 small](https://platform.openai.com/docs/models/embeddings), and [DALL-E 3](https://platform.openai.com/docs/models/dall-e).

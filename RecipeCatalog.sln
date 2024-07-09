@@ -5,39 +5,39 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2EBE491B-755F-429D-8A6C-062314CB1FDE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp", "src\BlazorApp\BlazorApp.csproj", "{5715CA30-CC47-465A-BA0B-225BE9A6D149}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.BlazorApp", "src\RecipeCatalog.BlazorApp\RecipeCatalog.BlazorApp.csproj", "{5715CA30-CC47-465A-BA0B-225BE9A6D149}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Client", "src\BlazorApp.Client\BlazorApp.Client.csproj", "{68F79FB9-5DBB-4680-9E21-16B42E109775}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.BlazorApp.Client", "src\RecipeCatalog.BlazorApp.Client\RecipeCatalog.BlazorApp.Client.csproj", "{68F79FB9-5DBB-4680-9E21-16B42E109775}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "src\WebApi\WebApi.csproj", "{BE6286E8-6102-40BA-8905-79D4E20C7ECF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.WebApi", "src\RecipeCatalog.WebApi\RecipeCatalog.WebApi.csproj", "{BE6286E8-6102-40BA-8905-79D4E20C7ECF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AIDataGenerator", "src\AIDataGenerator\AIDataGenerator.csproj", "{8963D17B-8704-4A9A-A4A6-4D81008258A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.AIDataGenerator", "src\RecipeCatalog.AIDataGenerator\RecipeCatalog.AIDataGenerator.csproj", "{8963D17B-8704-4A9A-A4A6-4D81008258A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain.csproj", "{B118E237-A6CB-4352-BAB8-4F7B10BA1FA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.Domain", "src\RecipeCatalog.Domain\RecipeCatalog.Domain.csproj", "{B118E237-A6CB-4352-BAB8-4F7B10BA1FA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Shared", "src\Domain.Shared\Domain.Shared.csproj", "{BEF86F1A-7DAB-44CE-989F-3B514263A9E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.Domain.Shared", "src\RecipeCatalog.Domain.Shared\RecipeCatalog.Domain.Shared.csproj", "{BEF86F1A-7DAB-44CE-989F-3B514263A9E1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "src\Application\Application.csproj", "{9F1FE48B-C316-4E97-8AC7-CE33087D7F65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.Application", "src\RecipeCatalog.Application\RecipeCatalog.Application.csproj", "{9F1FE48B-C316-4E97-8AC7-CE33087D7F65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Contracts", "src\Application.Contracts\Application.Contracts.csproj", "{7C4C8E52-3645-4605-ACC1-7EC004AE95DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.Application.Contracts", "src\RecipeCatalog.Application.Contracts\RecipeCatalog.Application.Contracts.csproj", "{7C4C8E52-3645-4605-ACC1-7EC004AE95DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A1E0BEA1-7E0A-456B-BF8F-E8EDA328CC05}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Shared.Tests", "tests\WebApi.Shared.Tests\WebApi.Shared.Tests.csproj", "{07012470-72CB-4DC1-8C4A-B4BD3A8D33C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.WebApi.Shared.Tests", "tests\RecipeCatalog.WebApi.Shared.Tests\RecipeCatalog.WebApi.Shared.Tests.csproj", "{07012470-72CB-4DC1-8C4A-B4BD3A8D33C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Shared", "src\WebApi.Shared\WebApi.Shared.csproj", "{55A62D44-9863-4A0F-B293-1DABF1D20C81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.WebApi.Shared", "src\RecipeCatalog.WebApi.Shared\RecipeCatalog.WebApi.Shared.csproj", "{55A62D44-9863-4A0F-B293-1DABF1D20C81}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application.Tests", "tests\Application.Tests\Application.Tests.csproj", "{29FBDA0C-68B1-468A-A9E8-FBD5FDC0CFC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.Application.Tests", "tests\RecipeCatalog.Application.Tests\RecipeCatalog.Application.Tests.csproj", "{29FBDA0C-68B1-468A-A9E8-FBD5FDC0CFC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Tests", "tests\Domain.Tests\Domain.Tests.csproj", "{5EE56C57-D0EE-4F0A-AC70-540418A84961}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.Domain.Tests", "tests\RecipeCatalog.Domain.Tests\RecipeCatalog.Domain.Tests.csproj", "{5EE56C57-D0EE-4F0A-AC70-540418A84961}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Shared", "tests\Tests.Shared\Tests.Shared.csproj", "{C5F2E55C-92C3-4DE0-B3E6-54F3C4A60E79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.Tests.Shared", "tests\RecipeCatalog.Tests.Shared\RecipeCatalog.Tests.Shared.csproj", "{C5F2E55C-92C3-4DE0-B3E6-54F3C4A60E79}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Tests", "tests\WebApi.Tests\WebApi.Tests.csproj", "{CB2616C6-56DF-41A4-98DF-5E98D21D0941}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.WebApi.Tests", "tests\RecipeCatalog.WebApi.Tests\RecipeCatalog.WebApi.Tests.csproj", "{CB2616C6-56DF-41A4-98DF-5E98D21D0941}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Tests", "tests\BlazorApp.Tests\BlazorApp.Tests.csproj", "{34132DEE-A8F6-4DE9-8353-F938D8432C5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.BlazorApp.Tests", "tests\RecipeCatalog.BlazorApp.Tests\RecipeCatalog.BlazorApp.Tests.csproj", "{34132DEE-A8F6-4DE9-8353-F938D8432C5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorApp.Client.Tests", "tests\BlazorApp.Client.Tests\BlazorApp.Client.Tests.csproj", "{46894D7C-1077-467C-8A04-4DABAED04CD7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeCatalog.BlazorApp.Client.Tests", "tests\RecipeCatalog.BlazorApp.Client.Tests\RecipeCatalog.BlazorApp.Client.Tests.csproj", "{46894D7C-1077-467C-8A04-4DABAED04CD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

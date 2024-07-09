@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-RecipeCatalog.BlazorApp-b59fd04c-b0cb-4a92-b299-c9e800f0958c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="libman.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="libman.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RecipeCatalog.Application\RecipeCatalog.Application.csproj" />
+    <ProjectReference Include="..\RecipeCatalog.BlazorApp.Client\RecipeCatalog.BlazorApp.Client.csproj" />
+    <ProjectReference Include="..\RecipeCatalog.WebApi.Shared\RecipeCatalog.WebApi.Shared.csproj" />
+    <PackageReference Include="Blazored.FluentValidation" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.1.175" />
+    <PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="2.0.5" />
+  </ItemGroup>
+
+</Project>
