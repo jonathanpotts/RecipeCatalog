@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
-using Azure.AI.OpenAI;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using OpenAI.Chat;
 
 namespace RecipeCatalog.AIDataGenerator;
 
@@ -10,7 +10,7 @@ internal static class SemanticKernelExtensions
     private static readonly OpenAIPromptExecutionSettings s_executionSettings = new()
     {
 #pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
-        ResponseFormat = ChatCompletionsResponseFormat.JsonObject,
+        ResponseFormat = ChatResponseFormat.JsonObject,
 #pragma warning restore SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
     };
 
