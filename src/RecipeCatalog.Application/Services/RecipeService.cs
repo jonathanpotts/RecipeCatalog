@@ -31,7 +31,6 @@ public class RecipeService(
     private const float DistanceThreshold = 0.6f;
     private const int MaxImageDimension = 1024;
     private const int ImageQuality = 80;
-    private const SKFilterQuality ImageFilterQuality = SKFilterQuality.High;
 
     private static readonly MarkdownPipeline s_pipeline = new MarkdownPipelineBuilder()
         .DisableHtml()
@@ -155,7 +154,7 @@ public class RecipeService(
                 var width = (int)Math.Floor(bitmap.Width * scaleFactor);
                 var height = (int)Math.Floor(bitmap.Height * scaleFactor);
 
-                var resizedBitmap = bitmap.Resize(new SKImageInfo(width, height), ImageFilterQuality);
+                var resizedBitmap = bitmap.Resize(new SKImageInfo(width, height), new SKSamplingOptions(SKCubicResampler.Mitchell));
 
                 bitmap.Dispose();
                 bitmap = resizedBitmap;
