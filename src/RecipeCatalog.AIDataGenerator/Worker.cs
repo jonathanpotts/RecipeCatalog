@@ -97,7 +97,7 @@ internal class Worker(
                 },
                 Description = y.Description,
                 DescriptionEmbeddings = y.DescriptionEmbeddings,
-                Ingredients = [.. y.Ingredients],
+                Ingredients = [.. y.Ingredients ?? []],
                 Instructions = new MarkdownData
                 {
                     Markdown = y.InstructionsMarkdown

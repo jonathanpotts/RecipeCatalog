@@ -135,7 +135,7 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        _cuisineFilter = [.. CuisineIds];
+        _cuisineFilter = [.. CuisineIds ?? []];
 
         if (!ApplicationState.TryTakeFromJson<IEnumerable<CuisineDto>>(
             "cuisines", out var restoredCuisines))
